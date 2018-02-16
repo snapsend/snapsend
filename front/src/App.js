@@ -1,7 +1,5 @@
 // @flow
-
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import AppBar from './AppBar';
 import Typography from 'material-ui/Typography';
 import styled from 'styled-components';
