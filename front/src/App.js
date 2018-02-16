@@ -42,12 +42,14 @@ const Zone = styled.div`
 const Circle = styled.div`
   border-radius: 100%;
   background: #ededed;
-  width: 40vw;
-  height: 40vw;
+  width: 90vw;
+  height: 90vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  max-height: 390px;
+  max-width: 390px;
 `;
 
 const Flex = styled.div`
