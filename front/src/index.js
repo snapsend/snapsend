@@ -1,17 +1,19 @@
+//@flow
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App.bs.js';
+import 'typeface-roboto';
+import App from './App';
 import registerServiceWorker from './registerServiceWorker';
-import { getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
+import { createMuiTheme, MuiThemeProvider } from 'material-ui/styles';
+import Reboot from 'material-ui/Reboot';
 
-const theme = getMuiTheme({
+const theme = createMuiTheme({
   palette: {
     primary: {
       light: '#ffa995',
       main: '#ff7767',
       dark: '#c7463c',
-      contrastText: '#333',
+      contrastText: '#33333',
     },
     secondary: {
       light: '#9ca0ff',
@@ -20,13 +22,41 @@ const theme = getMuiTheme({
       contrastText: '#f4f4f4',
     },
   },
+  typography: {
+    color: '#333333',
+    title: {
+      fontSize: 22,
+      fontWeight: 500,
+      fontStyle: 'italic',
+      color: '#333333',
+    },
+    display4: { color: '#333333' },
+    display3: { color: '#333333' },
+    display2: { color: '#333333' },
+    display1: { color: '#333333' },
+    headline: { color: '#333333' },
+    body1: {
+      fontSize: '1rem',
+      color: '#333333',
+    },
+    body2: {
+      fontSize: '1rem',
+      color: '#333333',
+    },
+    button: {
+      color: '#333333',
+    },
+  },
 });
 
 export const Root = () => (
   <MuiThemeProvider theme={theme}>
+    <Reboot />
     <App />
   </MuiThemeProvider>
 );
 
-ReactDOM.render(<Root />, document.getElementById('root'));
+const el = document.getElementById('root');
+
+el && ReactDOM.render(<Root />, el);
 registerServiceWorker();
