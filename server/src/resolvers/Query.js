@@ -1,9 +1,8 @@
 const { getUserId } = require('../utils');
+const {forwardTo} from require('prisma-bindings');
 
 const Query = {
-  envelope(id, info) {
-    return ctx.db.query.envelope({ where: { id } }, info);
-  },
+  enveloped: forwardTo('db'),
 
   //          THESE ARE THE OLD QUERIES FROM THE STARTER TEMPLATE
   // feed(parent, args, ctx, info) {
