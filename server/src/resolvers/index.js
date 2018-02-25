@@ -1,6 +1,6 @@
 const { Query } = require('./Query');
 const { auth } = require('./Mutation/auth');
-const { post } = require('./Mutation/post');
+const { image } = require('./Mutation/image');
 const { AuthPayload } = require('./AuthPayload');
 const { envelope } = require('./Mutation/envelope');
 
@@ -8,7 +8,7 @@ module.exports = {
   Query,
   Mutation: {
     ...auth,
-    ...post,
+    ...image,
     ...envelope,
   },
   AuthPayload,

@@ -40,4 +40,4 @@ const envelope = {
   // },
 };
 
-module.exports = { post };
+module.exports = { envelope };

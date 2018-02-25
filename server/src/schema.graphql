@@ -14,6 +14,8 @@ type Mutation {
   signup(email: String!, password: String!, name: String!): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
   createImage(envelope: String!, data: String!): Image!
+  createEnvelope(ownerName: String!, recipeintName: String!): Envelope!
+
   ### OLD MUTATIONS FROM STARTER TEMPLATE ###
   # createDraft(title: String!, text: String!): Post!
   # publish(id: ID!): Post!
