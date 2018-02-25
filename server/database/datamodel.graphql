@@ -12,6 +12,8 @@
 type User {
   id: ID! @unique
   email: String! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   password: String!
   name: String!
   envelopes: [Envelope!]!
@@ -23,6 +25,8 @@ type Envelope {
   owner: User
   ownerName: String
   recipientName: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type Image {
@@ -30,4 +34,6 @@ type Image {
   link: String! @unique
   fileName: String!
   envelope: Envelope!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
