@@ -2,7 +2,7 @@ const { getUserId } = require('../utils');
 const { forwardTo } = require('prisma-binding');
 
 const Query = {
-  // envelope: forwardTo('db'),
+  envelope: forwardTo('db'),
   //          THESE ARE THE OLD QUERIES FROM THE STARTER TEMPLATE
   // feed(parent, args, ctx, info) {
   //   return ctx.db.query.posts({ where: { isPublished: true } }, info)
