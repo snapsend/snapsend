@@ -23,8 +23,8 @@ type Envelope {
   id: ID! @unique
   images: [Image!]!
   owner: User
-  ownerName: String
-  recipientName: String
+  ownerName: String!
+  envelopeName: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
