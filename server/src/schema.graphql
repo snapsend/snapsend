@@ -2,6 +2,7 @@
 
 type Query {
   envelope: Envelope!
+  envelopes: [Envelopes!]!
 
   ### OLD QUERIES FROM STARTER TEMPLATE ###
   # feed: [Post!]!
