@@ -1,27 +1,47 @@
 # Javascript Node CircleCI 2.0 configuration file
 # 
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
+# version: 2
+# jobs:
+#  install:
+#    working_directory: ~/snapsend/front
+#    docker:
+#     - image: circleci/node:8.9.4
+#       # - image: circleci/mongo:3.4.4
+#    steps:
+#       # - run: npm install -g yarn
+#     - run: npm install
+
+#  test:
+#   working_directory: ~/snapsend/front
+#   docker:
+#    - image: circleci/node:8.9.4
+#   steps:
+#    - run: npm run test
+# workflows:
+#  version: 2
+#  build:
+#   jobs:
+#    - install	
 version: 2
 jobs:
- install:
-   working_directory: ~/snapsend/front
-   docker:
-    - image: circleci/node:8.9.4
-      # - image: circleci/mongo:3.4.4
-   steps:
-      # - run: npm install -g yarn
-    - run: npm install
-
- test:
-  working_directory: ~/snapsend/front
-  docker:
-   - image: circleci/node:8.9.4
-  steps:
-   - run: npm run test
+  build:
+    working_directory: ~/snapsend/front
+    docker:
+      - image: circleci/node:8.9.4
+    steps:
+      - checkout
+      - run: npm install
+  test:
+    working_directory: ~/snapsend/front
+    docker:
+      - image: circleci/node:8.9.4
+    steps:
+      - checkout
+      - run: npm run test
 workflows:
- version: 2
- build:
-  jobs:
-	 - install
-	
-	
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test
