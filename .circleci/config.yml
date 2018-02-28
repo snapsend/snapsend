@@ -2,8 +2,6 @@
 # 
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 version: 2
-general:
-    build_dir: front
 jobs:
   build:
     docker:
@@ -15,17 +13,17 @@ jobs:
 
   test:
    docker:
-     -image: circleci/node:8.9.4
+      - image: circleci/node:8.9.4
     steps:
       - run: yarn test
 
 workflows:
- version: 2
- build_and_test:
-  jobs:
-	- build
-	-test :
+  version: 2
+  build_and_test:
+    jobs:
+	    - build
+	    - test :
 	  	requires:
-		 - build
+		    - build
 	
 	
