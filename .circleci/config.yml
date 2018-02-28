@@ -4,7 +4,7 @@
 version: 2
 jobs:
  build:
-  working_directory: ~/snapsend/front
+   working_directory: ~/snapsend/front
    docker:
     - image: circleci/node:8.9.4
       # - image: circleci/mongo:3.4.4
