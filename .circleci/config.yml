@@ -6,6 +6,7 @@ jobs:
       - image: circleci/node:8.9.4
     steps:
       - checkout
+      - run: cd front
       - run: ls -a
       - run: npm install
   test:
