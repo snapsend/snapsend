@@ -2,8 +2,7 @@
 # 
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 # We need to 
-# - build, test, deploy server for staging and production
-# - build, test, deploy client for staging and production
+# - build, test, deploy for staging and production
 version: 2
 jobs:
   build:
