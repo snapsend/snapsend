@@ -6,7 +6,7 @@ jobs:
       - image: circleci/node:8.9.4
     steps:
       - checkout:
-        path: ~/snapsend
+          path: ~/snapsend
       - run: ls -a
       - run: npm install
   test:
