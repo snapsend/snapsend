@@ -2,9 +2,13 @@
   "name": "server",
   "scripts": {
     "start": "nodemon -e js,graphql -x node -r dotenv/config src/index.js",
-    "debug": "nodemon -e js,graphql -x node --inspect -r dotenv/config src/index.js",
+    "debug":
+      "nodemon -e js,graphql -x node --inspect -r dotenv/config src/index.js",
     "playground": "graphql playground",
-    "dev": "npm-run-all --parallel start playground"
+    "dev": "npm-run-all --parallel start playground",
+    "stage": "prisma deploy -e .env.staging",
+    "promote-db": "",
+    "promote-sv": ""
   },
   "dependencies": {
     "bcryptjs": "2.4.3",
@@ -22,5 +26,11 @@
   },
   "resolutions": {
     "graphql": "^0.13.1"
+  },
+  "now": {
+    "name": "snapsend-server",
+    "dotenv": ".env.staging",
+    "alias": "snapsend.kristo.sh",
+    "public": "true"
   }
 }

@@ -3,6 +3,7 @@ const { forwardTo } = require('prisma-binding');
 
 const Query = {
   envelope: forwardTo('db'),
+  envelopes: forwardTo('db'),
   //          THESE ARE THE OLD QUERIES FROM THE STARTER TEMPLATE
   //          I KEPT THEM FOR REFERENCE
   //

@@ -7,6 +7,7 @@ import registerServiceWorker from './registerServiceWorker';
 import { createMuiTheme, MuiThemeProvider } from 'material-ui/styles';
 import Reboot from 'material-ui/Reboot';
 
+// this is a simple change
 const theme = createMuiTheme({
   palette: {
     primary: {
