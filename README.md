@@ -1,2 +1,1 @@
-
-![CircleCI](https://img.shields.io/circleci/project/github/kristojorg/snapsend.svg)
+[![CircleCI](https://circleci.com/gh/kristojorg/snapsend/tree/master.svg?style=svg)](https://circleci.com/gh/kristojorg/snapsend/tree/master)
