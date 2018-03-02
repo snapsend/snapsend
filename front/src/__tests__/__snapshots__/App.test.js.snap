@@ -339,7 +339,9 @@ exports[`Button renders correctly 1`] = `
 >
   <span
     className="MuiButton-label-62"
-  />
+  >
+    Click me!
+  </span>
   <span
     className="MuiTouchRipple-root-78"
   />

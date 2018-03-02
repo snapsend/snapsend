@@ -29,6 +29,6 @@ it('AppBar renders correctly', () => {
 });
 
 it('Button renders correctly', () => {
-  const tree = renderer.create(<Button />).toJSON();
+  const tree = renderer.create(<Button>Click me!</Button>).toJSON();
   expect(tree).toMatchSnapshot();
 });
