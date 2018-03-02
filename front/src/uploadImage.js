@@ -1,6 +1,6 @@
 // @flow
 import filestack from 'filestack-js';
-
+console.log(filestack);
 const fs = filestack.init(process.env.REACT_APP_FILESTACK_SECRET);
 
 // type Source = String;

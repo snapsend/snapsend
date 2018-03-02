@@ -2,7 +2,7 @@
 
 exports[`AppBar renders correctly 1`] = `
 <header
-  className="MuiPaper-root-193 MuiPaper-shadow4-199 sc-bwzfXH ejjPxv"
+  className="MuiPaper-root-1 MuiPaper-shadow4-7 sc-bwzfXH ejjPxv"
   theme={
     Object {
       "breakpoints": Object {
@@ -253,11 +253,11 @@ exports[`AppBar renders correctly 1`] = `
   }
 >
   <div
-    className="MuiToolbar-root-220 MuiToolbar-gutters-221"
+    className="MuiToolbar-root-28 MuiToolbar-gutters-29"
   >
     <svg
       aria-hidden="true"
-      className="MuiSvgIcon-root-222"
+      className="MuiSvgIcon-root-30"
       color={undefined}
       focusable="false"
       style={
@@ -275,12 +275,12 @@ exports[`AppBar renders correctly 1`] = `
       />
     </svg>
     <h2
-      className="MuiTypography-root-229 MuiTypography-title-235 sc-bdVaJa gLHRUG"
+      className="MuiTypography-root-37 MuiTypography-title-43 sc-bdVaJa gLHRUG"
     >
       Snapsend.
     </h2>
     <button
-      className="MuiButtonBase-root-268 MuiButton-root-253"
+      className="MuiButtonBase-root-76 MuiButton-root-61"
       disabled={false}
       onBlur={[Function]}
       onFocus={[Function]}
@@ -302,12 +302,12 @@ exports[`AppBar renders correctly 1`] = `
       type="button"
     >
       <span
-        className="MuiButton-label-254"
+        className="MuiButton-label-62"
       >
         Login
       </span>
       <span
-        className="MuiTouchRipple-root-270"
+        className="MuiTouchRipple-root-78"
       />
     </button>
   </div>
@@ -316,7 +316,7 @@ exports[`AppBar renders correctly 1`] = `
 
 exports[`Button renders correctly 1`] = `
 <button
-  className="MuiButtonBase-root-268 MuiButton-root-253"
+  className="MuiButtonBase-root-76 MuiButton-root-61"
   disabled={false}
   onBlur={[Function]}
   onFocus={[Function]}
@@ -338,10 +338,10 @@ exports[`Button renders correctly 1`] = `
   type="button"
 >
   <span
-    className="MuiButton-label-254"
+    className="MuiButton-label-62"
   />
   <span
-    className="MuiTouchRipple-root-270"
+    className="MuiTouchRipple-root-78"
   />
 </button>
 `;
