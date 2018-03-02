@@ -1,2 +1,2 @@
 
-![CircleCI](https://circleci.com/gh/:kristo/:repo.png?circle-token=:circle-token)
+![CircleCI](https://img.shields.io/circleci/project/github/RedSparr0w/node-csgo-parser.svg)
