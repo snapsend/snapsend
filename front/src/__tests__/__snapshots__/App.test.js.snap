@@ -298,7 +298,7 @@ exports[`AppBar renders correctly 1`] = `
           "color": "#333333",
         }
       }
-      tabIndex={0}
+      tabIndex="0"
       type="button"
     >
       <span
@@ -334,7 +334,7 @@ exports[`Button renders correctly 1`] = `
       "color": "#333333",
     }
   }
-  tabIndex={0}
+  tabIndex="0"
   type="button"
 >
   <span
