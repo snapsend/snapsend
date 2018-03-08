@@ -49,7 +49,3 @@ Our to-dos are:
 
 Same as above, we just need to feed google cloud the environment variables that are found in `.env.prod` instead of `.env.staging`. 
 
-
-# On second thought!
-
-We can ignore frontend for now. It's basically set up fine. It deploys on every branch and gives us a new url to go preview it at. So we actually don't need to do anything there. Cluster is also done. So we just need to set up the server. 
