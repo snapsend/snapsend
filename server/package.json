@@ -30,7 +30,7 @@
   "now": {
     "name": "snapsend-server",
     "dotenv": ".env.staging",
-    "alias": "snapsend.kristo.sh",
+    "alias": "snapsend.now.sh",
     "public": "true"
   }
 }
