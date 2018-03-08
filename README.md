@@ -5,7 +5,7 @@ __Build status__: [![CircleCI](https://circleci.com/gh/kristojorg/snapsend/tree/
 
 There are two pieces to the backend. The first is the "cluster", which is essentially the database wrapped in a Prisma API. This we deploy to prisma cloud. It will have a url that it is available on, which the _server_ then interacts with. 
 
-The server is where we write any of our application code, which will primarily consist of user authentication at this point. Everything else is on the frontend or handled by the database API. The server we deploy to [`now`](https://zeit.co/now). You can read all about it there. It's basically an easy cloud service. I chose `now` because I've used it a bunch, but if you guys are more comfortable with something else, let's use that! Maybe google cloud? Especially since we have the instructions already to set up CI/CD there. 
+The server is where we write any of our application code, which will primarily consist of user authentication at this point. Everything else is on the frontend or handled by the database API. The server I currently deploy to [`now`](https://zeit.co/now), but let's switch to google cloud since we have the instructions already to set up CI/CD there. 
 
 ## Deploying the front end
 
