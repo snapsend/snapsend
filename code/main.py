@@ -1,3 +1,5 @@
+from google.appengine.ext import vendor
+vendor.add('lib')
 
 
 from flask import Flask, make_response
