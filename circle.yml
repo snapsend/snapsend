@@ -37,6 +37,7 @@ test:
   override:
     # run local unit tests
     - python tests/test_main.py
+    - cd front && npm install && npm run test
 
 deployment:
     staging:
