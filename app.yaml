@@ -30,3 +30,4 @@ libraries:
 # temporary workaround around gcloud issue
 skip_files:
 - ^venv/.*$
+- front/
