@@ -1,5 +1,3 @@
-/*
-
 jest.mock('filestack-js');
 import filestack, { upload } from 'filestack-js';
 import uploadImage from '../uploadImage';
@@ -44,8 +42,5 @@ describe('upload.js', () => {
 // 	}
 // 	return "Upload failed";
 // }
-
-
-*/
 
 test('placeholder test', () => {});

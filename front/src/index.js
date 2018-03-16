@@ -5,7 +5,7 @@ import 'typeface-roboto';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { createMuiTheme, MuiThemeProvider } from 'material-ui/styles';
-import Reboot from 'material-ui/Reboot';
+import CssBaseline from 'material-ui/CssBaseline';
 
 // this is a simple change
 const theme = createMuiTheme({
@@ -52,7 +52,7 @@ const theme = createMuiTheme({
 
 export const Root = () => (
   <MuiThemeProvider theme={theme}>
-    <Reboot />
+    <CssBaseline />
     <App />
   </MuiThemeProvider>
 );
