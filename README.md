@@ -1,51 +1,159 @@
-__Build status__: [![CircleCI](https://circleci.com/gh/kristojorg/snapsend/tree/master.svg?style=svg)](https://circleci.com/gh/kristojorg/snapsend/tree/master)
 
 
-## Deploying the backend
+This code is used for the purposes of COMS 4156 - Advanced Software Engineering course at Columbia University, New York. 
+This is a boilerplate python flask code along with configurations for Circle CI and Google Cloud.
 
-There are two pieces to the backend. The first is the "cluster", which is essentially the database wrapped in a Prisma API. This we deploy to prisma cloud. It will have a url that it is available on, which the _server_ then interacts with. 
+# Setup Instructions 
 
-The server is where we write any of our application code, which will primarily consist of user authentication at this point. Everything else is on the frontend or handled by the database API. The server I currently deploy to [`now`](https://zeit.co/now), but let's switch to google cloud since we have the instructions already to set up CI/CD there. 
+Please log into github before progressing with the next steps.
 
-## Deploying the front end
+### Step 1: First things first!
 
-The front end is just a set of static files that get sent to the browser, and which the browser then runs. So I currently have it set up in `netlify` to deploy whenever there is a PR. I just set that up initially to show you guys the site as I was developing it. It's a free and easy service, but again let's choose something you are comfortable with and that will be easy to set up the CI/CD for. Maybe we should use google again for this? 
+Grab your free google credits by following <a href='https://piazza.com/class/jchzhd6cdxz4dy?cid=31' target="_blank"> this post </a> in piazza.
 
-_EDIT_: I realized after writing this that the frontend is basically done already. It deploys on every branch and PR(you can see in github on a PR there is the netlify bot giving us a URL to go look at the app on). So we're done with that part!
+### Step 2: Fork
 
+Fork this repository into your github. From now on, we will be working on your forked repository. 
 
-# What we need to do
+How to fork ? <br/>
+Look out for a button called `fork` in the top right of this page. It will create a replica of this repository and put it in your github account. 
 
-There are these three moving parts, the `cluster`, the `server`, and the `frontend`. We need to have a version of each for dev, UA, and production. I'll list out the different environments below. All of the variables to coordinate these environments will need to be stored somewhere standard. I've created three files: `.env`, `.env.staging`, and `.env.prod` in the `/server` directory. You won't see them because I have instructed git to ignore them, since they will contain secrets. I will create a zip file of them and send it to you via whatsapp. You will each need to place the contents of that folder in the `/server` directory, or things won't work!
+### Step 3: Clone
 
-Our to-dos are:
+Open termnal -> go to any folder -> clone your forked repository into your local folder. 
 
-1. Set up google cloud to host our server, and deploy the "staging" branch to a staging url. When the server runs in staging, it will need to communicate with the staging cluster. Thus we need to make sure to set an environment variable in the staging environment that points `PRISMA_CLUSTER` to the staging cluster (see the existing url in `.env.staging`). 
+How to clone? <br/>
+Look out for a button called `clone` in the top right of the repository. Once you click that you will get a link like this `https://github.com/<your-name>/<your-repository-name>.git` 
 
-2. Set up google cloud to host our server and deploy the master branch to a production URL. Same thing applies as last point about setting correct `PRISMA_CLUSTER`. 
+Copy that and go to your folder and type the command: <br/>
+`git clone <your-forked-repository-GIT-URL>`
 
-3. ~~Set up google cloud to host our frontend and deploy the "staging" branch to staging url, and master to production. Here, we need to change which server url we will be pointing at. I'll handle that part of it when we actually connect the frontend and the server (they don't talk to each other yet). For now, we just need to make it deploy on those branches.~~ nvm we're done with this. 
+### Step 4: Set Repository as origin
 
-4. Finally, we need to decide how we will manage the cluster. Theoretically, our database schema won't be changing often, and we wouldn't necessarily want to deploy a fresh database every time we update staging. Certainly not for master, since deploying a new cluster wipes the database (there are *migration* capabilities for when we might need to change our DB schema without data loss). For now, I think we just leave this as is and manage it manually. Just need to make sure our server is talking to the right cluster in local, staging and production. 
+Now set this repository as your origin. 
 
+How? <br/>
 
-### dev
+`git remote add origin <your-forked-repository-GIT-URL>`
 
-*cluster*: In the dev environment, the cluster should be hosted locally, running inside docker on a container. This is already set up in the `.env` file, which is the dev env file. You can see `PRISMA_CLUSTER="local"`. 
+### Step 5: Set up Google Cloud, Project & App Engine
 
-*server*: you can run the server with the script `npm run dev`, which uses prisma to start a local server on your computer and starts your local docker cluster too. Make sure you have docker running when you do this or it will fail! It will give you a url like `localhost:8000` when it starts. 
+Login into <a href='https://cloud.google.com'>Google Cloud</a> using the account that you used for free credits. (Note: If you signed in using another account, switch account to the one that you used to grab free credits.)
 
-*frontend*: you can start the frontend with `npm run start`, which starts up a local server that just sends the static files to the browser. It'll give you a url like `localhost:3000` when it starts. 
+1. If you are using google cloud first time, it will ask you to accept some terms, please do so.
+2. On the top left -> click on `select a project`. If you have already used google cloud before and you have also created a project before, then you may see another project name there, even then click on it.
+3. It will open a small pane -> Ensure that organization is `columbia.edu`, if not then select that.
+4. Then, click on `+` button 
+4. Give a project name say in this case `ase-boilerplate`.
+5. Also, edit the Project ID and set it also to `ase-boilerplate` other wise, google adds some randome digits to the Project ID and we need this Project ID through out. So it is better if Project ID and Project Names are same.
+6. click `Create`.
+7. Search for `App Engine` -> Ensure that Google App Engine Services are available. Upon seeing the home page of App Engine and choosing a language is taking you to a tutorial then it means the services are available.
 
-### staging
+### Step 6: Set up CIRCLE CI. 
 
-*cluster*: I have deployed a staging cluster for us. We shouldn't need to change it much. Just need to make sure the server is talking to the right cluster when running in staging. This is set using the `PRISMA_CLUSTER` variable in the `.env*` files. You can see the correct staging cluster name in `.env.staging`. I'm not sure how google cloud does environment variables, but we need to make sure that variable gets set correctly for staging. 
+1. Go to <a href='https://circleci.com'> CircleCI </a>
+2. Sign up for a free account. You can login using github (easy way). Else, you can signup and later authorize github account. 
+3. Click on `projects` on the left pane -> `Add Project` -> `Setup Project` (Note: it might take sometime to sync the projects in your github into the Circle CI.)
+4. Choose the following:
+    * Operating System - Linux
+    * Platform - 2.0
+    * Language - Python
+5. click `start building`
+    
+### Step 7: Enable App Engine Admin API & retrieve Client Secret
 
-*server*: I actually just talked about what we need to do right above ^. Just set the right `PRISMA_CLUSTER` variable and deploy the server. The script that google cloud uses to run the server is `npm run start`. Remember, this command needs to be run *inside the `/server` directory*. If you try to run it in the root of the repo, you'll get an error. So somehow you need to make google cloud run it inside that folder. You also may need to `npm install` before running `npm run start`, which just downloads all the dependencies for the project.
+1. click on `Console`
+2. In the Search Bar -> search for `Google App Engine Admin API` -> click `Enable`
+3. Click on "Credentials" -> click on `Create Credential` -> select `Service Account Key`
+4. From the drop down of Service Account -> select `Compute Engine default service account`
+5. For the Key Type: select JSON
+6. click `create`.
+7. A json file with name similar to `<ase-boilerplate-some-number>.json` will be downloaded on to your system. Remember the folder it is downloaded to, we need this later.
 
-*frontend*: The frontend just needs to deploy. The frontend code needs to be "built" before it can be served. Technically, this is not the same as compiling since it is not turning it into bytecode. It's essentially just gathering all the dependencies and then converting the new-age javascript into javascript that older browsers can still run. Doesn't really matter. The script to build the site is `npm run build`. This will build all the files into the the folder `/front/build`. All that google cloud has to do is host that folder. Again, you'll need to `npm install` before `npm run build`. The script I set in netlify is `cd front && npm install && npm run build`.
+### Step 8: Setup CLIENT_SECRET and GCLOUD_PROJECT_ID variables in Circle CI
 
-### production
+1. Go to <a href='https://circleci.com'> CircleCI </a> -> click on `app`
+2. Click on `Projects`
+3. Click on little gear (notation for settings!) that is next to your project which is `ase-boilerplate`
+4. Click on `Environment Variables`
+5. Click on `Add Variable`
+6. For Name: `CLIENT_SECRET`
+7. Now, go to the folder where JSON file is downloaded previously and run this command: <br/>
+    `base64 <ase-boilerplate-some-number>.json | pbcopy` <br/>
+   It encodes the file into base64 format and copies into your clipboard. 
+9. Now go back to browser and for value: press the paste buttons (CMD + V on Mac / CTRL + V on windows)
+10. Again Click on `Add Variable`
+11. For Name: `GCLOUD_PROJECT_ID`
+12. For Value: put your your Project ID from google cloud.
 
-Same as above, we just need to feed google cloud the environment variables that are found in `.env.prod` instead of `.env.staging`. 
+How do I find my project Id? <br/>
+1. Go to <a href='https://cloud.google.com'>Google Cloud</a> and on top left select the project.
+2. It opens a new pane, in that look for the Project ID corresponding to the project name you gave. In our case, it is `ase-boilerplate`
 
+### Step 9: Verify build in CircleCI
+
+Step 8 would trigger a new build and release in Circle CI. 
+To verify:
+1. Go to `projects` -> `your project` -> open the lates build which will be like `master #some-number`
+2. If everything is good -> build will succeed and the app will be deployed into google app engine. 
+3. you can also verify that by going to `https://<your-gcloud-project-id>.appspot.com` which will show a message like starting with `hello`
+
+### Step 10: Database Setup (if required for your project)
+#### Create a SQL instance.
+1. Home Page -> Menu -> SQL
+2. Create Instance -> Select MySQL -> Select Second Generation 
+3. give a name (may be "mysql1" )-> and give a simple password (may be "root").
+4. Next, wait for couple of minutes for google cloud to process your request and create an instance
+5. Once, it is ready, you will get a green tick next to it. 
+6. Click on "mysql1" (or your instance name) once you see a green tick next to it. 
+7. There will be a pane called `Connect to this instance`. In that copy the value of `Instance connection name`.
+
+#### Setting configuration in your code
+1. Go to your code
+2. go to app.yaml -> update `<YOUR_CONNECTION_NAME>`  with `Instance connection name` you copied in previous step
+3. likewise update `<YOUR_USERNAME>` with username and `<YOUR_PASSWORD>` with password.
+4. Commit your code and push it to repo. It will trigger a build in Circle CI.
+5. Once your build has succeeded, then go to `https://<your-gcloud-project-id>.appspot.com/databases` and you should see a list of schemas/databases that come by default in your mysql instance.
+
+#### (optional) connecting to SQL instance locally 
+1. Go to Home Page -> Menu -> SQL -> "mysql1" (or your instance name)
+2. Click on Authorization tab -> For `name` put something like "HOME IP" -> for `Network` put your public IP address. This is called whitelisting IP address. Google cloud or any cloud providers by default block access from new IP addresses to their services. How do you find your public IP ? Google Search -> "myip"
+3. Then click save.
+4. Go to `overview` tab -> `Connect to this instance` -> `IPv4 address` -> copy IP Address. You need this to connect to mysql from you local computer. 
+5. Open Terminal -> `mysql --host=<IP_ADRESS_YOU_COPIED_PREIVOUSLY> --user=root --password=<YOUR_MYSQL_INSTANCE_PASSWORD>`
+6. Once you login succefully: try `show schemas`
+7. That will give you the same result as going to `https://<your-gcloud-project-id>.appspot.com/databases`
+
+### Step 11: (optional but highly recommended as a pre-requisite for step 12) Setup Anaconda
+If you don't have Python 2.7 in your system, then follow along:
+1. Download <a href='https://www.anaconda.com/download/#macos'>Anaconda</a> with Python version 3.6 (Don't get confused about 3.6 here!! We will be creating virtual environment with 2.7 instead of using Anaconda with Python 2.7 version which is a good practice!)
+2. Install Anaconda by double clicking the .dmg file 
+3. After installation -> Terminal -> `conda create -n python2env python=2.7`
+4. `source activate python2env`
+5. At this point you have activated virtual environment named `python2env` with packages `python=2.7`. So now if you test `python --version` you will see `python 2.7` as output 
+6. At this point, continue your previous work with this virtual environment active. 
+7. run `easy_install -U pip`
+8. Once you are done, deactivate the environment with `source deactivate`
+9. Fun Check: try `python --version` now! (it will show your default python version installed in your system)
+10. Before moving to next step do `source activate python2env` as running the system locally requires python2.7 and also we will be installing packages mentioned in requirements.txt in this virtual environment instead of your local base installation. 
+
+### Step 12: Setup Google Cloud SDK, App Engine SDK and Database in your local system
+1. Following this link and perform the 3 steps under the `Interactive Installer` section corresponding to your operating system. For our case it is Mac OS (vice versa you can choose Linux / windows based on your OS): <br/>
+<a href='https://cloud.google.com/sdk/downloads#interactive'>Google Cloud SDK</a>
+2. Following this link <a href='https://cloud.google.com/appengine/docs/standard/python/download'>App Engine extension for Python</a> and perform the steps below (and skip if you already have it): 
+    * 1st step (Check your python version by typing  `python --version` in you terminal / shell. If it is python 2.7, then skip the step, else check out optional Step 12 in this file.)
+    * 3rd step (perform this step)
+    * 4th step (Check if you have git installed by typing `git`. If yes, then skip, else perfrom this step. )
+    * 5th step (perform this step)
+    
+3. In your local system -> `cd <your-repository>` in our case `cd ase-boilerplate` <br/>
+4. `mkdir -p lib`
+5. `pip install -r requirements.txt -t lib`
+6. `pip install -r requirements.txt`. (This is extra step if you are using database setup).
+6. `dev_appserver.py ./`
+7. Now, you will be running the application locally (in locally mimicked App Engine framework!). So now checkout <a href='http://localhost:8080'>localhost:8080</a>. You should be greeted with `hello` message
+8. After you are done, press `ctrl+c` to stop the local server. 
+
+## Licensing
+
+Copyright (C) 2018 Columbia University.

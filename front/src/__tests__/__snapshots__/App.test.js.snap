@@ -2,7 +2,7 @@
 
 exports[`AppBar renders correctly 1`] = `
 <header
-  className="MuiPaper-root-1 MuiPaper-shadow4-7 sc-bwzfXH ejjPxv"
+  className="MuiPaper-root-1 MuiPaper-elevation4-7 sc-bwzfXH ejjPxv"
   theme={
     Object {
       "breakpoints": Object {
@@ -275,12 +275,12 @@ exports[`AppBar renders correctly 1`] = `
       />
     </svg>
     <h2
-      className="MuiTypography-root-37 MuiTypography-title-43 sc-bdVaJa gLHRUG"
+      className="MuiTypography-root-36 MuiTypography-title-42 sc-bdVaJa gLHRUG"
     >
       Snapsend.
     </h2>
     <button
-      className="MuiButtonBase-root-76 MuiButton-root-61"
+      className="MuiButtonBase-root-75 MuiButton-root-60"
       disabled={false}
       onBlur={[Function]}
       onFocus={[Function]}
@@ -302,7 +302,7 @@ exports[`AppBar renders correctly 1`] = `
       type="button"
     >
       <span
-        className="MuiButton-label-62"
+        className="MuiButton-label-61"
       >
         Login
       </span>
@@ -316,7 +316,7 @@ exports[`AppBar renders correctly 1`] = `
 
 exports[`Button renders correctly 1`] = `
 <button
-  className="MuiButtonBase-root-76 MuiButton-root-61"
+  className="MuiButtonBase-root-75 MuiButton-root-60"
   disabled={false}
   onBlur={[Function]}
   onFocus={[Function]}
@@ -338,7 +338,7 @@ exports[`Button renders correctly 1`] = `
   type="button"
 >
   <span
-    className="MuiButton-label-62"
+    className="MuiButton-label-61"
   >
     Click me!
   </span>
