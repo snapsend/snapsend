@@ -1,8 +1,7 @@
-/**
- * Mocking filestack-js
+/* Mocking filestack-js */
+import { FAILED_MESSAGE } from '../../uploadImage';
 
-
-const successResult = {
+export const successResult = {
   filename: 'img.jpg',
   handle: 'EL30NOJkQ9WJ2B0TBdoE',
   mimetype: 'image/jpeg',
@@ -11,16 +10,17 @@ const successResult = {
   url: 'https://cdn.filestackcontent.com/EL30NOJkQ9WJ2B0TBdoE',
 };
 
-const error = '';
+export const errorResult = Error(FAILED_MESSAGE);
 
 export default {
-  init: () => ({
+  init: jest.fn(() => ({
     upload,
-  }),
+  })),
 };
 
 // defining default behavior of the mock to return success.
 export const upload = jest.fn(() => Promise.resolve(successResult));
+// export const upload = jest.fn(() => Promise.reject('ERROR'));
 
 // function upload(file) {
 //   return new Promise(res => {
@@ -37,6 +37,3 @@ function rejectWithError(err) {
     process.nextTick(() => reject(err));
   });
 }
-*/
-
-test('placeholder test', () => {});

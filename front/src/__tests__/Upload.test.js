@@ -3,19 +3,22 @@ import filestack, { upload } from 'filestack-js';
 import uploadImage from '../uploadImage';
 import { successResult, errorResult } from './__mocks__/filestack-js';
 
+const TEST_IMAGE = './data/test.jpg';
+
 describe('upload.js', () => {
-  test('if upload succeeds, it should return the url', () => {
-    uploadImage('image').then(res => {
-      expect(result).toBe(successResult);
+  test('if upload succeeds, it should return the image payload', () => {
+    return uploadImage(TEST_IMAGE).then(res => {
+      return expect(res).toEqual(successResult);
     });
   });
 
-  test('When image upload fails, it returns the error code', () => {
-    // somethinog
-    uploadImage.mockImplementationOnce(() => Promise.reject(errorResult));
-    uploadImage('image').then(res => {
-      expect(result).toBe(errorResult);
-    });
+  test('When image upload fails, it returns the standard error', () => {
+    expect.assertions(1);
+    upload.mockImplementationOnce(() => Promise.reject('ERROR'));
+    // upload().catch(res => {
+    //   console.log(res);
+    // });
+    return expect(uploadImage(TEST_IMAGE)).rejects.toMatchSnapshot();
   });
 
   test('When input is not a file, it returns ___ error', () => {

@@ -5,14 +5,25 @@ const fs = filestack.init(process.env.REACT_APP_FILESTACK_SECRET);
 
 // type Source = String;
 
-const uploadImage = files => {
-  // check if source is valid string
-  // upload the image
-  console.log('FILES', files);
+const SUCCESS_STATUS = 'Stored';
 
-  fs.upload(files[0], {}, {}).then(res => {
-    console.log('DONE', res);
+export const FAILED_MESSAGE = 'Image Upload Failed';
+
+const uploadImage = files =>
+  new Promise((resolve, reject) => {
+    // check if source is valid string
+    // upload the image
+
+    return fs
+      .upload(files[0], {}, {})
+      .then(res => {
+        const { status } = res;
+        if (status === SUCCESS_STATUS) {
+          return resolve(res);
+        }
+        return reject(Error(FAILED_MESSAGE));
+      })
+      .catch(err => reject(Error(FAILED_MESSAGE)));
   });
-};
 
 export default uploadImage;
