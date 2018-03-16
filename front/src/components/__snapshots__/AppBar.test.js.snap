@@ -2,7 +2,7 @@
 
 exports[`AppBar AppBar renders correctly 1`] = `
 <header
-  className="MuiPaper-root-110 MuiPaper-elevation4-116 sc-bwzfXH ejjPxv"
+  className="MuiPaper-root-1 MuiPaper-elevation4-7 sc-bwzfXH ejjPxv"
   theme={
     Object {
       "breakpoints": Object {
@@ -253,11 +253,11 @@ exports[`AppBar AppBar renders correctly 1`] = `
   }
 >
   <div
-    className="MuiToolbar-root-137 MuiToolbar-gutters-138"
+    className="MuiToolbar-root-28 MuiToolbar-gutters-29"
   >
     <svg
       aria-hidden="true"
-      className="MuiSvgIcon-root-139"
+      className="MuiSvgIcon-root-30"
       color={undefined}
       focusable="false"
       style={
@@ -275,12 +275,12 @@ exports[`AppBar AppBar renders correctly 1`] = `
       />
     </svg>
     <h2
-      className="MuiTypography-root-145 MuiTypography-title-151 sc-bdVaJa gLHRUG"
+      className="MuiTypography-root-36 MuiTypography-title-42 sc-bdVaJa gLHRUG"
     >
       Snapsend.
     </h2>
     <button
-      className="MuiButtonBase-root-100 MuiButton-root-85"
+      className="MuiButtonBase-root-75 MuiButton-root-60"
       disabled={false}
       onBlur={[Function]}
       onFocus={[Function]}
@@ -302,48 +302,14 @@ exports[`AppBar AppBar renders correctly 1`] = `
       type="button"
     >
       <span
-        className="MuiButton-label-86"
+        className="MuiButton-label-61"
       >
         Login
       </span>
       <span
-        className="MuiTouchRipple-root-103"
+        className="MuiTouchRipple-root-78"
       />
     </button>
   </div>
 </header>
-`;
-
-exports[`Button Component Button renders correctly 1`] = `
-<button
-  className="MuiButtonBase-root-100 MuiButton-root-85"
-  disabled={false}
-  onBlur={[Function]}
-  onFocus={[Function]}
-  onKeyDown={[Function]}
-  onKeyUp={[Function]}
-  onMouseDown={[Function]}
-  onMouseLeave={[Function]}
-  onMouseUp={[Function]}
-  onTouchEnd={[Function]}
-  onTouchMove={[Function]}
-  onTouchStart={[Function]}
-  style={
-    Object {
-      "borderRadius": 0,
-      "color": "#333333",
-    }
-  }
-  tabIndex="0"
-  type="button"
->
-  <span
-    className="MuiButton-label-86"
-  >
-    Click me!
-  </span>
-  <span
-    className="MuiTouchRipple-root-103"
-  />
-</button>
 `;
