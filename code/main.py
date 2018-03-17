@@ -1,16 +1,17 @@
-from __future__ import print_function
+# from __future__ import print_function
 from google.appengine.ext import vendor
-from flask import Flask, request, jsonify,  make_response
+from flask import Flask, request, jsonify, make_response
 import os
 import json
 import sys
-from flask import jsonify
+import os
+import MySQLdb
+# from flask import jsonify
 
 vendor.add('lib')
 app = Flask(__name__)
 
-import os
-import MySQLdb
+
 
 # dynamodb = boto3.resource(
 #     'dynamodb',
