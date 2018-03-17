@@ -78,21 +78,21 @@ def showDatabases():
 @app.route('/createEnvelope')
 def createEnvelope():
     j_data = {
-    "envelopeId": 1502,
+    # "envelopeId": 1502,
     "envelopeName" : "MyEnvelope" ,
-    "userId" : 509,
-    "username" : "abc",
-    "password" : "abcdefg",
-    "email" : "abc@gmail.com",
+    # "userId" : 509,
+    # "username" : "abc",
+    # "password" : "abcdefg",
+    # "email" : "abc@gmail.com",
     "recipientName": "John",
     "senderName": "Mary",
     "images": [{
-            "imageId": 9479,
+            "imageId": 17,
             "url": "blah1",
             "filename": "pic1.jpg"
         },
         {
-            "imageId": 9480,
+            "imageId": 18,
             "url": "blah2",
             "filename": "pic2.jpg"
         }
@@ -102,42 +102,57 @@ def createEnvelope():
     r = json.dumps(j_data)
     loaded_r = json.loads(r)
 
-    env_id = loaded_r['envelopeId']
+    # env_id = loaded_r['envelopeId']
     env_name = loaded_r['envelopeName']
     rec_name = loaded_r['recipientName']
     sender_name = loaded_r['senderName']
     all_images = loaded_r['images']
-    uid = loaded_r['userId']
-    uname = loaded_r['username']
-    email = loaded_r['email']
-    pwd = loaded_r['password']
+    # uid = loaded_r['userId']
+    # uname = loaded_r['username']
+    # email = loaded_r['email']
+    # pwd = loaded_r['password']
 
     db = connect_to_cloudsql()
 
     cursor = db.cursor()
-    sql_user_query = 'INSERT INTO snapsend.User (userID, email, password, uname) values (' + str(uid) +', "'+ email +'", "' + pwd + '", "' + uname + '");'
-    sql_env_query = 'INSERT INTO snapsend.Envelope (eowner, envelopeID, ename) values (' + str(uid) +', '+ str(env_id) +', "' + env_name + '");'
+    # sql_user_query = 'INSERT INTO snapsend.User (email, password, uname) values ("'+ email +'", "' + pwd + '", "' + uname + '");'
+    sql_env_query = 'INSERT INTO snapsend.Envelope (ename) values ("' + env_name + '");'
+    cursor.execute(sql_env_query)
+    db.commit()
+    cursor.close()
+
+    cursor = db.cursor()
+    sql_get_env_id = 'SELECT max(envelopeID) from snapsend.Envelope;'
+    cursor.execute(sql_get_env_id)
+
     
+    j = ""
+    for r in cursor.fetchall():
+        j += str(r[0])
+    j = int(j)
+    cursor.close()
+
 
     try:
-        cursor.execute(sql_user_query)
-        cursor.execute(sql_env_query)
-
+        cursor = db.cursor()
         for i in range(len(all_images)):
             curr_dict = all_images[i]
             a = curr_dict['imageId']
             b = curr_dict['url']
             c = curr_dict['filename']
-            sql_image_query = 'INSERT INTO snapsend.Image (inenvID, imageID, imagelink, filename) values (' + str(env_id) +', '+ str(a) +', "' + b + '", "' + c + '");'
+            sql_image_query = 'INSERT INTO snapsend.Image (inenvID, imageID, imagelink, filename) values (' + str(j) +', '+ str(a) +', "' + b + '", "' + c + '");'
             cursor.execute(sql_image_query)
+            db.commit()
         
         print("success")    
     except Exception as e:
         print("error")
     
+    cursor.close()
 
-    cursor.execute('select * from snapsend.User')
-    # cursor.execute('select * from snapsend.Image')
+    cursor = db.cursor()
+    # cursor.execute('select * from snapsend.User')
+    cursor.execute('select * from snapsend.Image')
     # cursor.execute('select * from snapsend.Envelope')
 
 
@@ -147,6 +162,9 @@ def createEnvelope():
 
     response = make_response(res)
     response.headers['Content-Type'] = 'text/json'
+
+    # response.headers['Content-Type'] = 'text/json'
+    response.headers['Access-Control-Allow-Origin'] = '*'
 
     return response
 
@@ -179,26 +197,26 @@ def createEnvelope():
 #     try:
 #         result = cursor.execute(sql_get_env)
 
-#        env_out = {"envelopeId": env_id, "envelopeName" : result[1], "recipientName": result[3], "senderName": result[2], "created date": result[4]}
+#        # env_out = {"envelopeId": env_id, "envelopeName" : result[1], "recipientName": result[3], "senderName": result[2], "created date": result[4]}
 
-#        user_id = result[0]
+#        # user_id = result[0]
         
-#         img_ct = cursor.execute(sql_count_images)
+#        #  img_ct = cursor.execute(sql_count_images)
     
-#         cursor.execute(sql_get_images)
-#         imgres = cursor.fetchall()
+#        #  cursor.execute(sql_get_images)
+#        #  imgres = cursor.fetchall()
     
-#        img_arr = []
-#        img_out = {}
+#        # img_arr = []
+#        # img_out = {}
 
-#         for imgs in imgres:
-#             img_out = {"imageId": imgs[0], "url": imgs[1], "filename": imgs[2]}
-#            img_arr.append(img_out)
-#            img_out = {}
+#        #  for imgs in imgres:
+#        #      img_out = {"imageId": imgs[0], "url": imgs[1], "filename": imgs[2]}
+#        #     img_arr.append(img_out)
+#        #     img_out = {}
 
-#        payload = env_out + ' "images": ' + img_arr
+#        # payload = env_out + ' "images": ' + img_arr
 
-#        return jsonify(payload)
+#        # return jsonify(payload)
 
         
 #         print("success")    
@@ -207,19 +225,10 @@ def createEnvelope():
     
 
 #     response = make_response(payload)
+
 #     response.headers['Content-Type'] = 'text/json'
 
 #     return response  
-
-
-
-
-
-
-
-
-
-
 
 
 
