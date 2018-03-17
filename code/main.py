@@ -1,14 +1,12 @@
-# from google.appengine.ext import vendor
+from google.appengine.ext import vendor
 from __future__ import print_function
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,  make_response
 import os
 import json
 import sys
 from flask import jsonify
 
-# vendor.add('lib')
-
-from flask import Flask, make_response
+vendor.add('lib')
 app = Flask(__name__)
 
 import os
