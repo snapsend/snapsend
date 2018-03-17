@@ -23,12 +23,12 @@ import MySQLdb
 #     verify=False)
 
 # These environment variables are configured in app.yaml.
-# CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
-# CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
-# CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
-CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
-CLOUDSQL_USER = 'root'
-CLOUDSQL_PASSWORD = 'snapsend'
+CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
+CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
+CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
+# CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
+# CLOUDSQL_USER = 'root'
+# CLOUDSQL_PASSWORD = 'snapsend'
 
 
 def connect_to_cloudsql():
@@ -37,7 +37,6 @@ def connect_to_cloudsql():
     if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine/'):
         # Connect using the unix socket located at
         # /cloudsql/cloudsql-connection-name.
-        print("inside if")
         cloudsql_unix_socket = os.path.join(
             '/cloudsql', CLOUDSQL_CONNECTION_NAME)
 
@@ -47,7 +46,6 @@ def connect_to_cloudsql():
             passwd=CLOUDSQL_PASSWORD)
 
     else:
-        print("inside else")
         db = MySQLdb.connect(
             host='35.231.24.52', user=CLOUDSQL_USER, passwd=CLOUDSQL_PASSWORD)
     # else:
@@ -80,21 +78,21 @@ def showDatabases():
 @app.route('/createEnvelope')
 def createEnvelope():
     j_data = {
-    "envelopeId": 1501,
+    "envelopeId": 1502,
     "envelopeName" : "MyEnvelope" ,
-    "userId" : 5054,
+    "userId" : 509,
     "username" : "abc",
     "password" : "abcdefg",
     "email" : "abc@gmail.com",
     "recipientName": "John",
     "senderName": "Mary",
     "images": [{
-            "imageId": 9475,
+            "imageId": 9479,
             "url": "blah1",
             "filename": "pic1.jpg"
         },
         {
-            "imageId": 9476,
+            "imageId": 9480,
             "url": "blah2",
             "filename": "pic2.jpg"
         }
@@ -138,8 +136,8 @@ def createEnvelope():
         print("error")
     
 
-    # cursor.execute('select * from snapsend.User')
-    cursor.execute('select * from snapsend.Image')
+    cursor.execute('select * from snapsend.User')
+    # cursor.execute('select * from snapsend.Image')
     # cursor.execute('select * from snapsend.Envelope')
 
 
@@ -152,7 +150,80 @@ def createEnvelope():
 
     return response
 
+
+
+
+
+# @app.route('/getEnvelope')
+# def getEnvelope():
     
+# j_in = {
+#     "envelopeId": 1501
+#     }
+
+#     r = json.dumps(j_in)
+#     loaded_r = json.loads(r)
+#     env_id = loaded_r['envelopeId']
+
+#     db = connect_to_cloudsql()
+
+#     cursor = db.cursor()
+
+#     sql_get_env = 'SELECT eowner , ename, sender, recipient, createddate FROM snapsend.Envelope WHERE envelopeID = ' + str(env_id) + ';'
+
+#     sql_count_images = 'SELECT COUNT (imageID) FROM snapsend.Image WHERE inenvID = ' + str(env_id) + ';'
+
+#     sql_get_images = 'SELECT imageID, imagelink, filename FROM snapsend.Image WHERE inenvID = ' + str(env_id) + ';'
+
+#     env_out = {}
+#     try:
+#         result = cursor.execute(sql_get_env)
+
+#        env_out = {"envelopeId": env_id, "envelopeName" : result[1], "recipientName": result[3], "senderName": result[2], "created date": result[4]}
+
+#        user_id = result[0]
+        
+#         img_ct = cursor.execute(sql_count_images)
+    
+#         cursor.execute(sql_get_images)
+#         imgres = cursor.fetchall()
+    
+#        img_arr = []
+#        img_out = {}
+
+#         for imgs in imgres:
+#             img_out = {"imageId": imgs[0], "url": imgs[1], "filename": imgs[2]}
+#            img_arr.append(img_out)
+#            img_out = {}
+
+#        payload = env_out + ' "images": ' + img_arr
+
+#        return jsonify(payload)
+
+        
+#         print("success")    
+#     except Exception as e:
+#         print("error")
+    
+
+#     response = make_response(payload)
+#     response.headers['Content-Type'] = 'text/json'
+
+#     return response  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
