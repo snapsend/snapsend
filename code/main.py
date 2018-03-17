@@ -1,6 +1,6 @@
 # from __future__ import print_function
-# from google.appengine.ext import vendor
-# vendor.add('lib')
+from google.appengine.ext import vendor
+vendor.add('lib')
 from flask import Flask, request, jsonify, make_response
 # from flask import jsonify
 
@@ -23,12 +23,12 @@ import MySQLdb
 #     verify=False)
 
 # These environment variables are configured in app.yaml.
-# CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
-# CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
-# CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
-CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
-CLOUDSQL_USER = 'root'
-CLOUDSQL_PASSWORD = 'snapsend'
+CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
+CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
+CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
+# CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
+# CLOUDSQL_USER = 'root'
+# CLOUDSQL_PASSWORD = 'snapsend'
 
 
 def connect_to_cloudsql():
