@@ -1,6 +1,6 @@
 # from __future__ import print_function
-from google.appengine.ext import vendor
-vendor.add('lib')
+# from google.appengine.ext import vendor
+# vendor.add('lib')
 from flask import Flask, request, jsonify, make_response
 # from flask import jsonify
 
@@ -23,12 +23,12 @@ import MySQLdb
 #     verify=False)
 
 # These environment variables are configured in app.yaml.
-CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
-CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
-CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
-# CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
-# CLOUDSQL_USER = 'root'
-# CLOUDSQL_PASSWORD = 'snapsend'
+# CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
+# CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
+# CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
+CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
+CLOUDSQL_USER = 'root'
+CLOUDSQL_PASSWORD = 'snapsend'
 
 
 def connect_to_cloudsql():
@@ -79,7 +79,7 @@ def showDatabases():
 def createEnvelope():
     j_data = {
     # "envelopeId": 1502,
-    "envelopeName" : "MyEnvelope" ,
+    "envelopeName" : "MyEnvelope",
     # "userId" : 509,
     # "username" : "abc",
     # "password" : "abcdefg",
@@ -87,12 +87,12 @@ def createEnvelope():
     "recipientName": "John",
     "senderName": "Mary",
     "images": [{
-            "imageId": 17,
+            "imageId": 29,
             "url": "blah1",
             "filename": "pic1.jpg"
         },
         {
-            "imageId": 18,
+            "imageId": 30,
             "url": "blah2",
             "filename": "pic2.jpg"
         }
@@ -101,6 +101,7 @@ def createEnvelope():
 
     r = json.dumps(j_data)
     loaded_r = json.loads(r)
+
 
     # env_id = loaded_r['envelopeId']
     env_name = loaded_r['envelopeName']
@@ -160,10 +161,9 @@ def createEnvelope():
     for r in cursor.fetchall():
         res+= ('{}\n'.format(r))
 
-    response = make_response(res)
+    loaded_r['envelopeID'] = j
+    response = make_response(jsonify(loaded_r))
     response.headers['Content-Type'] = 'text/json'
-
-    # response.headers['Content-Type'] = 'text/json'
     response.headers['Access-Control-Allow-Origin'] = '*'
 
     return response
