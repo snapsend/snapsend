@@ -116,7 +116,7 @@ def createEnvelope():
 
     cursor = db.cursor()
     sql_user_query = 'INSERT INTO snapsend.User (userID, email, password, uname) values (' + str(uid) +', "'+ email +'", "' + pwd + '", "' + uname + '");'
-    sql_env_query = 'INSERT INTO snapsend.Envelope (eowner, envelopeID, ename) values (' + str(uid) +', '+ str(env_id) +', "' + env_name + '", "');'
+    sql_env_query = 'INSERT INTO snapsend.Envelope (eowner, envelopeID, ename) values (' + str(uid) +', '+ str(env_id) +', "' + env_name + '");'
     
 
     try:
