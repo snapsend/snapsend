@@ -17,7 +17,6 @@ exports[`Button Component Button renders correctly 1`] = `
   style={
     Object {
       "borderRadius": 0,
-      "color": "#333333",
     }
   }
   tabIndex="0"

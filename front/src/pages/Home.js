@@ -8,13 +8,14 @@ import { Redirect } from 'react-router-dom';
 import Dropzone, { handleDrop as uploadImages } from '../uploadImage';
 import type { SuccessImage, UnfinishedEnvelope, Envelope } from '../types';
 import Image from '../components/Image';
+import { post } from '../network';
 
 type PendingImage = Promise<SuccessImage>;
 
 type P = {};
 
 type State = {
-  envelope: UnfinishedEnvelope,
+  envelope?: UnfinishedEnvelope,
   pending: number,
   images: Array<SuccessImage>,
   redirect: ?string,
@@ -31,7 +32,7 @@ class Home extends Component<P, State> {
   state = {
     pending: 0,
     images: [],
-    envelope: initialEnvelope,
+    envelope: null,
     redirect: null,
   };
 
@@ -40,6 +41,7 @@ class Home extends Component<P, State> {
       this.setState(state => ({
         ...state,
         pending: state.pending + 1,
+        envelope: state.envelope ? state.envelope : initialEnvelope,
       }));
       // now
       pending.then(img => {
@@ -76,22 +78,30 @@ class Home extends Component<P, State> {
     }));
 
     // post to the network
+    post('/createEnvelope', {
+      ...envelope,
+      images: this.state.images,
+    }).then(res => {
+      console.log('HIH', res);
+      this.setState({ redirect: res.url });
+    });
 
     // then reroute us to the newly created envelope.
   };
 
   render() {
     const { images, pending, envelope, redirect } = this.state;
-    const isCreating = pending !== 0 && images.length !== 0;
+    const yetToDrop = pending === 0 && images.length === 0;
+    console.log('HOME', this.state);
     return (
       <Dropzone onDrop={this.handleDrop}>
         <Flex>
           <AppBar
             envelope={envelope}
             handleEnvelopeChange={this.handleEnvelopeChange}
-            handleEnvelopeSave={this.handleEnvelopeSave}
+            handleSave={this.handleEnvelopeSave}
           />
-          {!isCreating && (
+          {yetToDrop && (
             <Zone>
               <Circle>
                 <PicIcon

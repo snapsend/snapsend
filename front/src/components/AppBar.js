@@ -19,6 +19,7 @@ export default ({
   onEnvelopeChange: UnfinishedEnvelope => void,
   handleSave: () => void,
 }) => {
+  console.log('LOADING?', envelope && envelope.loading);
   return (
     <AppBar elevation={4} component="header" square>
       <Toolbar>
