@@ -1,5 +1,5 @@
-# from __future__ import print_function
-from google.appengine.ext import vendor
+from __future__ import print_function
+# from google.appengine.ext import vendor
 from flask import Flask, request, jsonify, make_response
 import os
 import json
@@ -8,7 +8,7 @@ import os
 import MySQLdb
 # from flask import jsonify
 
-vendor.add('lib')
+# vendor.add('lib')
 app = Flask(__name__)
 
 
@@ -22,12 +22,12 @@ app = Flask(__name__)
 #     verify=False)
 
 # These environment variables are configured in app.yaml.
-CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
-CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
-CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
-#CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
-#CLOUDSQL_USER = 'root'
-#CLOUDSQL_PASSWORD = 'snapsend'
+# CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
+# CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
+# CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
+CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
+CLOUDSQL_USER = 'root'
+CLOUDSQL_PASSWORD = 'snapsend'
 
 
 def connect_to_cloudsql():
@@ -74,12 +74,12 @@ def showDatabases():
     return response
 
 
-@app.route('/createEnvelope', methods=["POST"])
+@app.route('/createEnvelope')
 def createEnvelope():
     j_data = {
     "envelopeId": 1501,
     "envelopeName" : "MyEnvelope" ,
-    "userId" : 5052,
+    "userId" : 5054,
     "username" : "abc",
     "password" : "abcdefg",
     "email" : "abc@gmail.com",
@@ -135,8 +135,8 @@ def createEnvelope():
         print("error")
     
 
-    cursor.execute('select * from snapsend.User')
-    # cursor.execute('select * from snapsend.Image')
+    # cursor.execute('select * from snapsend.User')
+    cursor.execute('select * from snapsend.Image')
     # cursor.execute('select * from snapsend.Envelope')
 
 
