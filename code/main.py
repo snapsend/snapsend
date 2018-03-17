@@ -1,5 +1,5 @@
 from __future__ import print_function
-# from google.appengine.ext import vendor
+from google.appengine.ext import vendor
 from flask import Flask, request, jsonify, make_response
 import os
 import json
@@ -8,7 +8,7 @@ import os
 import MySQLdb
 # from flask import jsonify
 
-# vendor.add('lib')
+vendor.add('lib')
 app = Flask(__name__)
 
 
@@ -148,6 +148,7 @@ def createEnvelope():
     response.headers['Content-Type'] = 'text/json'
 
     return response
+    
     
 
 if __name__ == '__main__':
