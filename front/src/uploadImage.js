@@ -1,9 +1,10 @@
 // @flow
+import React from 'react';
 import filestack from 'filestack-js';
 import accept from 'attr-accept';
-const fs = filestack.init(process.env.REACT_APP_FILESTACK_SECRET);
+import DropzoneComp from 'react-dropzone';
 
-// type Source = String;
+const fs = filestack.init(process.env.REACT_APP_FILESTACK_SECRET);
 
 const SUCCESS_STATUS = 'Stored';
 
@@ -21,7 +22,7 @@ export const ACCEPTED_TYPES = [
 
 export const FAILED_MESSAGE = 'Image Upload Failed';
 
-const handleUploadDrop = files => {
+export const handleDrop = files => {
   return files.map(file => uploadImage(file));
 };
 
@@ -42,4 +43,20 @@ export const uploadImage = file =>
       .catch(err => reject(FAILED_MESSAGE));
   });
 
-export default handleUploadDrop;
+const Dropzone = ({ children, ...props }) => (
+  <DropzoneComp
+    {...props}
+    accept={ACCEPTED_TYPES.join(',')}
+    disableClick
+    style={{
+      position: 'relative',
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+    }}
+  >
+    {children}
+  </DropzoneComp>
+);
+
+export default Dropzone;

@@ -1,6 +1,6 @@
 jest.mock('filestack-js');
 import filestack, { upload } from 'filestack-js';
-import dropImages, { uploadImage, ACCEPTED_TYPES } from '../uploadImage';
+import { handleDrop, uploadImage, ACCEPTED_TYPES } from '../uploadImage';
 
 import {
   successResult,
@@ -58,20 +58,20 @@ describe('Handle files dropped on screen', () => {
     expect.assertions(1);
     const images = [TEST_IMAGE, TEST_IMAGE, TEST_IMAGE];
     const results = [successResult, successResult, successResult];
-    return expect(Promise.all(dropImages(images))).resolves.toEqual(results);
+    return expect(Promise.all(handleDrop(images))).resolves.toEqual(results);
   });
 
   test('array with single incorrect format file', async () => {
     expect.assertions(1);
     const arrayOfImages = [FILE_NOT_IMAGE];
-    const results = dropImages(arrayOfImages);
+    const results = handleDrop(arrayOfImages);
     await expect(results[0]).rejects.toMatchSnapshot();
   });
 
   test('multiple images, with one wrong', async () => {
     expect.assertions(2);
     const arrayOfImages = [TEST_IMAGE, FILE_NOT_IMAGE];
-    const results = dropImages(arrayOfImages);
+    const results = handleDrop(arrayOfImages);
     await expect(results[1]).rejects.toMatchSnapshot();
     await expect(results[0]).resolves.toEqual(successResult);
   });

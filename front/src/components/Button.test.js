@@ -3,6 +3,11 @@ import Button from './Button';
 import ReactDOM from 'react-dom';
 import renderer from 'react-test-renderer';
 
+/**
+ * Button just does what button does
+ * Only it does it w/ special style.
+ */
+
 describe('Button Component', () => {
   it('Button renders correctly', () => {
     const tree = renderer.create(<Button>Click me!</Button>).toJSON();
