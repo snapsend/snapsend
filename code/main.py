@@ -1,8 +1,6 @@
 # from google.appengine.ext import vendor
 from __future__ import print_function
 from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
 import os
 import json
 import sys
