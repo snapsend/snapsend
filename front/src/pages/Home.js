@@ -78,7 +78,7 @@ class Home extends Component<P, State> {
     }));
 
     // post to the network
-    post('/createEnvelope', {
+    post('/envelope', {
       ...envelope,
       images: this.state.images,
     }).then(res => {
