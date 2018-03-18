@@ -18,7 +18,7 @@ import MySQLdb
 #     aws_access_key_id='dummy_access_key',
 #     aws_secret_access_key='dummy_secret_key',
 #     verify=False)
-
+# commiting get
 # These environment variables are configured in app.yaml.
 CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
 CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
@@ -75,59 +75,60 @@ def showDatabases():
 
 @app.route('/envelope', methods=['POST', 'GET'])
 def envelope():
-  if request.method == 'POST':
-    loaded_r = request.get_json()
-    r = json.dumps(loaded_r)
-    loaded_r = json.loads(r)
-    env_name = loaded_r['envelopeName']
-    rec_name = loaded_r['recipientName']
-    sender_name = loaded_r['senderName']
-    all_images = loaded_r['images']
+    if request.method == 'POST':
+        loaded_r = request.get_json()
+        r = json.dumps(loaded_r)
+        loaded_r = json.loads(r)
+        env_name = loaded_r['envelopeName']
+        rec_name = loaded_r['recipientName']
+        sender_name = loaded_r['senderName']
+        all_images = loaded_r['images']
 
-    db = connect_to_cloudsql()
+        db = connect_to_cloudsql()
 
-    cursor = db.cursor()
-    # sql_user_query = 'INSERT INTO snapsend.User (email, password, uname) values ("'+ email +'", "' + pwd + '", "' + uname + '");'
-    sql_env_query = 'INSERT INTO snapsend.Envelope (ename) values ("' + env_name + '");'
-    cursor.execute(sql_env_query)
-    db.commit()
-    cursor.close()
-
-    cursor = db.cursor()
-    sql_get_env_id = 'SELECT max(envelopeID) from snapsend.Envelope;'
-    cursor.execute(sql_get_env_id)
-
-    j = ""
-    for r in cursor.fetchall():
-      j += str(r[0])
-    j = int(j)
-    cursor.close()
-
-    try:
-      cursor = db.cursor()
-      for i in range(len(all_images)):
-        curr_dict = all_images[i]
-        a = curr_dict['imageId']
-        b = curr_dict['url']
-        c = curr_dict['filename']
-        sql_image_query = 'INSERT INTO snapsend.Image (inenvID, imageID, imagelink, filename) values (' + str(
-            j) + ', ' + str(a) + ', "' + b + '", "' + c + '");'
-        cursor.execute(sql_image_query)
+        cursor = db.cursor()
+        # sql_user_query = 'INSERT INTO snapsend.User (email, password, uname) values ("'+ email +'", "' + pwd + '", "' + uname + '");'
+        sql_env_query = 'INSERT INTO snapsend.Envelope (ename) values ("' + env_name + '");'
+        cursor.execute(sql_env_query)
         db.commit()
+        cursor.close()
 
-      print("success")
-    except Exception as e:
-      print("error")
+        cursor = db.cursor()
+        sql_get_env_id = 'SELECT max(envelopeID) from snapsend.Envelope;'
+        cursor.execute(sql_get_env_id)
 
-    cursor.close()
+        j = ""
+        for r in cursor.fetchall():
+          j += str(r[0])
+        j = int(j)
+        cursor.close()
 
-    loaded_r['envelopeID'] = j
-    response = make_response(json.dumps(loaded_r))
-    response.headers['Content-Type'] = 'text/json'
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    return response
+        try:
+          cursor = db.cursor()
+          for i in range(len(all_images)):
+            curr_dict = all_images[i]
+            a = curr_dict['imageId']
+            b = curr_dict['url']
+            c = curr_dict['filename']
+            sql_image_query = 'INSERT INTO snapsend.Image (inenvID, imageID, imagelink, filename) values (' + str(
+                j) + ', ' + str(a) + ', "' + b + '", "' + c + '");'
+            cursor.execute(sql_image_query)
+            db.commit()
 
-    elif (request.method == 'GET'):
+          print("success")
+        except Exception as e:
+          print("error")
+
+        cursor.close()
+
+        loaded_r['envelopeID'] = j
+        response = make_response(json.dumps(loaded_r))
+        response.headers['Content-Type'] = 'text/json'
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        return response
+    
+    elif request.method == 'GET':
+        
         url = request.url
         url = url.split('?')
         k = url[1].split('=')
