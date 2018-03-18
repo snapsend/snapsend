@@ -127,8 +127,62 @@ def envelope():
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
-  elif (request.method == 'GET'):
-    return "hi"
+    elif (request.method == 'GET'):
+        url = request.url
+        url = url.split('?')
+        k = url[1].split('=')
+        loaded_r = {"envelopeId":k[1] }
+        r = json.dumps(loaded_r)
+        loaded_r = json.loads(r)
+        #print loaded_r
+        env_id = loaded_r['envelopeId']
+
+        db = connect_to_cloudsql()
+
+        cursor = db.cursor()
+
+        sql_get_env = 'SELECT ename, sender, recipient, createddate FROM snapsend.Envelope WHERE envelopeID = ' + str(env_id) + ';'
+
+        #sql_count_images = 'SELECT COUNT (imageID) FROM snapsend.Image WHERE inenvID = ' + str(env_id) + ';'
+
+        sql_get_images = 'SELECT imageID, imagelink, filename FROM snapsend.Image WHERE inenvID = ' + str(env_id) + ';'
+        payload = ""
+        env_out = {}
+        try:
+            cursor.execute(sql_get_env)
+            result = cursor.fetchall()
+         
+            env_out = {"envelopeId": env_id , "envelopeName" :  result[0][0] , "recipientName": result[0][2] , "senderName":  result[0][1], "created date":  result[0][3] }
+
+            #user_id = result[0]
+                
+            #img_ct = cursor.execute(sql_count_images)
+
+            cursor.execute(sql_get_images)
+            imgres = cursor.fetchall()
+            #print imgres
+            #payload = "" 
+            img_arr = []
+            img_out = {}
+
+            for imgs in imgres:
+                img_out = {"imageId": imgs[0], "url": imgs[1], "filename": imgs[2]}
+                img_arr.append(img_out)
+                img_out = {}
+            #print img_arr
+            payload = env_out
+            payload["images"]=img_arr
+            #print payload
+            return jsonify(payload)
+
+        
+            print("success")    
+        except Exception as e:
+            print("error")
+
+        response = make_response(payload)
+        response.headers['Content-Type'] = 'text/json'
+        return response
 
 
 # @app.route('/getEnvelope')
