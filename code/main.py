@@ -1,6 +1,7 @@
 from google.appengine.ext import vendor
 vendor.add('lib')
 from flask import Flask, request, jsonify, make_response
+#needed for front and backend to work together
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -56,7 +57,7 @@ def connect_to_cloudsql():
 
 @app.route('/')
 def index():
-  return "Hello, World (lets see how long a change takes III)!"
+  return "Hello, World"
 
 
 @app.route('/databases')

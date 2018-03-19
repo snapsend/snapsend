@@ -1,8 +1,4 @@
-
 There are two links for the site:
-
-- Production: https://snpsend.netlify.com/
-- UAT: https://5aaf59a6efbe5d6349f99318--snpsend.netlify.com/
 
 
 
