@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`T Component T renders correctly 1`] = `
+<p
+  className="MuiTypography-root-1 MuiTypography-body1-10"
+>
+  Click me!
+</p>
+`;

@@ -11,7 +11,7 @@ export default ({
   props?: any,
 }) => {
   return (
-    <Button style={{ color: '#333333', borderRadius: 0 }} {...props}>
+    <Button style={{ borderRadius: 0 }} {...props}>
       {children}
     </Button>
   );

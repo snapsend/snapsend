@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Image Component Image renders correctly when pending 1`] = `
+<div
+  className="sc-bdVaJa ewHNwH"
+>
+  <div
+    className="sc-bwzfXH IQLxr"
+  >
+    <p
+      className="MuiTypography-root-1 MuiTypography-body1-10"
+    >
+      Uploading image
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Image Component Image renders correctly when upload fails 1`] = `
+<div
+  className="sc-bdVaJa ikyrKG"
+>
+  uploading image
+</div>
+`;
+
+exports[`Image Component Image renders correctly when wrong format 1`] = `
+<div
+  className="sc-bdVaJa ikyrKG"
+>
+  uploading image
+</div>
+`;
