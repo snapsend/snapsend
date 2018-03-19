@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
 import Home from './pages/Home';
 
@@ -8,9 +8,10 @@ type P = {};
 class App extends Component<P> {
   render() {
     return (
-      <BrowserRouter>
+      <React.Fragment>
         <Route exact path="/" component={Home} />
-      </BrowserRouter>
+        <Route path="/envelope/:envelopeId" component={Home} />
+      </React.Fragment>
     );
   }
 }

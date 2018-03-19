@@ -1,7 +1,6 @@
 const API_BASE = process.env.REACT_APP_API_URL;
 
 export function post(endpoint, data) {
-  console.log('POSTING', data, API_BASE);
   return fetch(API_BASE + endpoint, {
     body: JSON.stringify(data),
     headers: {
@@ -12,12 +11,25 @@ export function post(endpoint, data) {
   })
     .catch(err => console.warn(err))
     .then(r => {
-      console.log('R', r);
-      return r.text();
+      return r.json();
     })
     .catch(err => console.warn(err))
     .then(res => {
-      console.log('Success', res);
+      return res;
+    });
+}
+
+export function get(endpoint) {
+  return fetch(API_BASE + endpoint, {
+    mode: 'cors',
+    method: 'GET',
+  })
+    .catch(err => console.warn(err))
+    .then(r => {
+      return r.json();
+    })
+    .catch(err => console.warn(err))
+    .then(res => {
       return res;
     });
 }

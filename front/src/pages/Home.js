@@ -8,11 +8,17 @@ import { Redirect } from 'react-router-dom';
 import Dropzone, { handleDrop as uploadImages } from '../uploadImage';
 import type { SuccessImage, UnfinishedEnvelope, Envelope } from '../types';
 import Image from '../components/Image';
-import { post } from '../network';
+import { post, get } from '../network';
 
 type PendingImage = Promise<SuccessImage>;
 
-type P = {};
+type P = {
+  match: {
+    params?: {
+      envelopeId?: string,
+    },
+  },
+};
 
 type State = {
   envelope?: UnfinishedEnvelope,
@@ -26,6 +32,7 @@ const initialEnvelope: UnfinishedEnvelope = {
   recipientName: '',
   createdDate: Date.now(),
   loading: false,
+  envelopeName: null,
 };
 
 class Home extends Component<P, State> {
@@ -35,6 +42,22 @@ class Home extends Component<P, State> {
     envelope: null,
     redirect: null,
   };
+
+  componentDidMount() {
+    // if the component just mounted, check if there is an envelopeId and fetch it.
+    const { match } = this.props;
+    if (match && match.params && match.params.envelopeId) {
+      get(`/envelope/${match.params.envelopeId}`).then((res: Envelope) => {
+        console.log('ENVELOPE IS', res);
+        const images = res.images;
+        this.setState(state => ({
+          ...state,
+          res,
+          images: res.images,
+        }));
+      });
+    }
+  }
 
   handleDrop = acceptedFiles => {
     uploadImages(acceptedFiles).forEach((pending: PendingImage) => {
@@ -82,17 +105,16 @@ class Home extends Component<P, State> {
       ...envelope,
       images: this.state.images,
     }).then(res => {
-      console.log('HIH', res);
-      this.setState({ redirect: res.url });
+      this.setState({ redirect: res.envelopeID });
     });
 
     // then reroute us to the newly created envelope.
   };
 
   render() {
+    const { match } = this.props;
     const { images, pending, envelope, redirect } = this.state;
     const yetToDrop = pending === 0 && images.length === 0;
-    console.log('HOME', this.state);
     return (
       <Dropzone onDrop={this.handleDrop}>
         <Flex>
@@ -118,11 +140,11 @@ class Home extends Component<P, State> {
             </Zone>
           )}
           <Images>
-            {images.map(img => <Image key={img.handle} img={img} />)}
+            {images.map(img => <Image key={img.url} img={img} />)}
             {[...new Array(pending)].map((v, i) => <Image key={i} />)}
           </Images>
         </Flex>
-        {redirect && <Redirect />}
+        {redirect && <Redirect to={`/envelope/${redirect}`} />}
       </Dropzone>
     );
   }

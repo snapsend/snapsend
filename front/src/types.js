@@ -16,6 +16,7 @@ export type UnfinishedEnvelope = {
   senderName: string,
   createdAt: number,
   loading: boolean,
+  envelopeName: ?string,
 }
 
 export type Envelope = UnfinishedEnvelope && {
