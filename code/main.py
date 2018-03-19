@@ -57,7 +57,7 @@ def connect_to_cloudsql():
 
 @app.route('/')
 def index():
-  return "Hello, World (lets see how long a change takes III)!"
+  return "Hello, World"
 
 
 @app.route('/databases')
