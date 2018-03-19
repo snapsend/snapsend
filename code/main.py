@@ -94,7 +94,7 @@ def postenvelope():
 
     cursor = db.cursor()
     # sql_user_query = 'INSERT INTO snapsend.User (email, password, uname) values ("'+ email +'", "' + pwd + '", "' + uname + '");'
-    sql_env_query = 'INSERT INTO snapsend.Envelope (ename) values ("' + env_name + '");'
+    sql_env_query = 'INSERT INTO snapsend.Envelope (ename,sender,recipient) values ("' + env_name + '","' + sender_name + '","' + rec_name + '");'
     cursor.execute(sql_env_query)
     db.commit()
     cursor.close()
