@@ -50,7 +50,7 @@ test:
 
 deployment:
     staging:
-        branch: dev
+        branch: uat
         commands:
         # create AppEngine
         #gcloud app create --region=us-central
