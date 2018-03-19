@@ -36,7 +36,7 @@ export default ({
             autoFocus
             label="Your name"
             name="senderName"
-            disabled={isViewing}
+            disabled={!!isViewing}
             value={envelope.senderName}
             onChange={handleEnvelopeChange}
           />
@@ -44,7 +44,7 @@ export default ({
             name="recipientName"
             onChange={handleEnvelopeChange}
             autoFocus
-            disabled={isViewing}
+            disabled={!!isViewing}
             label="Recipient's name"
             value={envelope.recipientName}
           />
