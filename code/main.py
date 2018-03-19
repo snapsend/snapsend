@@ -4,13 +4,14 @@ from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
 import os
 import json
 import sys
 import os
 import MySQLdb
+import logging
 
+CORS(app)
 logging.getLogger('flask_cors').level = logging.DEBUG
 
 # dynamodb = boto3.resource(
@@ -40,9 +41,9 @@ def connect_to_cloudsql():
     cloudsql_unix_socket = os.path.join('/cloudsql', CLOUDSQL_CONNECTION_NAME)
 
     db = MySQLdb.connect(
-      unix_socket=cloudsql_unix_socket,
-      user=CLOUDSQL_USER,
-      passwd=CLOUDSQL_PASSWORD)
+        unix_socket=cloudsql_unix_socket,
+        user=CLOUDSQL_USER,
+        passwd=CLOUDSQL_PASSWORD)
 
   else:
     db = MySQLdb.connect(
@@ -77,18 +78,18 @@ def showDatabases():
 
 @app.route('/envelope', methods=['POST'])
 def postenvelope():
-  if request.method =="POST":
+  if request.method == "POST":
     loaded_r = request.get_json()
     print loaded_r
     #loaded_r = {"envelopeName" : "MyEllmnvelope","recipientName": "Johlmlmn","senderName": "Mary",
-     #             "images": [{"url": "blah1", "filename": "pic1.jpg"},{"url": "blah2","filename": "pic2.jpg"}]}
+    #             "images": [{"url": "blah1", "filename": "pic1.jpg"},{"url": "blah2","filename": "pic2.jpg"}]}
     r = json.dumps(loaded_r)
     loaded_r = json.loads(r)
     env_name = loaded_r['envelopeName']
     rec_name = loaded_r['recipientName']
     sender_name = loaded_r['senderName']
     all_images = loaded_r['images']
-    print env_name,rec_name,sender_name,all_images
+    print env_name, rec_name, sender_name, all_images
     db = connect_to_cloudsql()
 
     cursor = db.cursor()
@@ -116,7 +117,7 @@ def postenvelope():
         b = curr_dict['url']
         c = curr_dict['filename']
         sql_image_query = 'INSERT INTO snapsend.Image (inenvID, imagelink, filename) values (' + str(
-            j)  + ', "' + b + '", "' + c + '");'
+            j) + ', "' + b + '", "' + c + '");'
         cursor.execute(sql_image_query)
         db.commit()
 
@@ -132,8 +133,6 @@ def postenvelope():
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
-        
-        
 
 @app.route('/envelope/<int:env_id>', methods=['GET'])
 def getenvelope(env_id):
@@ -141,7 +140,7 @@ def getenvelope(env_id):
   #url = request.url
   #url = url.split('?')
   #k = url[1].split('=')
-  loaded_r = {"envelopeId":env_id }
+  loaded_r = {"envelopeId": env_id}
   r = json.dumps(loaded_r)
   loaded_r = json.loads(r)
   #print loaded_r
@@ -151,49 +150,57 @@ def getenvelope(env_id):
 
   cursor = db.cursor()
 
-  sql_get_env = 'SELECT ename, sender, recipient, createddate FROM snapsend.Envelope WHERE envelopeID = ' + str(env_id) + ';'
+  sql_get_env = 'SELECT ename, sender, recipient, createddate FROM snapsend.Envelope WHERE envelopeID = ' + str(
+      env_id) + ';'
 
   #sql_count_images = 'SELECT COUNT (imageID) FROM snapsend.Image WHERE inenvID = ' + str(env_id) + ';'
 
-  sql_get_images = 'SELECT imageID, imagelink, filename FROM snapsend.Image WHERE inenvID = ' + str(env_id) + ';'
+  sql_get_images = 'SELECT imageID, imagelink, filename FROM snapsend.Image WHERE inenvID = ' + str(
+      env_id) + ';'
   payload = ""
   env_out = {}
   try:
-      cursor.execute(sql_get_env)
-      result = cursor.fetchall()
-   
-      env_out = {"envelopeId": env_id , "envelopeName" :  result[0][0] , "recipientName": result[0][2] , "senderName":  result[0][1], "created date":  result[0][3] }
+    cursor.execute(sql_get_env)
+    result = cursor.fetchall()
 
-      #user_id = result[0]
-          
-      #img_ct = cursor.execute(sql_count_images)
+    env_out = {
+        "envelopeId": env_id,
+        "envelopeName": result[0][0],
+        "recipientName": result[0][2],
+        "senderName": result[0][1],
+        "created date": result[0][3]
+    }
 
-      cursor.execute(sql_get_images)
-      imgres = cursor.fetchall()
-      #print imgres
-      #payload = "" 
-      img_arr = []
+    #user_id = result[0]
+
+    #img_ct = cursor.execute(sql_count_images)
+
+    cursor.execute(sql_get_images)
+    imgres = cursor.fetchall()
+    #print imgres
+    #payload = ""
+    img_arr = []
+    img_out = {}
+
+    for imgs in imgres:
+      img_out = {"imageId": imgs[0], "url": imgs[1], "filename": imgs[2]}
+      img_arr.append(img_out)
       img_out = {}
+    #print img_arr
+    payload = env_out
+    payload["images"] = img_arr
+    #print payload
+    return jsonify(payload)
 
-      for imgs in imgres:
-          img_out = {"imageId": imgs[0], "url": imgs[1], "filename": imgs[2]}
-          img_arr.append(img_out)
-          img_out = {}
-      #print img_arr
-      payload = env_out
-      payload["images"]=img_arr
-      #print payload
-      return jsonify(payload)
-
-  
-      print("success")    
+    print("success")
   except Exception as e:
-      print("error")
+    print("error")
 
   response = make_response(payload)
   response.headers['Content-Type'] = 'text/json'
-  
+
   return response
+
 
 # @app.route('/getEnvelope')
 # def getEnvelope():
