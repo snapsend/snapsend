@@ -1,18 +1,62 @@
 // @flow
+import React from 'react';
 import filestack from 'filestack-js';
-console.log(filestack);
+import accept from 'attr-accept';
+import DropzoneComp from 'react-dropzone';
+
 const fs = filestack.init(process.env.REACT_APP_FILESTACK_SECRET);
 
-// type Source = String;
+const SUCCESS_STATUS = 'Stored';
 
-const uploadImage = files => {
-  // check if source is valid string
-  // upload the image
-  console.log('FILES', files);
+const WRONG_TYPE_ERROR = 'Input is not the right format';
 
-  fs.upload(files[0], {}, {}).then(res => {
-    console.log('DONE', res);
-  });
+export const ACCEPTED_TYPES = [
+  'image/jpg',
+  'image/jpeg',
+  'image/pjpeg',
+  'image/png',
+  'image/webp',
+  'image/tiff',
+  'image/x-tiff',
+];
+
+export const FAILED_MESSAGE = 'Image Upload Failed';
+
+export const handleDrop = files => {
+  return files.map(file => uploadImage(file));
 };
 
-export default uploadImage;
+export const uploadImage = file =>
+  new Promise((resolve, reject) => {
+    // make sure you got the right file type
+    if (!accept(file, ACCEPTED_TYPES)) return reject(WRONG_TYPE_ERROR);
+
+    fs
+      .upload(file, {}, {})
+      .then(res => {
+        const { status } = res;
+        if (status === SUCCESS_STATUS) {
+          return resolve(res);
+        }
+        return reject(FAILED_MESSAGE);
+      })
+      .catch(err => reject(FAILED_MESSAGE));
+  });
+
+const Dropzone = ({ children, ...props }) => (
+  <DropzoneComp
+    {...props}
+    accept={ACCEPTED_TYPES.join(',')}
+    disableClick
+    style={{
+      position: 'relative',
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+    }}
+  >
+    {children}
+  </DropzoneComp>
+);
+
+export default Dropzone;
