@@ -7,7 +7,6 @@ import registerServiceWorker from './registerServiceWorker';
 import { createMuiTheme, MuiThemeProvider } from 'material-ui/styles';
 import CssBaseline from 'material-ui/CssBaseline';
 import JssProvider from './components/JssProvider';
-import { BrowserRouter } from 'react-router-dom';
 
 // this is a simple change
 const theme = createMuiTheme({
@@ -53,14 +52,12 @@ const theme = createMuiTheme({
 });
 
 export const Root = () => (
-  <BrowserRouter>
-    <JssProvider>
-      <MuiThemeProvider theme={theme}>
-        <CssBaseline />
-        <App />
-      </MuiThemeProvider>
-    </JssProvider>
-  </BrowserRouter>
+  <JssProvider>
+    <MuiThemeProvider theme={theme}>
+      <CssBaseline />
+      <App />
+    </MuiThemeProvider>
+  </JssProvider>
 );
 
 const el = document.getElementById('root');
