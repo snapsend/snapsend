@@ -1,6 +1,7 @@
 const API_BASE = process.env.REACT_APP_API_URL;
 
 export function post(endpoint, data) {
+  console.log('DATA', data);
   return fetch(API_BASE + endpoint, {
     body: JSON.stringify(data),
     headers: {

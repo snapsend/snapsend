@@ -32,7 +32,7 @@ const initialEnvelope: UnfinishedEnvelope = {
   recipientName: '',
   createdDate: Date.now(),
   loading: false,
-  envelopeName: null,
+  envelopeName: '',
 };
 
 class Home extends Component<P, State> {
