@@ -11,6 +11,8 @@ import sys
 import os
 import MySQLdb
 
+logging.getLogger('flask_cors').level = logging.DEBUG
+
 # dynamodb = boto3.resource(
 #     'dynamodb',
 #     endpoint_url='http://localhost:8000',
