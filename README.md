@@ -1,7 +1,6 @@
 There are two links for the site:
 
-Production: https://snpsend.netlify.com/
-UAT: https://5aaf59a6efbe5d6349f99318--snpsend.netlify.com/
+
 
 This code is used for the purposes of COMS 4156 - Advanced Software Engineering course at Columbia University, New York. 
 This is a boilerplate python flask code along with configurations for Circle CI and Google Cloud.
