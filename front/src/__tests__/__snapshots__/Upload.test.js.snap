@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Handle files dropped on screen array with single incorrect format file 1`] = `"Input is not the right format"`;
+
+exports[`Handle files dropped on screen multiple images, with one wrong 1`] = `"Input is not the right format"`;
+
+exports[`upload to filestack When image is wrong format, it returns the right error 1`] = `"Input is not the right format"`;
+
+exports[`upload to filestack When input is not a file, it returns the right error 1`] = `"Input is not the right format"`;
+
+exports[`upload to filestack When upload fails, it returns the right error 1`] = `"Image Upload Failed"`;
