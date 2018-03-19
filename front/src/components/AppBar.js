@@ -14,10 +14,12 @@ export default ({
   envelope,
   handleEnvelopeChange,
   handleSave,
+  isViewing,
 }: {
   envelope?: UnfinishedEnvelope,
   onEnvelopeChange: UnfinishedEnvelope => void,
   handleSave: () => void,
+  isViewing: boolean,
 }) => {
   return (
     <AppBar elevation={4} component="header" square>
@@ -34,6 +36,7 @@ export default ({
             autoFocus
             label="Your name"
             name="senderName"
+            disabled={isViewing}
             value={envelope.senderName}
             onChange={handleEnvelopeChange}
           />
@@ -41,17 +44,20 @@ export default ({
             name="recipientName"
             onChange={handleEnvelopeChange}
             autoFocus
+            disabled={isViewing}
             label="Recipient's name"
             value={envelope.recipientName}
           />
-          <Button
-            onClick={handleSave}
-            variant="raised"
-            color="secondary"
-            disabled={envelope.loading}
-          >
-            Get Link
-          </Button>
+          {!isViewing && (
+            <Button
+              onClick={handleSave}
+              variant="raised"
+              color="secondary"
+              disabled={envelope.loading}
+            >
+              Get Link
+            </Button>
+          )}
         </EditingWrapper>
       )}
     </AppBar>

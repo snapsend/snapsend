@@ -52,7 +52,7 @@ class Home extends Component<P, State> {
         const images = res.images;
         this.setState(state => ({
           ...state,
-          res,
+          envelope: res,
           images: res.images,
         }));
       });
@@ -115,6 +115,9 @@ class Home extends Component<P, State> {
     const { match } = this.props;
     const { images, pending, envelope, redirect } = this.state;
     const yetToDrop = pending === 0 && images.length === 0;
+    const isViewing = match.params && match.params.envelopeId;
+
+    console.log('STATE', this.state);
     return (
       <Dropzone onDrop={this.handleDrop}>
         <Flex>
@@ -122,6 +125,7 @@ class Home extends Component<P, State> {
             envelope={envelope}
             handleEnvelopeChange={this.handleEnvelopeChange}
             handleSave={this.handleEnvelopeSave}
+            isViewing={isViewing}
           />
           {yetToDrop && (
             <Zone>
