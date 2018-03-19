@@ -115,7 +115,7 @@ class Home extends Component<P, State> {
     const { match } = this.props;
     const { images, pending, envelope, redirect } = this.state;
     const yetToDrop = pending === 0 && images.length === 0;
-    const isViewing = match.params && match.params.envelopeId;
+    const isViewing = match && match.params && match.params.envelopeId;
 
     console.log('STATE', this.state);
     return (
