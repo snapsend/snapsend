@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.21, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
--- Host: localhost    Database: snapsend
+-- Host: 35.231.24.52    Database: snapsend
 -- ------------------------------------------------------
--- Server version	5.7.21-0ubuntu0.17.10.1
+-- Server version	5.7.14-google-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,14 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+SET @MYSQLDUMP_TEMP_LOG_BIN = @@SESSION.SQL_LOG_BIN;
+SET @@SESSION.SQL_LOG_BIN= 0;
+
+--
+-- GTID state at the beginning of the backup 
+--
+
+SET @@GLOBAL.GTID_PURGED='3277026c-27cc-11e8-a6bf-42010a8e0062:1-405572';
 
 --
 -- Table structure for table `Envelope`
@@ -23,25 +31,16 @@ DROP TABLE IF EXISTS `Envelope`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Envelope` (
-  `envelopeID` varchar(255) NOT NULL,
+  `envelopeID` int(11) NOT NULL AUTO_INCREMENT,
   `eowner` varchar(16) DEFAULT NULL,
+  `sender` varchar(255) DEFAULT NULL,
+  `recipient` varchar(255) DEFAULT NULL,
   `ename` varchar(255) DEFAULT NULL,
   `createddate` datetime DEFAULT CURRENT_TIMESTAMP,
   `updateddate` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`envelopeID`),
-  KEY `eowner` (`eowner`),
-  CONSTRAINT `Envelope_ibfk_1` FOREIGN KEY (`eowner`) REFERENCES `User` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`envelopeID`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Envelope`
---
-
-LOCK TABLES `Envelope` WRITE;
-/*!40000 ALTER TABLE `Envelope` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Envelope` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `Image`
@@ -51,26 +50,15 @@ DROP TABLE IF EXISTS `Image`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Image` (
-  `imageID` varchar(255) NOT NULL,
+  `imageID` int(11) NOT NULL AUTO_INCREMENT,
   `inenvID` varchar(255) DEFAULT NULL,
   `imagelink` varchar(2550) DEFAULT NULL,
   `filename` varchar(255) DEFAULT NULL,
   `createddate` datetime DEFAULT CURRENT_TIMESTAMP,
   `updateddate` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`imageID`),
-  KEY `inenvID` (`inenvID`),
-  CONSTRAINT `Image_ibfk_1` FOREIGN KEY (`inenvID`) REFERENCES `Envelope` (`envelopeID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`imageID`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Image`
---
-
-LOCK TABLES `Image` WRITE;
-/*!40000 ALTER TABLE `Image` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Image` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `User`
@@ -87,17 +75,9 @@ CREATE TABLE `User` (
   `createddate` datetime DEFAULT CURRENT_TIMESTAMP,
   `updateddate` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`userID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `User`
---
-
-LOCK TABLES `User` WRITE;
-/*!40000 ALTER TABLE `User` DISABLE KEYS */;
-/*!40000 ALTER TABLE `User` ENABLE KEYS */;
-UNLOCK TABLES;
+SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -108,4 +88,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-14 19:59:01
+-- Dump completed on 2018-03-19 10:34:19
