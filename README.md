@@ -1,4 +1,4 @@
-##Snapsend 
+# Snapsend 
 
 
 This is the code for our web application "Snapsend". This is a part of a project built for COMS 4156 - Advanced Software Engineering course at Columbia University, New York. 
