@@ -16,9 +16,9 @@ export default ({
   handleSave,
   isViewing,
 }: {
-  envelope?: UnfinishedEnvelope,
-  onEnvelopeChange: UnfinishedEnvelope => void,
-  handleSave: () => void,
+  envelope: ?UnfinishedEnvelope,
+  handleEnvelopeChange: (SyntheticEvent<HTMLButtonElement>) => void,
+  handleSave: () => Promise<void>,
   isViewing: boolean,
 }) => {
   return (
