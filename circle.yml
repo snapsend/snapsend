@@ -43,7 +43,7 @@ deployment:
     developement:
         branch: dev
         commands:
-        - gcloud config set project $GCLOUD_PROJECT_DEV
+        - gcloud config set project $GCLOUD_PROJECT_ID
         # create AppEngine
         #gcloud app create --region=us-central
         # deploy to AppEngine
@@ -52,7 +52,7 @@ deployment:
     production:
         branch: master
         commands:
-        - gcloud config set project $GCLOUD_PROJECT
+        - gcloud config set project $GCLOUD_PROJECT_ID1
         # create AppEngine
         #gcloud app create --region=us-central
         # deploy to AppEngine
