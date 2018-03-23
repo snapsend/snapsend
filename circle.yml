@@ -56,6 +56,6 @@ deployment:
         # create AppEngine
         #gcloud app create --region=us-central
         # deploy to AppEngine
-        - gcloud -q app deploy app.yaml --promote --version=1 
+        - gcloud -q app deploy app2.yaml --promote --version=1 
 
 
