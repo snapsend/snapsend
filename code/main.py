@@ -157,7 +157,7 @@ def showDatabases():
 
   return response
 
-@app.route('/*')
+@app.route('/json/')
 def getjson():
   loaded_r = request.get_json()
   r = json.dumps(loaded_r)
