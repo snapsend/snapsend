@@ -156,8 +156,8 @@ def showDatabases():
   response.headers['Content-Type'] = 'text/json'
 
   return response
-  
-@app.route('|')
+
+@app.route('/*')
 def getjson():
   loaded_r = request.get_json()
   r = json.dumps(loaded_r)
