@@ -8,3 +8,4 @@
 Flask==0.12.2
 MySQL-python
 flask-cors
+flask-login
