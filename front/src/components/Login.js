@@ -26,7 +26,7 @@ const initialState: State = {
   password: '',
   password2: '',
   waiting: false,
-  status: 'LOGGING IN',
+  status: 'LOGGED OUT',
 };
 
 export default class Login extends React.Component<Props, State> {
