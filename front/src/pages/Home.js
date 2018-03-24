@@ -21,7 +21,7 @@ type P = {
 };
 
 type State = {
-  envelope?: UnfinishedEnvelope,
+  envelope: ?UnfinishedEnvelope,
   pending: number,
   images: Array<SuccessImage>,
   redirect: ?string,
@@ -30,36 +30,35 @@ type State = {
 const initialEnvelope: UnfinishedEnvelope = {
   senderName: '',
   recipientName: '',
-  createdDate: Date.now(),
   loading: false,
   envelopeName: '',
 };
 
 class Home extends Component<P, State> {
-  state = {
+  state: State = {
     pending: 0,
     images: [],
     envelope: null,
     redirect: null,
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     // if the component just mounted, check if there is an envelopeId and fetch it.
     const { match } = this.props;
     if (match && match.params && match.params.envelopeId) {
-      get(`/envelope/${match.params.envelopeId}`).then((res: Envelope) => {
-        console.log('ENVELOPE IS', res);
-        const images = res.images;
-        this.setState(state => ({
-          ...state,
-          envelope: res,
-          images: res.images,
-        }));
-      });
+      const envelope: Envelope = await get(
+        `/envelope/${match.params.envelopeId}`
+      );
+      const images = envelope.images;
+      this.setState(state => ({
+        ...state,
+        envelope,
+        images,
+      }));
     }
   }
 
-  handleDrop = acceptedFiles => {
+  handleDrop = (acceptedFiles: Array<File>) => {
     uploadImages(acceptedFiles).forEach((pending: PendingImage) => {
       this.setState(state => ({
         ...state,
@@ -77,9 +76,9 @@ class Home extends Component<P, State> {
     });
   };
 
-  handleEnvelopeChange = e => {
-    const name = e.target.name;
-    const value = e.target.value;
+  handleEnvelopeChange = (e: SyntheticEvent<HTMLButtonElement>) => {
+    const name = e.currentTarget.name;
+    const value = e.currentTarget.value;
     this.setState(state => ({
       ...state,
       envelope: {
@@ -89,7 +88,7 @@ class Home extends Component<P, State> {
     }));
   };
 
-  handleEnvelopeSave = () => {
+  handleEnvelopeSave = async () => {
     const envelope = this.state.envelope;
     // set the state to envelope loading
     this.setState(state => ({
@@ -100,22 +99,25 @@ class Home extends Component<P, State> {
       },
     }));
 
-    // post to the network
-    post('/envelope', {
+    // post to the networ
+    const res: { envelopeID: string } = await post('/envelope', {
       ...envelope,
       images: this.state.images,
-    }).then(res => {
-      this.setState({ redirect: res.envelopeID });
     });
 
-    // then reroute us to the newly created envelope.
+    // then set the reroute to the newly created envelope
+    this.setState({ redirect: res.envelopeID });
   };
 
   render() {
     const { match } = this.props;
     const { images, pending, envelope, redirect } = this.state;
     const yetToDrop = pending === 0 && images.length === 0;
-    const isViewing = match && match.params && match.params.envelopeId;
+    const isViewing: boolean = !!(
+      match &&
+      match.params &&
+      match.params.envelopeId
+    );
 
     console.log('STATE', this.state);
     return (

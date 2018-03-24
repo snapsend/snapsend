@@ -1,36 +1,35 @@
-const API_BASE = process.env.REACT_APP_API_URL;
+// @flow
+import type { Envelope } from './types';
 
-export function post(endpoint, data) {
-  console.log('DATA', data);
-  return fetch(API_BASE + endpoint, {
-    body: JSON.stringify(data),
-    headers: {
-      'content-type': 'application/json',
-    },
-    mode: 'cors',
-    method: 'POST',
-  })
-    .catch(err => console.warn(err))
-    .then(r => {
-      return r.json();
-    })
-    .catch(err => console.warn(err))
-    .then(res => {
-      return res;
+const API_BASE = process.env.REACT_APP_API_URL || '';
+
+export async function post(endpoint: string, data: {}): any {
+  try {
+    const res = await fetch(API_BASE + endpoint, {
+      body: JSON.stringify(data),
+      headers: {
+        'content-type': 'application/json',
+      },
+      mode: 'cors',
+      method: 'POST',
     });
+
+    const json = await res.json();
+    return json;
+  } catch (rejectedValue) {
+    return 'An error occurred posting data';
+  }
 }
 
-export function get(endpoint) {
-  return fetch(API_BASE + endpoint, {
-    mode: 'cors',
-    method: 'GET',
-  })
-    .catch(err => console.warn(err))
-    .then(r => {
-      return r.json();
-    })
-    .catch(err => console.warn(err))
-    .then(res => {
-      return res;
+export async function get(endpoint: string): any {
+  try {
+    const res = await fetch(API_BASE + endpoint, {
+      mode: 'cors',
+      method: 'GET',
     });
+    const json = await res.json();
+    return json;
+  } catch (rejectedValue) {
+    return { error: 'An error occurred fetching data' };
+  }
 }

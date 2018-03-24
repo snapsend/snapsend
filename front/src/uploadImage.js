@@ -1,8 +1,10 @@
 // @flow
 import React from 'react';
+import type { Node } from 'react';
 import filestack from 'filestack-js';
 import accept from 'attr-accept';
 import DropzoneComp from 'react-dropzone';
+import type { SuccessImage } from './types';
 
 const fs = filestack.init(process.env.REACT_APP_FILESTACK_SECRET);
 
@@ -22,11 +24,11 @@ export const ACCEPTED_TYPES = [
 
 export const FAILED_MESSAGE = 'Image Upload Failed';
 
-export const handleDrop = files => {
+export const handleDrop = (files: Array<File>) => {
   return files.map(file => uploadImage(file));
 };
 
-export const uploadImage = file =>
+export const uploadImage = (file: File): Promise<SuccessImage> =>
   new Promise((resolve, reject) => {
     // make sure you got the right file type
     if (!accept(file, ACCEPTED_TYPES)) return reject(WRONG_TYPE_ERROR);
@@ -43,7 +45,15 @@ export const uploadImage = file =>
       .catch(err => reject(FAILED_MESSAGE));
   });
 
-const Dropzone = ({ children, ...props }) => (
+const Dropzone = ({
+  children,
+  onDrop,
+  ...props
+}: {
+  children: Node,
+  onDrop: (acceptedFiles: Array<File>) => void,
+  props?: {},
+}) => (
   <DropzoneComp
     {...props}
     accept={ACCEPTED_TYPES.join(',')}
