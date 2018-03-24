@@ -52,7 +52,7 @@ const Dropzone = ({
 }: {
   children: Node,
   onDrop: (acceptedFiles: Array<File>) => void,
-  props: {},
+  props?: {},
 }) => (
   <DropzoneComp
     {...props}
