@@ -22,7 +22,7 @@ CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
 
 #CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
 #CLOUDSQL_USER = 'root'
-#CLOUDSQL_PASSWORD = 'snapsend'
+#git CLOUDSQL_PASSWORD = 'snapsend'
 
 app.secret_key = 'snapsend_rocks'  # Change this!
 login_manager = flask_login.LoginManager()
@@ -156,7 +156,8 @@ def showDatabases():
   response.headers['Content-Type'] = 'text/json'
 
   return response
-
+  
+@app.route('|')
 def getjson():
   loaded_r = request.get_json()
   r = json.dumps(loaded_r)
