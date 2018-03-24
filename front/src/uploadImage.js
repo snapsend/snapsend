@@ -55,7 +55,7 @@ const Dropzone = ({
   props?: {},
 }) => (
   <DropzoneComp
-    {...props}
+    onDrop={onDrop}
     accept={ACCEPTED_TYPES.join(',')}
     disableClick
     style={{
@@ -64,6 +64,7 @@ const Dropzone = ({
       display: 'flex',
       flexDirection: 'column',
     }}
+    {...props}
   >
     {children}
   </DropzoneComp>

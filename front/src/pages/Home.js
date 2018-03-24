@@ -119,7 +119,6 @@ class Home extends Component<P, State> {
       match.params.envelopeId
     );
 
-    console.log('STATE', this.state);
     return (
       <Dropzone onDrop={this.handleDrop}>
         <Flex>
