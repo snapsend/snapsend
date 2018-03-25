@@ -84,7 +84,6 @@ const generateDownloadUrl = (
   }
 
   const result = `${baseUrl}${resize}${formatString}zip/${imagesString}`;
-  console.log('RESULT', result);
   return result;
 };
 
@@ -177,8 +176,7 @@ class Home extends Component<P, State> {
     }));
   };
 
-  handleFormatChange = (e: SyntheticEvent<HTMLLIElement>) => {
-    console.log('e.target', e.target);
+  handleFormatChange = (e: SyntheticInputEvent<HTMLLIElement>) => {
     const value = e.target.value;
     if (value !== 'JPG' && value !== 'PNG' && value !== 'ORIGINAL') return;
 
