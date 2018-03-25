@@ -113,11 +113,17 @@ def protected():
     return 'Logged in as: ' + flask_login.current_user.id
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
   # usr = flask_login.current_user.id
   flask_login.logout_user()
-  return 'Logged out '  
+  loaded_r = {"success":True}
+
+  payload = json.dumps(loaded_r)
+  response = make_response(payload)
+  response.headers['Content-Type'] = 'text/json'
+            #response.headers['Access-Control-Allow-Origin'] = '*'
+  return response 
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
