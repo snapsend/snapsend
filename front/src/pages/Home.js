@@ -1,5 +1,5 @@
 // @flow
-import React, { Component, SyntheticEvent } from 'react';
+import React, { Component } from 'react';
 import AppBar from '../components/AppBar';
 import Typography from 'material-ui/Typography';
 import styled from 'styled-components';
@@ -178,6 +178,7 @@ class Home extends Component<P, State> {
   };
 
   handleFormatChange = (e: SyntheticEvent<HTMLLIElement>) => {
+    console.log('e.target', e.target);
     const value = e.target.value;
     if (value !== 'JPG' && value !== 'PNG' && value !== 'ORIGINAL') return;
 

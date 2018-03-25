@@ -32,7 +32,12 @@ const initialState: State = {
 export default class Login extends React.Component<Props, State> {
   state = initialState;
 
-  handleClickLogin = () => this.setState({ status: 'LOGGING IN' });
+  handleClickLogin = () => {
+    if (this.state.status === 'LOGGED IN')
+      return this.setState({ status: 'LOGGED OUT' });
+
+    return this.setState({ status: 'LOGGING IN' });
+  };
 
   handleLogin = async () => {
     this.setState({ waiting: true });
@@ -40,7 +45,9 @@ export default class Login extends React.Component<Props, State> {
     const { email, password } = this.state;
     const res = await post('/login', { email, password });
     console.log('RES', res);
-
+    if (res.success) {
+      return this.setState({ waiting: false, status: 'LOGGED IN' });
+    }
     this.setState({ waiting: false });
   };
 
@@ -172,7 +179,11 @@ export default class Login extends React.Component<Props, State> {
         </Modal>
       );
     }
-    return <Button onClick={this.handleClickLogin}>Login</Button>;
+    return (
+      <Button onClick={this.handleClickLogin}>
+        {status === 'LOGGED IN' ? 'Log out' : 'Log in'}
+      </Button>
+    );
   }
 }
 

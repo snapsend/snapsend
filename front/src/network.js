@@ -17,6 +17,7 @@ export async function post(endpoint: string, data: {}): any {
     const json = await res.json();
     return json;
   } catch (rejectedValue) {
+    console.warn(`Error occurred at ${endpoint}`, rejectedValue);
     return 'An error occurred posting data';
   }
 }
@@ -30,6 +31,7 @@ export async function get(endpoint: string): any {
     const json = await res.json();
     return json;
   } catch (rejectedValue) {
+    console.warn(`Error occurred at ${endpoint}`, rejectedValue);
     return { error: 'An error occurred fetching data' };
   }
 }
