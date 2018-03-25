@@ -32,9 +32,11 @@ const initialState: State = {
 export default class Login extends React.Component<Props, State> {
   state = initialState;
 
-  handleClickLogin = () => {
-    if (this.state.status === 'LOGGED IN')
+  handleClickLogin = async () => {
+    if (this.state.status === 'LOGGED IN') {
+      await post('/logout', {});
       return this.setState({ status: 'LOGGED OUT' });
+    }
 
     return this.setState({ status: 'LOGGING IN' });
   };

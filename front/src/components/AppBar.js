@@ -32,7 +32,7 @@ export default ({
   isViewing: boolean,
   format: Format,
   size: Size,
-  handleFormatChange: EventHandler,
+  handleFormatChange: (SyntheticInputEvent<HTMLLIElement>) => void,
   handleSizeChange: EventHandler,
   downloadUrl: string,
 }) => {

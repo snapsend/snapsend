@@ -1,7 +1,6 @@
 //@flow
 import * as React from 'react';
 import Button from 'material-ui/Button';
-import styled from 'styled-components';
 
 export default ({
   children,
