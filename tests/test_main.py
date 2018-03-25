@@ -31,5 +31,23 @@ class MainTest(unittest.TestCase):
         print(rv.data)
         assert("hello" in rv.data.lower())
 
+    def test_getjson(self):
+    	v = self.app.get('/json/')
+    	self.assertFalse(type(v) is dict) 
+
+    def test_getjson(self):
+    	v = self.app.get('/json/')
+    	self.assertFalse(type(v) is int) 
+
+    def test_getjson(self):
+    	v = self.app.get('/json/')
+    	self.assertFalse(type(v) is list) 
+
+    def test_getjson(self):
+    	v = self.app.get('/json/')
+    	self.assertFalse(type(v) is float) 
+
+    
+
 if __name__ == '__main__':
     unittest.main()
