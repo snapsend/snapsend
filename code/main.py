@@ -22,7 +22,7 @@ CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
 
 #CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
 #CLOUDSQL_USER = 'root'
-#git CLOUDSQL_PASSWORD = 'snapsend'
+#CLOUDSQL_PASSWORD = 'snapsend'
 
 app.secret_key = 'snapsend_rocks'  # Change this!
 login_manager = flask_login.LoginManager()
@@ -70,7 +70,15 @@ def login():
             user = User()
             user.id = email
             flask_login.login_user(user)
-            return flask.redirect(flask.url_for('protected'))
+            
+            loaded_r = {"success":True}
+
+            payload = json.dumps(loaded_r)
+            response = make_response(payload)
+            response.headers['Content-Type'] = 'text/json'
+            #response.headers['Access-Control-Allow-Origin'] = '*'
+            return response
+            #return flask.redirect(flask.url_for('protected'))
 
         return 'Bad login'
 
