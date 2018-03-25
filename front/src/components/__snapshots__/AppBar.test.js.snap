@@ -2,7 +2,7 @@
 
 exports[`AppBar AppBar renders correctly 1`] = `
 <header
-  className="MuiPaper-root-1 MuiPaper-elevation4-7 sc-dnqmqq gWGXQr"
+  className="MuiPaper-root-1 MuiPaper-elevation4-7 sc-iwsKbI jsWGWU"
   theme={
     Object {
       "breakpoints": Object {
@@ -275,7 +275,7 @@ exports[`AppBar AppBar renders correctly 1`] = `
       />
     </svg>
     <h2
-      className="MuiTypography-root-36 MuiTypography-title-42 sc-htoDjs cIVlcQ"
+      className="MuiTypography-root-36 MuiTypography-title-42 sc-dnqmqq kHYyxp"
     >
       Snapsend.
     </h2>
