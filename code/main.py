@@ -80,7 +80,13 @@ def login():
             return response
             #return flask.redirect(flask.url_for('protected'))
 
-        return 'Bad login'
+        loaded_r = {"success":False}
+
+        payload = json.dumps(loaded_r)
+        response = make_response(payload)
+        response.headers['Content-Type'] = 'text/json'
+            #response.headers['Access-Control-Allow-Origin'] = '*'
+        return response
 
 
 @app.route('/signup', methods=['POST'])
