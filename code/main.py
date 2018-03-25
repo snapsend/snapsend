@@ -104,7 +104,13 @@ def signup():
         user.id = curr_email
         flask_login.login_user(user)
 
-        return flask.redirect(flask.url_for('protected'))
+        payload = json.dumps(loaded_r)
+        response = make_response(payload)
+        response.headers['Content-Type'] = 'text/json'
+            #response.headers['Access-Control-Allow-Origin'] = '*'
+        return response
+
+        #return flask.redirect(flask.url_for('protected'))
 
 
 @app.route('/protected')
