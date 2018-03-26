@@ -109,7 +109,7 @@ def signup():
         user = User()
         user.id = curr_email
         flask_login.login_user(user)
-
+        loaded_r = {"success":True}
         payload = json.dumps(loaded_r)
         response = make_response(payload)
         response.headers['Content-Type'] = 'text/json'
