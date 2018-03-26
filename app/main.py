@@ -1,5 +1,5 @@
-from google.appengine.ext import vendor
-vendor.add('lib')
+#from google.appengine.ext import vendor
+#vendor.add('lib')
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 import flask
@@ -11,18 +11,20 @@ import sys
 import os
 import MySQLdb
 import logging
+from app import db,app
+from model import User, Envelope,Image
 
 CORS(app)
 logging.getLogger('flask_cors').level = logging.DEBUG
 
 # These environment variables are configured in app.yaml.
-CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
-CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
-CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
+#CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
+#CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
+#CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
 
-#CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
-#CLOUDSQL_USER = 'root'
-#git CLOUDSQL_PASSWORD = 'snapsend'
+CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
+CLOUDSQL_USER = 'root'
+CLOUDSQL_PASSWORD = 'snapsend'
 
 app.secret_key = 'snapsend_rocks'  # Change this!
 login_manager = flask_login.LoginManager()
@@ -157,12 +159,6 @@ def showDatabases():
 
   return response
 
-@app.route('/json/')
-def getjson():
-  loaded_r = request.get_json()
-  r = json.dumps(loaded_r)
-  loaded_r = json.loads(r)
-  return loaded_r
 
 def makepostresponse(payload):
   response = make_response(payload)
@@ -170,10 +166,15 @@ def makepostresponse(payload):
   response.headers['Access-Control-Allow-Origin'] = '*'
   return response
 
+def getjson():
+  loaded_r = request.get_json()
+  r = json.dumps(loaded_r)
+  loaded_r = json.loads(r)
+  return loaded_r
+
 @app.route('/envelope', methods=['POST'])
 def postenvelope():
   loaded_r = getjson()
-  print(type(loaded_r))
   env_name = loaded_r['envelopeName']
   rec_name = loaded_r['recipientName']
   sender_name = loaded_r['senderName']
@@ -218,14 +219,11 @@ def postenvelope():
 
   loaded_r['envelopeID'] = j
   payload = json.dumps(loaded_r)
-
+  print payload
   response = makepostresponse(payload)
-  
+  print response
   return response
 
-def makegetresponse(payload):
-  response = make_response(payload)
-  response.headers['Content-Type'] = 'text/json'
 
 @app.route('/envelope/<int:env_id>', methods=['GET'])
 def getenvelope(env_id):
@@ -278,10 +276,4 @@ def getenvelope(env_id):
   except Exception as e:
     raise e
 
-  response = makegetresponse(payload)
-
-  return response
-
-
-if __name__ == '__main__':
-  app.run(debug=True)
+    

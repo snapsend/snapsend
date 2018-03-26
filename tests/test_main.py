@@ -15,38 +15,77 @@ import sys
 import os.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, 'code')))
 
-
 import main
+from model import User, Envelope, Image
+from flask_testing import TestCase
+import config
+from main import getjson
 import unittest
 
-class MainTest(unittest.TestCase):
+
+
+class BaseTestCase(TestCase):
     """This class uses the Flask tests app to run an integration test against a
     local instance of the server."""
+    def register(self, email, password):
+		""" Registers a user with the following credentials """ 
+		return self.client.post('/signup', data=dict(email=email, password=password), follow_redirects=True)
+
+	def login(self, email, password):
+		""" Logs in the with specified email and password. Returns the response """ 
+		return self.client.post('/login', data=dict(email=email, password=password), 
+			follow_redirects=True)
+
+	def create_app(self):
+		app.config.from_object('config.TestConfig')
+		return app
 
     def setUp(self):
-        self.app = main.app.test_client()
+		""" Setup. Creates a test user and two parking spots """ 
+		db.create_all()
+		db.session.add(User("Test", "Tester", "test@tester.com", "test"))
+		db.session.add(User("Adam", "Admin", "admin@admin.com", "admin"))
+		db.session.add(Parking_Spot(1, "2957 Broadway", "New York", "NY", 10025, "SUV", 40.8079732, -73.9643219))	# Shake Shack
+		db.session.add(Parking_Spot(2, "2013 66 Street", "Brooklyn", "NY", 11204, "LMV", 40.6156401, -73.9860273))
+		db.session.add(Message(2, 1, 1, "Hi I am interested in 2957 Broadway."))
+		db.session.commit()
+
+	def tearDown(self):
+		""" Teardown method """ 
+		db.session.remove()
+		db.drop_all()
+
+    
+       
 
     def test_hello_world(self):
         rv = self.app.get('/')
         print(rv.data)
+        self.assertEqual(response.status_code, 200)
         assert("hello" in rv.data.lower())
 
-    def test_getjson(self):
-    	v = self.app.get('/json/')
-    	self.assertFalse(type(v) is dict) 
+'''
+	def create_app(self):
+		app.config.from_object('config.TestConfig')
+		return app
 
-    def test_getjson(self):
-    	v = self.app.get('/json/')
-    	self.assertFalse(type(v) is int) 
+	def setUp(self):
+		""" Setup. Creates a test user and two parking spots """ 
+		db.create_all()
+		db.session.add(User("Test", "Tester", "test@tester.com", "test"))
+		db.session.add(User("Adam", "Admin", "admin@admin.com", "admin"))
+		db.session.add(Parking_Spot(1, "2957 Broadway", "New York", "NY", 10025, "SUV", 40.8079732, -73.9643219))	# Shake Shack
+		db.session.add(Parking_Spot(2, "2013 66 Street", "Brooklyn", "NY", 11204, "LMV", 40.6156401, -73.9860273))
+		db.session.add(Message(2, 1, 1, "Hi I am interested in 2957 Broadway."))
+		db.session.commit()
 
-    def test_getjson(self):
-    	v = self.app.get('/json/')
-    	self.assertFalse(type(v) is list) 
+	def tearDown(self):
+		""" Teardown method """ 
+		db.session.remove()
+		db.drop_all()
 
-    def test_getjson(self):
-    	v = self.app.get('/json/')
-    	self.assertFalse(type(v) is float) 
-
+ 
+'''
     
 
 if __name__ == '__main__':
