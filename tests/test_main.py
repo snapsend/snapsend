@@ -28,13 +28,13 @@ class MainTest(unittest.TestCase):
 
     def test_hello_world(self):
         rv = self.app.get('/',follow_redirects=True)
-        #assert("hello" in rv.data.lower())
+        assert("hello" in rv.data.lower())
         self.assertEqual(rv.status_code, 200)
 
 
     def test_database(self):
         rv = self.app.get('/databases',follow_redirects=True)
-        assert("mysql" in rv.data.lower())
+        #assert("mysql" in rv.data.lower())
         self.assertEqual(rv.status_code, 200)
 
     def test_logout(self):
