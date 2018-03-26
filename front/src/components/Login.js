@@ -19,6 +19,7 @@ type State = {
   password2: string,
   waiting: boolean,
   status: Status,
+  error: boolean,
 };
 
 const initialState: State = {
@@ -27,6 +28,7 @@ const initialState: State = {
   password2: '',
   waiting: false,
   status: 'LOGGED OUT',
+  error: false,
 };
 
 export default class Login extends React.Component<Props, State> {
@@ -50,7 +52,7 @@ export default class Login extends React.Component<Props, State> {
     if (res.success) {
       return this.setState({ waiting: false, status: 'LOGGED IN' });
     }
-    this.setState({ waiting: false });
+    this.setState({ waiting: false, error: true });
   };
 
   handleCreate = async () => {
@@ -59,8 +61,10 @@ export default class Login extends React.Component<Props, State> {
     const { email, password: password1, password2 } = this.state;
     const res = await post('/signup', { email, password1, password2 });
     console.log('RES', res);
-
-    this.setState({ waiting: false });
+    if (res.success) {
+      return this.setState({ waiting: false, status: 'LOGGED IN' });
+    }
+    this.setState({ waiting: false, error: true });
   };
 
   handleChange = (e: SyntheticEvent<HTMLInputElement>) => {
@@ -74,7 +78,7 @@ export default class Login extends React.Component<Props, State> {
   handleClose = () => this.setState({ status: 'LOGGED OUT' });
 
   render() {
-    const { status, waiting } = this.state;
+    const { status, waiting, error } = this.state;
 
     if (status === 'LOGGING IN') {
       return (
@@ -91,6 +95,7 @@ export default class Login extends React.Component<Props, State> {
               <Form>
                 <Input
                   name="email"
+                  error={error}
                   label="Email"
                   type="email"
                   value={this.state.email}
@@ -99,10 +104,12 @@ export default class Login extends React.Component<Props, State> {
                 <Input
                   name="password"
                   label="Password"
+                  error={error}
                   value={this.state.password}
                   onChange={this.handleChange}
                   type="password"
                 />
+                {error && <ErrorMsg>Login failed.</ErrorMsg>}
                 <Button
                   disabled={waiting}
                   onClick={this.handleLogin}
@@ -149,12 +156,14 @@ export default class Login extends React.Component<Props, State> {
                   name="email"
                   label="Email"
                   type="email"
+                  error={error}
                   value={this.state.email}
                   onChange={this.handleChange}
                 />
                 <Input
                   name="password"
                   label="Password"
+                  error={error}
                   value={this.state.password}
                   onChange={this.handleChange}
                   type="password"
@@ -162,10 +171,12 @@ export default class Login extends React.Component<Props, State> {
                 <Input
                   name="password2"
                   label="Confirm Password"
+                  error={error}
                   value={this.state.password2}
                   onChange={this.handleChange}
                   type="password"
                 />
+                {error && <ErrorMsg>Account creation failed.</ErrorMsg>}
                 <Button
                   disabled={waiting}
                   onClick={this.handleLogin}
@@ -188,6 +199,12 @@ export default class Login extends React.Component<Props, State> {
     );
   }
 }
+
+const ErrorMsg = styled.div`
+  color: ${({ theme }) => theme.error};
+  text-align: center;
+  margin: 15px;
+`;
 
 const CloseIcon = styled(IconButton)`
   position: absolute;

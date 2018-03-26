@@ -304,7 +304,7 @@ exports[`AppBar AppBar renders correctly 1`] = `
       <span
         className="MuiButton-label-61"
       >
-        Login
+        Log in
       </span>
       <span
         className="MuiTouchRipple-root-78"
