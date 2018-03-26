@@ -182,7 +182,7 @@ export default class Login extends React.Component<Props, State> {
                 {error && <ErrorMsg>Account creation failed.</ErrorMsg>}
                 <Button
                   disabled={waiting}
-                  onClick={this.handleLogin}
+                  onClick={this.handleCreate}
                   variant="raised"
                   color="secondary"
                   style={{ margin: 15, alignSelf: 'flex-end' }}
