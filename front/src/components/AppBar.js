@@ -49,7 +49,7 @@ export default ({
     <AppBar elevation={4} component="header" square>
       <Toolbar>
         <Logo style={{ marginRight: 20 }} />
-        <Title variant="title">Snapsend.</Title>
+        <Title variant="title">Snapsend test</Title>
         <Login />
       </Toolbar>
       {envelope && (
