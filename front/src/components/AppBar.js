@@ -7,7 +7,13 @@ import { withTheme } from 'material-ui/styles';
 import Button from './Button';
 import Paper from 'material-ui/Paper';
 import Logo from '../icons/Logo';
-import type { UnfinishedEnvelope, Format, Size, EventHandler } from '../types';
+import type {
+  UnfinishedEnvelope,
+  Format,
+  Size,
+  EventHandler,
+  Envelope,
+} from '../types';
 import Input from 'material-ui/TextField';
 import Login from './Login';
 import Select from 'material-ui/Select';
@@ -26,7 +32,7 @@ export default ({
   handleFormatChange,
   handleSizeChange,
 }: {
-  envelope: ?UnfinishedEnvelope,
+  envelope: ?Envelope,
   handleEnvelopeChange: EventHandler,
   handleSave: () => Promise<void>,
   isViewing: boolean,
@@ -36,6 +42,7 @@ export default ({
   handleSizeChange: EventHandler,
   downloadUrl: string,
 }) => {
+  const isEnvelope = !!(envelope && envelope.envelopeId);
   return (
     <AppBar elevation={4} component="header" square>
       <Toolbar>
@@ -73,57 +80,59 @@ export default ({
               </Button>
             )}
           </EditingWrapper>
-          <DownloadWrap>
-            <FormControl style={{ minWidth: 86, margin: 20 }}>
-              <InputLabel>Format</InputLabel>
-              <Select
-                value={format}
-                onChange={handleFormatChange}
-                inputProps={{
-                  name: 'format',
+          {isEnvelope && (
+            <DownloadWrap>
+              <FormControl style={{ minWidth: 86, margin: 20 }}>
+                <InputLabel>Format</InputLabel>
+                <Select
+                  value={format}
+                  onChange={handleFormatChange}
+                  inputProps={{
+                    name: 'format',
+                  }}
+                >
+                  <MenuItem value="ORIGINAL">
+                    <em>Original</em>
+                  </MenuItem>
+                  <MenuItem value="JPG">jpg</MenuItem>
+                  <MenuItem value="PNG">png</MenuItem>
+                </Select>
+              </FormControl>
+              <TextField
+                style={{ minWidth: 86, margin: 20 }}
+                label="Max width"
+                name="width"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
                 }}
+                placeholder="Original"
+                value={size.width || ''}
+                onChange={handleSizeChange}
+              />
+              <TextField
+                style={{ minWidth: 86, margin: 20 }}
+                label="Max height"
+                name="height"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                placeholder="Original"
+                value={size.height || ''}
+                onChange={handleSizeChange}
+              />
+              <Button
+                style={{ minWidth: 86, margin: 20 }}
+                variant="raised"
+                color="secondary"
+                href={downloadUrl}
+                download={envelope.senderName || 'snapsend'}
               >
-                <MenuItem value="ORIGINAL">
-                  <em>Original</em>
-                </MenuItem>
-                <MenuItem value="JPG">jpg</MenuItem>
-                <MenuItem value="PNG">png</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              style={{ minWidth: 86, margin: 20 }}
-              label="Max width"
-              name="width"
-              type="number"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              placeholder="Original"
-              value={size.width || ''}
-              onChange={handleSizeChange}
-            />
-            <TextField
-              style={{ minWidth: 86, margin: 20 }}
-              label="Max height"
-              name="height"
-              type="number"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              placeholder="Original"
-              value={size.height || ''}
-              onChange={handleSizeChange}
-            />
-            <Button
-              style={{ minWidth: 86, margin: 20 }}
-              variant="raised"
-              color="secondary"
-              href={downloadUrl}
-              download={envelope.senderName || 'snapsend'}
-            >
-              Download
-            </Button>
-          </DownloadWrap>
+                Download
+              </Button>
+            </DownloadWrap>
+          )}
         </Fragment>
       )}
     </AppBar>
