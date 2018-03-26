@@ -1,5 +1,5 @@
-from google.appengine.ext import vendor
-vendor.add('lib')
+#from google.appengine.ext import vendor
+#vendor.add('lib')
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 import flask
@@ -16,13 +16,13 @@ CORS(app)
 logging.getLogger('flask_cors').level = logging.DEBUG
 
 # These environment variables are configured in app.yaml.
-CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
-CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
-CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
+#CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
+#CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
+#CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
 
-#CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
-#CLOUDSQL_USER = 'root'
-#CLOUDSQL_PASSWORD = 'snapsend'
+CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
+CLOUDSQL_USER = 'root'
+CLOUDSQL_PASSWORD = 'snapsend'
 
 app.secret_key = 'snapsend_rocks'  # Change this!
 login_manager = flask_login.LoginManager()
@@ -171,7 +171,7 @@ def connect_to_cloudsql():
 
 @app.route('/')
 def index():
-  return "Hello, World (lets see how long a change takes III)!"
+  return "Hello, World"
 
 
 @app.route('/databases')
@@ -190,23 +190,14 @@ def showDatabases():
 
   return response
 
-@app.route('/json/')
-def getjson():
-  loaded_r = request.get_json()
-  r = json.dumps(loaded_r)
-  loaded_r = json.loads(r)
-  return loaded_r
 
-def makepostresponse(payload):
-  response = make_response(payload)
-  response.headers['Content-Type'] = 'text/json'
-  response.headers['Access-Control-Allow-Origin'] = '*'
-  return response
+  
 
 @app.route('/envelope', methods=['POST'])
 def postenvelope():
-  loaded_r = getjson()
-  print(type(loaded_r))
+  loaded_r = request.get_json()
+  r = json.dumps(loaded_r)
+  loaded_r = json.loads(r)
   env_name = loaded_r['envelopeName']
   rec_name = loaded_r['recipientName']
   sender_name = loaded_r['senderName']
@@ -251,8 +242,10 @@ def postenvelope():
 
   loaded_r['envelopeID'] = j
   payload = json.dumps(loaded_r)
-
-  response = makepostresponse(payload)
+  response = make_response(payload)
+  response.headers['Content-Type'] = 'text/json'
+  response.headers['Access-Control-Allow-Origin'] = '*'
+  
   
   return response
 
