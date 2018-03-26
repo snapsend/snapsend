@@ -1,64 +1,26 @@
+# Snapsend 
 
 
-This code is used for the purposes of COMS 4156 - Advanced Software Engineering course at Columbia University, New York. 
-This is a boilerplate python flask code along with configurations for Circle CI and Google Cloud.
+This is the code for our web application "Snapsend". This is a part of a project built for COMS 4156 - Advanced Software Engineering course at Columbia University, New York. 
+
+Project Members - 
+Maitri Shroff
+Shreya Jain
+Kristo 
+Malini 
+
+
+
+
+There are two links for the site:
+Development Link - 
+Production Link - 
+
+
+This is a python flask code along with configurations for Circle CI and Google Cloud.
 
 # Setup Instructions 
 
-Please log into github before progressing with the next steps.
-
-### Step 1: First things first!
-
-Grab your free google credits by following <a href='https://piazza.com/class/jchzhd6cdxz4dy?cid=31' target="_blank"> this post </a> in piazza.
-
-### Step 2: Fork
-
-Fork this repository into your github. From now on, we will be working on your forked repository. 
-
-How to fork ? <br/>
-Look out for a button called `fork` in the top right of this page. It will create a replica of this repository and put it in your github account. 
-
-### Step 3: Clone
-
-Open termnal -> go to any folder -> clone your forked repository into your local folder. 
-
-How to clone? <br/>
-Look out for a button called `clone` in the top right of the repository. Once you click that you will get a link like this `https://github.com/<your-name>/<your-repository-name>.git` 
-
-Copy that and go to your folder and type the command: <br/>
-`git clone <your-forked-repository-GIT-URL>`
-
-### Step 4: Set Repository as origin
-
-Now set this repository as your origin. 
-
-How? <br/>
-
-`git remote add origin <your-forked-repository-GIT-URL>`
-
-### Step 5: Set up Google Cloud, Project & App Engine
-
-Login into <a href='https://cloud.google.com'>Google Cloud</a> using the account that you used for free credits. (Note: If you signed in using another account, switch account to the one that you used to grab free credits.)
-
-1. If you are using google cloud first time, it will ask you to accept some terms, please do so.
-2. On the top left -> click on `select a project`. If you have already used google cloud before and you have also created a project before, then you may see another project name there, even then click on it.
-3. It will open a small pane -> Ensure that organization is `columbia.edu`, if not then select that.
-4. Then, click on `+` button 
-4. Give a project name say in this case `ase-boilerplate`.
-5. Also, edit the Project ID and set it also to `ase-boilerplate` other wise, google adds some randome digits to the Project ID and we need this Project ID through out. So it is better if Project ID and Project Names are same.
-6. click `Create`.
-7. Search for `App Engine` -> Ensure that Google App Engine Services are available. Upon seeing the home page of App Engine and choosing a language is taking you to a tutorial then it means the services are available.
-
-### Step 6: Set up CIRCLE CI. 
-
-1. Go to <a href='https://circleci.com'> CircleCI </a>
-2. Sign up for a free account. You can login using github (easy way). Else, you can signup and later authorize github account. 
-3. Click on `projects` on the left pane -> `Add Project` -> `Setup Project` (Note: it might take sometime to sync the projects in your github into the Circle CI.)
-4. Choose the following:
-    * Operating System - Linux
-    * Platform - 2.0
-    * Language - Python
-5. click `start building`
     
 ### Step 7: Enable App Engine Admin API & retrieve Client Secret
 
