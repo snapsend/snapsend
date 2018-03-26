@@ -31,8 +31,9 @@ export default ({
   downloadUrl,
   handleFormatChange,
   handleSizeChange,
+  isAtEnvelope,
 }: {
-  envelope: ?Envelope,
+  envelope: ?Envelope | UnfinishedEnvelope,
   handleEnvelopeChange: EventHandler,
   handleSave: () => Promise<void>,
   isViewing: boolean,
@@ -41,8 +42,9 @@ export default ({
   handleFormatChange: (SyntheticInputEvent<HTMLLIElement>) => void,
   handleSizeChange: EventHandler,
   downloadUrl: string,
+  isAtEnvelope: boolean,
 }) => {
-  const isEnvelope = !!(envelope && envelope.envelopeId);
+  const isEnvelope = isAtEnvelope;
   return (
     <AppBar elevation={4} component="header" square>
       <Toolbar>

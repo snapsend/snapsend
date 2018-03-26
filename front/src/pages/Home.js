@@ -197,11 +197,12 @@ class Home extends Component<P, State> {
     );
 
     const downloadUrl = generateDownloadUrl(images, envelope, format, size);
-
+    const isAtEnvelope = !!(match && match.params && match.params.envelopeId);
     return (
       <Dropzone onDrop={this.handleDrop}>
         <Flex>
           <AppBar
+            isAtEnvelope={isAtEnvelope}
             envelope={envelope}
             handleEnvelopeChange={this.handleEnvelopeChange}
             handleSave={this.handleEnvelopeSave}
