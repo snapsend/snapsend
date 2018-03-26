@@ -104,11 +104,18 @@ def signup():
             users[curr_email] = {'password': pwd1 }
             print(users)
         else:
-          return flask.redirect(flask.url_for('signup'))
+          loaded_r = {"success":False}
+          payload = json.dumps(loaded_r)
+          response = make_response(payload)
+          response.headers['Content-Type'] = 'text/json'
+          #response.headers['Access-Control-Allow-Origin'] = '*'
+          return response
+          #return flask.redirect(flask.url_for('signup'))
 
         user = User()
         user.id = curr_email
         flask_login.login_user(user)
+
         loaded_r = {"success":True}
         payload = json.dumps(loaded_r)
         response = make_response(payload)
