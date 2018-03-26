@@ -59,6 +59,7 @@ export default class Login extends React.Component<Props, State> {
     this.setState({ waiting: true });
     // now post
     const { email, password: password1, password2 } = this.state;
+    if (password1 !== password2) return;
     const res = await post('/signup', { email, password1, password2 });
     console.log('RES', res);
     if (res.success) {
@@ -78,8 +79,8 @@ export default class Login extends React.Component<Props, State> {
   handleClose = () => this.setState({ status: 'LOGGED OUT' });
 
   render() {
-    const { status, waiting, error } = this.state;
-
+    const { status, waiting, error, password, password2 } = this.state;
+    const passwordsMatch = password === password2;
     if (status === 'LOGGING IN') {
       return (
         <Modal>
@@ -103,7 +104,7 @@ export default class Login extends React.Component<Props, State> {
                 />
                 <Input
                   name="password"
-                  label="Password"
+                  label="Passwor"
                   error={error}
                   value={this.state.password}
                   onChange={this.handleChange}
@@ -163,18 +164,20 @@ export default class Login extends React.Component<Props, State> {
                 <Input
                   name="password"
                   label="Password"
-                  error={error}
+                  error={error || !passwordsMatch}
                   value={this.state.password}
                   onChange={this.handleChange}
                   type="password"
+                  helperText={passwordsMatch ? '' : 'passwords do not match'}
                 />
                 <Input
                   name="password2"
                   label="Confirm Password"
-                  error={error}
+                  error={error || !passwordsMatch}
                   value={this.state.password2}
                   onChange={this.handleChange}
                   type="password"
+                  helperText={passwordsMatch ? '' : 'passwords do not match'}
                 />
                 {error && <ErrorMsg>Account creation failed.</ErrorMsg>}
                 <Button
