@@ -33,7 +33,7 @@ export default ({
   handleSizeChange,
   isAtEnvelope,
 }: {
-  envelope: ?Envelope | UnfinishedEnvelope,
+  envelope: ?UnfinishedEnvelope,
   handleEnvelopeChange: EventHandler,
   handleSave: () => Promise<void>,
   isViewing: boolean,
