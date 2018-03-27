@@ -8,8 +8,7 @@ class User(db.Model):
 	email = db.Column(db.String(255),unique=True,nullable=True)
 	password = db.Column(db.String(16),nullable=True)
 	uname = db.Column(db.String(255))
-	createddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
-	updateddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+	
  
 	def __init__(self, uname, email, passw):
 		#self.userID = userID
@@ -17,8 +16,7 @@ class User(db.Model):
 	    self.email = None
 	    self.password = None
 	    #self.set_password(passw)
-	    self.createddate = createddate
-	    self.updateddate = updateddate
+	    
 
     #def set_password(self, passw):
     #	self.password = generate_password_hash(passw)
@@ -39,14 +37,16 @@ class Envelope(db.Model):
 	sender = db.Column(db.String(255),nullable=True)
 	recipient = db.Column(db.String(255),nullable=True)
 	ename = db.Column(db.String(255),default = None, nullable=True)
-	
+	createddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+	updateddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
-	def __init__(self,eowner,sender,recipient,ename):
-		#self.envelopeID = envelopeID
-		self.eowner = eowner.title()
+	def __init__(self,ename,sender,recipient):
+		self.envelopeID = envelopeID
+		#self.eowner = eowner.title()
 		self.sender = sender.title()
 		self.recipient = recipient.title()
-		self.ename = ename
+		self.ename = ename.title()
+
 
 
 
@@ -59,12 +59,11 @@ class Image(db.Model):
 	updateddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 	createddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 	
-	def __init__(self,imageID,inenvID,filename,imagelink,createddate,updateddate):
-		self.imageID = imageID
+	def __init__(self,inenvID,imagelink,filename):
+		#self.imageID = imageID
 		self.inenvID = inenvID
 		self.imagelink = imagelink.title()
 		self.filename = filename.title()
-		self.updateddate = updateddate
-		self.createddate = createddate
+	
 
 

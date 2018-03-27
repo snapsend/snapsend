@@ -1,9 +1,14 @@
-class BaseConfig(object):
-    #SECRET_KEY = 'vTI\x9f\xe6y\xf3g\xbb?\xa6(\x84\xf8\x82(\xd8wM\xe8}\xeb\xd1='	#SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost/UserData'
-	#SQLALCHEMY_TRACK_MODIFICATIONS = False	
-	#SQLALCHEMY_ECHO = True
+# app/config.py
 
-	SQLALCHEMY_DATABASE_URI = 'mysql://root:snapsend@/snapsend?unix_socket=/cloudsql/flask-snapsend:us-east1:snapsend-mysql'
+# Source: https://github.com/realpython/discover-flask/blob/master/config.py
+
+class BaseConfig(object):
+    DEBUG = True
+    TESTING = False
+    SECRET_KEY = 'snapsend'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:snapsend@35.231.24.52/snapsend'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ECHO = True
 
 class TestConfig(BaseConfig):
 	DEBUG = True
@@ -11,7 +16,7 @@ class TestConfig(BaseConfig):
 	WTF_CSRF_ENABLED = False
 	SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
 	SQLALCHEMY_ECHO = False
-	
+
 class DevelopmentalConfig(BaseConfig):
 	DEBUG = True
 
