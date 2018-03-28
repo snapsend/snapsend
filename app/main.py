@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 import flask
 import flask_login
-app = Flask(__name__)
+import configuration
 import os
 import json
 import sys
@@ -14,7 +14,8 @@ import logging
 from app import db,app
 from model import User, Envelope, Image
 from sqlalchemy import func
-
+app = Flask(__name__)
+#app.config.from_object('config.BaseConfig')
 CORS(app)
 logging.getLogger('flask_cors').level = logging.DEBUG
 
