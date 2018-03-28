@@ -3,7 +3,7 @@
 
 This is the code for our web application "Snapsend". This is a part of a project built for COMS 4156 - Advanced Software Engineering course at Columbia University, New York. 
 
-Project Members - 
+## Project Members - 
 
 Maitri Shroff
 
@@ -15,7 +15,7 @@ Malini Sasisoban
 
 
 
-##There are two links for the site:
+## There are two links for the site:
 Development Link - https://dev.snapsend.xyz/
 Production Link - https://snapsend.xyz/
 
@@ -33,37 +33,37 @@ To run backend tests you need to do -
 
 nosetests app app/tests/*.py*
 
-#Features
+# Features
 
-###Signup
+### Signup
 
 The application allows user to sign up to become users of it. Becoming a user is not necessary to use it but provides extra functionality.
 
-###Login
+### Login
 
 Once signed up, the user can keep returning to their account to view their history, share more pictures or view the ones shared with them.
 
-###Logout
+### Logout
 
 The user can logout from his account on their will.
 
-###Downloading Images
+### Downloading Images
 
 Once an envelope of images is sent to the reciepent, they can download them. 
 
-###Converting Size
+### Converting Size
 
 Once an envelope of images is sent to the reciepent, they can convert these images to any size as per their requirement. 
 
-###Converting Format 
+### Converting Format 
 
 Once an envelope of images is sent to the reciepent, they can convert these images to any format (png and jpg supported at the time) as per their requirement. For converting sizes and formats of given images we are using Filestack API. This is accessed using the front end so we do not store the images.
 
-###Uploading Image
+### Uploading Image
 
 A sender can upload as many images as he/she wants and then press the get link button to get a link to the envelope page. 
 
-###Sending Envelope
+### Sending Envelope
 
 This link can simply be shared with the client who can then download images in the required format and size.
 
