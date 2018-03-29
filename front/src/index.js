@@ -60,9 +60,6 @@ export const Root = () => (
   </JssProvider>
 );
 
-function HelloWorld() {
-  return <div>Hello world!</div>;
-}
 const el = document.getElementById('root');
 
 el && ReactDOM.render(<Root />, el);

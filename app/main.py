@@ -1,6 +1,7 @@
 #from google.appengine.ext import vendor
 #vendor.add('lib')
 from flask import Flask, request, jsonify, make_response
+#needed for front and backend to work together
 from flask_cors import CORS
 import flask
 import flask_login
@@ -160,7 +161,7 @@ def unauthorized_handler():
 
 @app.route('/')
 def index():
-  return "Hello, World (lets see how long a change takes III)!"
+  return "Hello, World"
 
 '''
 @app.route('/databases')
@@ -180,12 +181,19 @@ def showDatabases():
   return response
 
 
+<<<<<<< HEAD:app/main.py
+=======
+  
+>>>>>>> 4fadaadd7de81503c2b59e00b64f3c05ca250bd5:code/main.py
 
 
 '''
 @app.route('/envelope', methods=['POST'])
 def postenvelope():
+<<<<<<< HEAD:app/main.py
   
+=======
+>>>>>>> 4fadaadd7de81503c2b59e00b64f3c05ca250bd5:code/main.py
   loaded_r = request.get_json()
   r = json.dumps(loaded_r)
   loaded_r = json.loads(r)
@@ -210,6 +218,17 @@ def postenvelope():
     raise e
   loaded_r['envelopeID'] = j
   payload = json.dumps(loaded_r)
+<<<<<<< HEAD:app/main.py
+=======
+  response = make_response(payload)
+  response.headers['Content-Type'] = 'text/json'
+  response.headers['Access-Control-Allow-Origin'] = '*'
+  
+  
+  return response
+
+def makegetresponse(payload):
+>>>>>>> 4fadaadd7de81503c2b59e00b64f3c05ca250bd5:code/main.py
   response = make_response(payload)
   response.headers['Content-Type'] = 'text/json'
   response.headers['Access-Control-Allow-Origin'] = '*'

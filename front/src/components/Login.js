@@ -19,6 +19,7 @@ type State = {
   password2: string,
   waiting: boolean,
   status: Status,
+  error: boolean,
 };
 
 const initialState: State = {
@@ -27,12 +28,20 @@ const initialState: State = {
   password2: '',
   waiting: false,
   status: 'LOGGED OUT',
+  error: false,
 };
 
 export default class Login extends React.Component<Props, State> {
   state = initialState;
 
-  handleClickLogin = () => this.setState({ status: 'LOGGING IN' });
+  handleClickLogin = async () => {
+    if (this.state.status === 'LOGGED IN') {
+      await post('/logout', {});
+      return this.setState({ status: 'LOGGED OUT' });
+    }
+
+    return this.setState({ status: 'LOGGING IN' });
+  };
 
   handleLogin = async () => {
     this.setState({ waiting: true });
@@ -40,18 +49,23 @@ export default class Login extends React.Component<Props, State> {
     const { email, password } = this.state;
     const res = await post('/login', { email, password });
     console.log('RES', res);
-
-    this.setState({ waiting: false });
+    if (res.success) {
+      return this.setState({ waiting: false, status: 'LOGGED IN' });
+    }
+    this.setState({ waiting: false, error: true });
   };
 
   handleCreate = async () => {
     this.setState({ waiting: true });
     // now post
     const { email, password: password1, password2 } = this.state;
+    if (password1 !== password2) return;
     const res = await post('/signup', { email, password1, password2 });
     console.log('RES', res);
-
-    this.setState({ waiting: false });
+    if (res.success) {
+      return this.setState({ waiting: false, status: 'LOGGED IN' });
+    }
+    this.setState({ waiting: false, error: true });
   };
 
   handleChange = (e: SyntheticEvent<HTMLInputElement>) => {
@@ -65,8 +79,8 @@ export default class Login extends React.Component<Props, State> {
   handleClose = () => this.setState({ status: 'LOGGED OUT' });
 
   render() {
-    const { status, waiting } = this.state;
-
+    const { status, waiting, error, password, password2 } = this.state;
+    const passwordsMatch = password === password2;
     if (status === 'LOGGING IN') {
       return (
         <Modal>
@@ -82,6 +96,7 @@ export default class Login extends React.Component<Props, State> {
               <Form>
                 <Input
                   name="email"
+                  error={error}
                   label="Email"
                   type="email"
                   value={this.state.email}
@@ -89,11 +104,13 @@ export default class Login extends React.Component<Props, State> {
                 />
                 <Input
                   name="password"
-                  label="Password"
+                  label="Passwor"
+                  error={error}
                   value={this.state.password}
                   onChange={this.handleChange}
                   type="password"
                 />
+                {error && <ErrorMsg>Login failed.</ErrorMsg>}
                 <Button
                   disabled={waiting}
                   onClick={this.handleLogin}
@@ -140,26 +157,32 @@ export default class Login extends React.Component<Props, State> {
                   name="email"
                   label="Email"
                   type="email"
+                  error={error}
                   value={this.state.email}
                   onChange={this.handleChange}
                 />
                 <Input
                   name="password"
                   label="Password"
+                  error={error || !passwordsMatch}
                   value={this.state.password}
                   onChange={this.handleChange}
                   type="password"
+                  helperText={passwordsMatch ? '' : 'passwords do not match'}
                 />
                 <Input
                   name="password2"
                   label="Confirm Password"
+                  error={error || !passwordsMatch}
                   value={this.state.password2}
                   onChange={this.handleChange}
                   type="password"
+                  helperText={passwordsMatch ? '' : 'passwords do not match'}
                 />
+                {error && <ErrorMsg>Account creation failed.</ErrorMsg>}
                 <Button
                   disabled={waiting}
-                  onClick={this.handleLogin}
+                  onClick={this.handleCreate}
                   variant="raised"
                   color="secondary"
                   style={{ margin: 15, alignSelf: 'flex-end' }}
@@ -172,9 +195,19 @@ export default class Login extends React.Component<Props, State> {
         </Modal>
       );
     }
-    return <Button onClick={this.handleClickLogin}>Login</Button>;
+    return (
+      <Button onClick={this.handleClickLogin}>
+        {status === 'LOGGED IN' ? 'Log out' : 'Log in'}
+      </Button>
+    );
   }
 }
+
+const ErrorMsg = styled.div`
+  color: ${({ theme }) => theme.error};
+  text-align: center;
+  margin: 15px;
+`;
 
 const CloseIcon = styled(IconButton)`
   position: absolute;

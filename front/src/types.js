@@ -23,3 +23,9 @@ export type Envelope = UnfinishedEnvelope & {
   images: Array<SuccessImage>,
   createdAt: number,
 };
+
+export type Format = 'JPG' | 'PNG' | 'ORIGINAL';
+
+export type Size = { width: ?number, height: ?number };
+
+export type EventHandler = (SyntheticEvent<HTMLInputElement>) => void;

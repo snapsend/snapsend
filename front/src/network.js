@@ -1,5 +1,4 @@
 // @flow
-import type { Envelope } from './types';
 
 const API_BASE = process.env.REACT_APP_API_URL || '';
 
@@ -17,6 +16,7 @@ export async function post(endpoint: string, data: {}): any {
     const json = await res.json();
     return json;
   } catch (rejectedValue) {
+    console.warn(`POST Error occurred at ${endpoint}`, data, rejectedValue);
     return 'An error occurred posting data';
   }
 }
@@ -30,6 +30,7 @@ export async function get(endpoint: string): any {
     const json = await res.json();
     return json;
   } catch (rejectedValue) {
+    console.warn(`GET Error occurred at ${endpoint}`, rejectedValue);
     return { error: 'An error occurred fetching data' };
   }
 }
