@@ -7,7 +7,8 @@ import os
 app = Flask(__name__)
 
 # Configurations
-app.config.from_object('config.BaseConfig')
+app.config.from_object('configuration.BaseConfig')
+
 
 db = SQLAlchemy(app)
 #CSRFProtect(app)

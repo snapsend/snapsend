@@ -3,22 +3,22 @@ from app import db
 from datetime import datetime
 
 class User(db.Model):
+	__table_args__ = {'extend_existing': True}
 	__tablename__ = 'User'
-	userID = db.Column(db.String(16),primary_key=True)
+	userID = db.Column(db.Integer,primary_key=True,autoincrement=True)
 	email = db.Column(db.String(255),unique=True,nullable=True)
 	password = db.Column(db.String(16),nullable=True)
 	uname = db.Column(db.String(255))
-	createddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
-	updateddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+	picture = db.Column()
+	
  
 	def __init__(self, uname, email, passw):
 		#self.userID = userID
 	    self.uname = uname.title()
-	    self.email = None
-	    self.password = None
+	    self.email = email.title()
+	    self.password = passw.title()
 	    #self.set_password(passw)
-	    self.createddate = createddate
-	    self.updateddate = updateddate
+	    
 
     #def set_password(self, passw):
     #	self.password = generate_password_hash(passw)
@@ -33,38 +33,41 @@ class User(db.Model):
     #	return cls.query.filter_by(email = email).first() is not None
 
 class Envelope(db.Model):
+	__table_args__ = {'extend_existing': True}
 	__tablename__ = 'Envelope'
 	envelopeID = db.Column(db.Integer,primary_key=True, autoincrement=True,  nullable=False)
-	eowner = db.Column(db.String(16),nullable=True)
+	eowner = db.Column(db.Integer,nullable=True)
 	sender = db.Column(db.String(255),nullable=True)
 	recipient = db.Column(db.String(255),nullable=True)
 	ename = db.Column(db.String(255),default = None, nullable=True)
-	
+	createddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+	updateddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
-	def __init__(self,eowner,sender,recipient,ename):
+	def __init__(self,ename,sender,recipient):
 		#self.envelopeID = envelopeID
-		self.eowner = eowner.title()
+		#self.eowner = eowner.title()
 		self.sender = sender.title()
 		self.recipient = recipient.title()
-		self.ename = ename
+		self.ename = ename.title()
+
 
 
 
 class Image(db.Model):
+	__table_args__ = {'extend_existing': True}
 	__tablename__ = 'Image'
 	imageID = db.Column(db.Integer,primary_key=True, autoincrement=True)
-	inenvID = db.Column(db.String(255),nullable=True)
+	inenvID = db.Column(db.Integer,nullable=True)
 	imagelink = db.Column(db.String(255),nullable=True)
 	filename = db.Column(db.String(255),nullable=True)
 	updateddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 	createddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 	
-	def __init__(self,imageID,inenvID,filename,imagelink,createddate,updateddate):
-		self.imageID = imageID
+	def __init__(self,inenvID,imagelink,filename):
+		#self.imageID = imageID
 		self.inenvID = inenvID
 		self.imagelink = imagelink.title()
 		self.filename = filename.title()
-		self.updateddate = updateddate
-		self.createddate = createddate
+	
 
 
