@@ -3,18 +3,20 @@ from app import db
 from datetime import datetime
 
 class User(db.Model):
+	__table_args__ = {'extend_existing': True}
 	__tablename__ = 'User'
-	userID = db.Column(db.String(16),primary_key=True)
+	userID = db.Column(db.Integer,primary_key=True,autoincrement=True)
 	email = db.Column(db.String(255),unique=True,nullable=True)
 	password = db.Column(db.String(16),nullable=True)
 	uname = db.Column(db.String(255))
+	picture = db.Column()
 	
  
 	def __init__(self, uname, email, passw):
 		#self.userID = userID
 	    self.uname = uname.title()
-	    self.email = None
-	    self.password = None
+	    self.email = email.title()
+	    self.password = passw.title()
 	    #self.set_password(passw)
 	    
 
@@ -31,9 +33,10 @@ class User(db.Model):
     #	return cls.query.filter_by(email = email).first() is not None
 
 class Envelope(db.Model):
+	__table_args__ = {'extend_existing': True}
 	__tablename__ = 'Envelope'
 	envelopeID = db.Column(db.Integer,primary_key=True, autoincrement=True,  nullable=False)
-	eowner = db.Column(db.String(16),nullable=True)
+	eowner = db.Column(db.Integer,nullable=True)
 	sender = db.Column(db.String(255),nullable=True)
 	recipient = db.Column(db.String(255),nullable=True)
 	ename = db.Column(db.String(255),default = None, nullable=True)
@@ -41,7 +44,7 @@ class Envelope(db.Model):
 	updateddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
 	def __init__(self,ename,sender,recipient):
-		self.envelopeID = envelopeID
+		#self.envelopeID = envelopeID
 		#self.eowner = eowner.title()
 		self.sender = sender.title()
 		self.recipient = recipient.title()
@@ -51,9 +54,10 @@ class Envelope(db.Model):
 
 
 class Image(db.Model):
+	__table_args__ = {'extend_existing': True}
 	__tablename__ = 'Image'
 	imageID = db.Column(db.Integer,primary_key=True, autoincrement=True)
-	inenvID = db.Column(db.String(255),nullable=True)
+	inenvID = db.Column(db.Integer,nullable=True)
 	imagelink = db.Column(db.String(255),nullable=True)
 	filename = db.Column(db.String(255),nullable=True)
 	updateddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
