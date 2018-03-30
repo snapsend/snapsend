@@ -53,83 +53,83 @@ def user_loader(email):
 
 @login_manager.request_loader
 def request_loader(request):
-    email = request.form.get('email')
-    if email not in users:
-        return
+  email = request.form.get('email')
+  if email not in users:
+      return
 
-    user = User()
-    user.id = email
+  user = User()
+  user.id = email
 
-    user.is_authenticated = request.form['password'] == users[email]['password']
-    return user
+  user.is_authenticated = request.form['password'] == users[email]['password']
+  return user
 
 @app.route('/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        loaded_r = request.get_json()
-        r = json.dumps(loaded_r)
-        loaded_r = json.loads(r)
+  if request.method == 'POST':
+    loaded_r = request.get_json()
+    r = json.dumps(loaded_r)
+    loaded_r = json.loads(r)
 
-        email = loaded_r['email']
-        pwd = loaded_r['password']
-        if pwd == users[email]['password']:
-            user = User()
-            user.id = email
-            flask_login.login_user(user)
-            
-            loaded_r = {"success":True}
-
-            payload = json.dumps(loaded_r)
-            response = make_response(payload)
-            response.headers['Content-Type'] = 'text/json'
-            #response.headers['Access-Control-Allow-Origin'] = '*'
-            return response
-            #return flask.redirect(flask.url_for('protected'))
-
-        loaded_r = {"success":False}
+    email = loaded_r['email']
+    pwd = loaded_r['password']
+    if pwd == users[email]['password']:
+        user = User()
+        user.id = email
+        flask_login.login_user(user)
+        
+        loaded_r = {"success":True}
 
         payload = json.dumps(loaded_r)
         response = make_response(payload)
         response.headers['Content-Type'] = 'text/json'
-            #response.headers['Access-Control-Allow-Origin'] = '*'
+        #response.headers['Access-Control-Allow-Origin'] = '*'
         return response
+        #return flask.redirect(flask.url_for('protected'))
+
+    loaded_r = {"success":False}
+
+    payload = json.dumps(loaded_r)
+    response = make_response(payload)
+    response.headers['Content-Type'] = 'text/json'
+        #response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 
 @app.route('/signup', methods=['POST'])
 def signup():
-    if request.method == 'POST':
-        loaded_r = request.get_json()
-        r = json.dumps(loaded_r)
-        loaded_r = json.loads(r)
+  if request.method == 'POST':
+    loaded_r = request.get_json()
+    r = json.dumps(loaded_r)
+    loaded_r = json.loads(r)
 
-        curr_email = loaded_r['email']
-        pwd1 = loaded_r['password1']
-        pwd2 = loaded_r['password2']
+    curr_email = loaded_r['email']
+    pwd1 = loaded_r['password1']
+    pwd2 = loaded_r['password2']
 
-        if(pwd1 == pwd2):
-            users[curr_email] = {'password': pwd1 }
-            print(users)
-        else:
-          loaded_r = {"success":False}
-          payload = json.dumps(loaded_r)
-          response = make_response(payload)
-          response.headers['Content-Type'] = 'text/json'
-          #response.headers['Access-Control-Allow-Origin'] = '*'
-          return response
-          #return flask.redirect(flask.url_for('signup'))
+    if(pwd1 == pwd2):
+        users[curr_email] = {'password': pwd1 }
+        print(users)
+    else:
+      loaded_r = {"success":False}
+      payload = json.dumps(loaded_r)
+      response = make_response(payload)
+      response.headers['Content-Type'] = 'text/json'
+      #response.headers['Access-Control-Allow-Origin'] = '*'
+      return response
+      #return flask.redirect(flask.url_for('signup'))
 
-        user = User()
-        user.id = curr_email
-        flask_login.login_user(user)
+    user = User()
+    user.id = curr_email
+    flask_login.login_user(user)
 
-        loaded_r = {"success":True}
-        payload = json.dumps(loaded_r)
-        response = make_response(payload)
-        response.headers['Content-Type'] = 'text/json'
-            #response.headers['Access-Control-Allow-Origin'] = '*'
-        return response
+    loaded_r = {"success":True}
+    payload = json.dumps(loaded_r)
+    response = make_response(payload)
+    response.headers['Content-Type'] = 'text/json'
+        #response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
-        #return flask.redirect(flask.url_for('protected'))
+    #return flask.redirect(flask.url_for('protected'))
 
 
 @app.route('/protected')
@@ -181,19 +181,10 @@ def showDatabases():
   return response
 
 
-<<<<<<< HEAD:app/main.py
-=======
-  
->>>>>>> 4fadaadd7de81503c2b59e00b64f3c05ca250bd5:code/main.py
-
 
 '''
 @app.route('/envelope', methods=['POST'])
 def postenvelope():
-<<<<<<< HEAD:app/main.py
-  
-=======
->>>>>>> 4fadaadd7de81503c2b59e00b64f3c05ca250bd5:code/main.py
   loaded_r = request.get_json()
   r = json.dumps(loaded_r)
   loaded_r = json.loads(r)
@@ -218,22 +209,12 @@ def postenvelope():
     raise e
   loaded_r['envelopeID'] = j
   payload = json.dumps(loaded_r)
-<<<<<<< HEAD:app/main.py
-=======
   response = make_response(payload)
   response.headers['Content-Type'] = 'text/json'
   response.headers['Access-Control-Allow-Origin'] = '*'
   
   
   return response
-
-def makegetresponse(payload):
->>>>>>> 4fadaadd7de81503c2b59e00b64f3c05ca250bd5:code/main.py
-  response = make_response(payload)
-  response.headers['Content-Type'] = 'text/json'
-  response.headers['Access-Control-Allow-Origin'] = '*'
-  return response
-  
 
 
 @app.route('/envelope/<int:env_id>', methods=['GET'])
