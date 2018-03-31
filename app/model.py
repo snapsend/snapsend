@@ -68,6 +68,3 @@ class Image(db.Model):
 		self.inenvID = inenvID
 		self.imagelink = imagelink.title()
 		self.filename = filename.title()
-	
-
-

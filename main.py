@@ -24,7 +24,6 @@ app = Flask(__name__)
 CORS(app)
 logging.getLogger('flask_cors').level = logging.DEBUG
 
-
 # These environment variables are configured in app.yaml.
 #CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
 #CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
@@ -116,7 +115,7 @@ def login():
         payload = json.dumps(loaded_r)
         response = make_response(payload)
         response.headers['Content-Type'] = 'text/json'
-        response.headers['Access-Control-Allow-Origin'] = '*'
+        #response.headers['Access-Control-Allow-Origin'] = '*'
         return response
         #return flask.redirect(flask.url_for('protected'))
 
@@ -164,7 +163,7 @@ def signup(request):
     payload = json.dumps(loaded_r)
     response = make_response(payload)
     response.headers['Content-Type'] = 'text/json'
-    response.headers['Access-Control-Allow-Origin'] = '*'
+        #response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
     #return flask.redirect(flask.url_for('protected'))
