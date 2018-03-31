@@ -32,9 +32,9 @@ logging.getLogger('flask_cors').level = logging.DEBUG
 #CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
 #CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
 
-CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
-CLOUDSQL_USER = 'root'
-CLOUDSQL_PASSWORD = 'snapsend'
+#CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
+#CLOUDSQL_USER = 'root'
+#CLOUDSQL_PASSWORD = 'snapsend'
 
 app.secret_key = 'snapsend_rocks'  # Change this!
 login_manager = flask_login.LoginManager()
@@ -201,12 +201,12 @@ def unauthorized_handler():
 def index():
   return "Hello, World"
 
-
+'''
 @app.route('/blah')
 def index1():
   return "Hello, blahWorld"
 
-
+'''
 
 '''
 @app.route('/databases')
