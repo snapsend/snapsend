@@ -7,10 +7,10 @@ class User(db.Model):
 	__tablename__ = 'User'
 	userID = db.Column(db.Integer,primary_key=True,autoincrement=True)
 	email = db.Column(db.String(255),unique=True,nullable=True)
-	password = db.Column(db.String(16),nullable=True)
+	password = db.Column(db.String(255),nullable=True)
 	uname = db.Column(db.String(255))
-	picture = db.Column()
-	
+	picture = db.Column(db.String(2550),nullable=True)
+	token = db.Column(db.String(2550),nullable=True)
  
 	def __init__(self, uname, email, passw):
 		#self.userID = userID

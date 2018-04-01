@@ -1,5 +1,5 @@
-from google.appengine.ext import vendor
-vendor.add('lib')
+#from google.appengine.ext import vendor
+#vendor.add('lib')
 from flask import Flask, request, jsonify, make_response
 #adding another comment
 #adding comment
@@ -20,8 +20,6 @@ from sqlalchemy import func
 import md5
 from itsdangerous import URLSafeTimedSerializer
 
-
-app = Flask(__name__)
 # app.config.from_object('config.BaseConfig')
 CORS(app)
 logging.getLogger('flask_cors').level = logging.DEBUG
@@ -32,10 +30,10 @@ logging.getLogger('flask_cors').level = logging.DEBUG
 #CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
 #CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
 
-#CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
-#CLOUDSQL_USER = 'root'
-#CLOUDSQL_PASSWORD = 'snapsend'
-
+CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
+CLOUDSQL_USER = 'root'
+CLOUDSQL_PASSWORD = 'snapsend'
+'''
 app.secret_key = 'snapsend_rocks'  # Change this!
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
@@ -195,7 +193,7 @@ def unauthorized_handler():
     return 'Unauthorized'
 
 
-
+'''
 
 @app.route('/')
 def index():
@@ -299,3 +297,4 @@ def getenvelope(env_id):
 
 	except Exception as e:
 		raise e
+

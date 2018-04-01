@@ -13,7 +13,7 @@ class BaseConfig(object):
 class TestConfig(BaseConfig):
 	DEBUG = True
 	TESTING = True
-	SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+	#SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
 	SQLALCHEMY_ECHO = False
 
 class DevelopmentalConfig(BaseConfig):
