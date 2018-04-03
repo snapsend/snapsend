@@ -7,16 +7,21 @@ class User(db.Model):
 	__tablename__ = 'User'
 	userID = db.Column(db.Integer,primary_key=True,autoincrement=True)
 	email = db.Column(db.String(255),unique=True,nullable=True)
-	password = db.Column(db.String(255),nullable=True)
+	password = db.Column(db.String(16),nullable=True)
+	token = db.Column(db.String(255),nullable=True)
 	uname = db.Column(db.String(255))
-	picture = db.Column(db.String(2550),nullable=True)
-	token = db.Column(db.String(2550),nullable=True)
+	profilepic = db.Column(db.String(2550),nullable=True)
+	# picture = db.Column()
+	
  
+	#def __init__(self, uname, email, passw, generated_token, profile_url):
 	def __init__(self, uname, email, passw):
 		#self.userID = userID
 	    self.uname = uname.title()
 	    self.email = email.title()
 	    self.password = passw.title()
+	    #self.token = generated_token.title()
+	    #self.profilepic = profile_url.title()
 	    #self.set_password(passw)
 	    
 

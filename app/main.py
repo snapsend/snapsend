@@ -1,3 +1,5 @@
+
+
 #from google.appengine.ext import vendor
 #vendor.add('lib')
 from flask import Flask, request, jsonify, make_response
@@ -7,22 +9,26 @@ from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 import flask
 import flask_login
-import configuration
 import os
 import json
 import sys
 import os
-import MySQLdb
+#import MySQLdb
 import logging
-from app import db,app
+# from app import db
+from app import app,db
 from model import User, Envelope, Image
 from sqlalchemy import func
 import md5
 from itsdangerous import URLSafeTimedSerializer
 
-# app.config.from_object('config.BaseConfig')
-CORS(app)
+
+
+
 logging.getLogger('flask_cors').level = logging.DEBUG
+CORS(app)
+
+
 
 
 # These environment variables are configured in app.yaml.
@@ -30,181 +36,244 @@ logging.getLogger('flask_cors').level = logging.DEBUG
 #CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
 #CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
 
-CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
-CLOUDSQL_USER = 'root'
-CLOUDSQL_PASSWORD = 'snapsend'
-'''
-app.secret_key = 'snapsend_rocks'  # Change this!
-login_manager = flask_login.LoginManager()
-login_manager.init_app(app)
+# CLOUDSQL_CONNECTION_NAME = 'flask-snapsend:us-east1:snapsend-mysql'
+# CLOUDSQL_USER = 'root'
+# CLOUDSQL_PASSWORD = 'snapsend'
 
-# Our mock database.
+#app.secret_key = 'snapsend_rocks'
+#login_serializer = URLSafeTimedSerializer(app.secret_key)
 
-users = {'maitri@gmail.com': {'password': 'lol'}}
+#login_manager = flask_login.LoginManager()
+#login_manager.init_app(app)
 
-class User(flask_login.UserMixin):
-  # def __init__(self, userid, password):
-  #   self.id = userid
-  #   self.password = password
-  pass
+#Our mock database.
 
+#users = {'maitri@gmail.com': {'password': 'lol'}}
 
-  def get_auth_token(self):
-    #Encode a secure token for cookie
-    data = [str(self.id), self.password]
-    return login_serializer.dumps(data)
+#class User(flask_login.UserMixin):
+#   # def __init__(self, userid, password):
+#   #   self.id = userid
+#   #   self.password = password
+#   pass
 
 
-  @staticmethod
-  def get(userid):
-        # Static method to search the database and see if userid exists.  If it 
-        # does exist then return a User Object.  If not then return None as 
-        # required by Flask-Login. 
-        #For this example the USERS database is a list consisting of 
-        #(user,hased_password) of users.
-    for user in USERS:
-        if user[0] == userid:
-            return User(user[0], user[1])
-    return None
+#   def get_auth_token(self):
+#     #Encode a secure token for cookie
+#     data = [str(self.id), self.password]
+#     return login_serializer.dumps(data)
+
+
+#   @staticmethod
+#   def get(userid):
+#         # Static method to search the database and see if userid exists.  If it 
+#         # does exist then return a User Object.  If not then return None as 
+#         # required by Flask-Login. 
+#         #For this example the USERS database is a list consisting of 
+#         #(user,hased_password) of users.
+#     for user in USERS:
+#         if user[0] == userid:
+#             return User(user[0], user[1])
+#     return None
 
 
 
-def hash_pass(password):
-    #Return the md5 hash of the password+salt
-    salted_password = password + app.secret_key
-    return md5.new(salted_password).hexdigest()
+# def hash_pass(password):
+#     #Return the md5 hash of the password+salt
+#     salted_password = password + app.secret_key
+#     return md5.new(salted_password).hexdigest()
 
 
-@login_manager.user_loader
-def user_loader(email):
-    if email not in users:
-        return
-
-    user = User()
-    user.id = email
-    return user
-
-
-@login_manager.request_loader
-def request_loader(request):
-  email = request.form.get('email')
-  if email not in users:
-      return
-
-  user = User()
-  user.id = email
-
-  user.is_authenticated = request.form['password'] == users[email]['password']
-  return user
-
-@app.route('/login', methods=['POST'])
-def login():
-  if request.method == 'POST':
-    loaded_r = request.get_json()
-    r = json.dumps(loaded_r)
-    loaded_r = json.loads(r)
-
-    email = loaded_r['email']
-    pwd = loaded_r['password']
-    if pwd == users[email]['password']:
-        user = User()
-        user.id = email
-        flask_login.login_user(user)
-        
-        loaded_r = {"success":True}
-
-        payload = json.dumps(loaded_r)
-        response = make_response(payload)
-        response.headers['Content-Type'] = 'text/json'
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        return response
-        #return flask.redirect(flask.url_for('protected'))
-
-    loaded_r = {"success":False}
-
-    payload = json.dumps(loaded_r)
-    response = make_response(payload)
-    response.headers['Content-Type'] = 'text/json'
-        #response.headers['Access-Control-Allow-Origin'] = '*'
-    return response
+# @login_manager.token_loader
+# def load_token(token):
+#     """
+#     Flask-Login token_loader callback. 
+#     The token_loader function asks this function to take the token that was 
+#     stored on the users computer process it to check if its valid and then 
+#     return a User Object if its valid or None if its not valid.
+#     """
+ 
+#     #The Token itself was generated by User.get_auth_token.  So it is up to 
+#     #us to known the format of the token data itself.  
+ 
+#     #The Token was encrypted using itsdangerous.URLSafeTimedSerializer which 
+#     #allows us to have a max_age on the token itself.  When the cookie is stored
+#     #on the users computer it also has a exipry date, but could be changed by
+#     #the user, so this feature allows us to enforce the exipry date of the token
+#     #server side and not rely on the users cookie to exipre. 
+#     max_age = app.config["REMEMBER_COOKIE_DURATION"].total_seconds()
+ 
+#     #Decrypt the Security Token, data = [username, hashpass]
+#     data = login_serializer.loads(token, max_age=max_age)
+ 
+#     #Find the User
+#     user = User.get(data[0])
+ 
+#     #Check Password and return user or None
+#     if user and data[1] == user.password:
+#         return user
+#     return None
 
 
-@app.route('/signup', methods=['POST'])
-def signup(request):
-  print("hit signup")
-  if request.method == 'POST':
-    loaded_r = request.get_json()
-    r = json.dumps(loaded_r)
-    loaded_r = json.loads(r)
-
-    curr_email = loaded_r['email']
-    pwd1 = loaded_r['password1']
-    pwd2 = loaded_r['password2']
-
-    if(pwd1 == pwd2):
-        users[curr_email] = {'password': pwd1 }
-        print(users)
-    else:
-      loaded_r = {"success":False}
-      payload = json.dumps(loaded_r)
-      response = make_response(payload)
-      response.headers['Content-Type'] = 'text/json'
-      response.headers['Access-Control-Allow-Origin'] = '*'
-      return response
-      #return flask.redirect(flask.url_for('signup'))
-
-    user = User()
-    user.id = curr_email
-    user.password = pwd1
-    flask_login.login_user(user)
-    some_token = user.get_auth_token()
-    print(some_token)
-
-    loaded_r = {"success":True}
-    payload = json.dumps(loaded_r)
-    response = make_response(payload)
-    response.headers['Content-Type'] = 'text/json'
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    return response
-
-    #return flask.redirect(flask.url_for('protected'))
 
 
-@app.route('/protected')
-@flask_login.login_required
-def protected():
-    return 'Logged in as: ' + flask_login.current_user.id
+# @login_manager.user_loader
+# def user_loader(email):
+#     if email not in users:
+#         return
+
+#     user = User()
+#     user.id = email
+#     return user
 
 
-@app.route('/logout', methods=['POST'])
-def logout():
-  # usr = flask_login.current_user.id
-  flask_login.logout_user()
-  loaded_r = {"success":True}
+# @login_manager.request_loader
+# def request_loader(request):
+#   email = request.form.get('email')
+#   if email not in users:
+#       return
 
-  payload = json.dumps(loaded_r)
-  response = make_response(payload)
-  response.headers['Content-Type'] = 'text/json'
-            #response.headers['Access-Control-Allow-Origin'] = '*'
-  return response 
+#   user = User()
+#   user.id = email
 
-@login_manager.unauthorized_handler
-def unauthorized_handler():
-    return 'Unauthorized'
+#   user.is_authenticated = request.form['password'] == users[email]['password']
+#   return user
+
+# @app.route('/login', methods=['POST'])
+# def login():
+#   if request.method == 'POST':
+#     loaded_r = request.get_json()
+#     r = json.dumps(loaded_r)
+#     loaded_r = json.loads(r)
+
+#     email = loaded_r['email']
+#     pwd = loaded_r['password']
+
+#     new_pwd = hash_pass(pwd)
+
+#     user_tuple=User.query.filter_by(email=email).first()
+
+#     if new_pwd == user_tuple.password:
+#       user = User()
+#       user.id = email
+#       flask_login.login_user(user)
+#       some_token = user.get_auth_token()
+#       user_tuple.token = some_token
+#       db.session.commit()
+      
+#       loaded_r = {"success":True, 
+#                   "email" : email,
+#                   "password" : pwd,
+#                   "token" : some_token
+#                   }
+
+#       payload = json.dumps(loaded_r)
+#       response = make_response(payload)
+#       response.headers['Content-Type'] = 'text/json'
+#       response.headers['Access-Control-Allow-Origin'] = '*'
+#       return response
+#         #return flask.redirect(flask.url_for('protected'))
+
+#     loaded_r = {"success":False}
+
+#     payload = json.dumps(loaded_r)
+#     response = make_response(payload)
+#     response.headers['Content-Type'] = 'text/json'
+#         #response.headers['Access-Control-Allow-Origin'] = '*'
+#     return response
 
 
-'''
+# @app.route('/signup', methods=['POST'])
+# def signup(request):
+#   print("hit signup")
+#   if request.method == 'POST':
+#     loaded_r = request.get_json()
+#     r = json.dumps(loaded_r)
+#     loaded_r = json.loads(r)
 
-@app.route('/')
+#     curr_email = loaded_r['email']
+#     pwd1 = loaded_r['password1']
+#     pwd2 = loaded_r['password2']
+#     user_name = loaded_r['username']
+#     profile_picture = loaded_r['profile_url'] 
+
+#     if(pwd1 == pwd2):
+#       users[curr_email] = {'password': pwd1 }
+#       print(users)
+#     else:
+#       loaded_r = {"success":False}
+#       payload = json.dumps(loaded_r)
+#       response = make_response(payload)
+#       response.headers['Content-Type'] = 'text/json'
+#       response.headers['Access-Control-Allow-Origin'] = '*'
+#       return response
+#       #return flask.redirect(flask.url_for('signup'))
+
+#     user = User()
+#     user.id = curr_email
+#     user.password = pwd1
+#     flask_login.login_user(user)
+#     some_token = user.get_auth_token()
+#     # print(some_token)
+
+#     hashed_pwd = hash_pass(pwd1)
+
+#     new_user = User(user_name, curr_email, hashed_pwd, some_token, profile_picture)
+#     db.session.add(new_user)
+#     db.session.commit()
+
+#     loaded_r = {"success":True, 
+#                 "token" : some_token, 
+#                 "email" : curr_email,
+#                 "username" : user_name,
+#                 "password" : hashed_pwd,
+#                 "profile_url" : profile_picture
+#                 }
+#     payload = json.dumps(loaded_r)
+#     response = make_response(payload)
+#     response.headers['Content-Type'] = 'text/json'
+#     response.headers['Access-Control-Allow-Origin'] = '*'
+#     return response
+
+#     #return flask.redirect(flask.url_for('protected'))
+
+
+# @app.route('/protected')
+# @flask_login.login_required
+# def protected():
+#     return 'Logged in as: ' + flask_login.current_user.id
+
+
+# @app.route('/logout', methods=['POST'])
+# def logout():
+
+
+#   usr_email = flask_login.current_user.id
+#   user_tuple=User.query.filter_by(email=usr_email).first()
+
+#   user_tuple.token = NULL
+#   db.session.commit()
+#   flask_login.logout_user()
+
+#   loaded_r = {"success":True}
+
+#   payload = json.dumps(loaded_r)
+#   response = make_response(payload)
+#   response.headers['Content-Type'] = 'text/json'
+#             #response.headers['Access-Control-Allow-Origin'] = '*'
+#   return response 
+
+# @login_manager.unauthorized_handler
+# def unauthorized_handler():
+#     return 'Unauthorized'
+
+
+
+
+@app.route('/helloworld')
 def index():
   return "Hello, World"
 
-'''
-@app.route('/blah')
-def index1():
-  return "Hello, blahWorld"
 
-'''
 
 '''
 @app.route('/databases')
@@ -224,8 +293,8 @@ def showDatabases():
   return response
 
 
-
 '''
+
 @app.route('/envelope', methods=['POST'])
 def postenvelope():
   loaded_r = request.get_json()
@@ -297,4 +366,3 @@ def getenvelope(env_id):
 
 	except Exception as e:
 		raise e
-
