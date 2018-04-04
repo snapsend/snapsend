@@ -8,8 +8,8 @@ class BaseConfig(object):
   DEBUG = True
   TESTING = False
   SECRET_KEY = 'snapsend'
-  SQLALCHEMY_DATABASE_URI = 'mysql://root:snapsend_rocks@35.231.24.52/snapsend'
-  # SQLALCHEMY_DATABASE_URI = 'mysql://root:snapsend_rocks@35.231.24.52/snapsend'
+  #SQLALCHEMY_DATABASE_URI = 'mysql://root:snapsend_rocks@35.231.24.52/snapsend'  SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root@/snapsend_rocks?unix_socket=/cloudql/flask-snapsend:us-east1:snapsend-mysql'
+# SQLALCHEMY_DATABASE_URI = 'mysql://root:snapsend_rocks@35.231.24.52/snapsend'
   SQLALCHEMY_TRACK_MODIFICATIONS = False
   SQLALCHEMY_ECHO = True
 
