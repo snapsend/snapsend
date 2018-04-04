@@ -10,6 +10,7 @@ import Input from 'material-ui/TextField';
 import { post } from '../network';
 import Close from 'material-ui-icons/Close';
 import IconButton from 'material-ui/IconButton';
+import ProfileImage from './ProfileImage';
 
 type Status = 'LOGGED OUT' | 'LOGGED IN' | 'LOGGING IN' | 'SIGNING UP';
 type Props = {};
@@ -20,6 +21,7 @@ type State = {
   waiting: boolean,
   status: Status,
   error: boolean,
+  profilePic: ?string,
 };
 
 const initialState: State = {
@@ -29,6 +31,7 @@ const initialState: State = {
   waiting: false,
   status: 'LOGGED OUT',
   error: false,
+  profilePic: null,
 };
 
 export default class Login extends React.Component<Props, State> {
@@ -58,9 +61,19 @@ export default class Login extends React.Component<Props, State> {
   handleCreate = async () => {
     this.setState({ waiting: true });
     // now post
-    const { email, password: password1, password2 } = this.state;
+    const {
+      email,
+      password: password1,
+      password2,
+      profilePic: profile_url,
+    } = this.state;
     if (password1 !== password2) return;
-    const res = await post('/signup', { email, password1, password2 });
+    const res = await post('/signup', {
+      email,
+      password1,
+      password2,
+      profile_url,
+    });
     console.log('RES', res);
     if (res.success) {
       return this.setState({ waiting: false, status: 'LOGGED IN' });
@@ -73,6 +86,8 @@ export default class Login extends React.Component<Props, State> {
     const value = e.currentTarget.value;
     this.setState({ [name]: value });
   };
+
+  handlePicChange = (url: string) => this.setState({ profilePic: url });
 
   handleClickCreate = () => this.setState({ status: 'SIGNING UP' });
 
@@ -153,6 +168,11 @@ export default class Login extends React.Component<Props, State> {
                 </Title>
               </Header>
               <Form>
+                <ProfileImage
+                  style={{ alignSelf: 'center', marginTop: 30 }}
+                  handlePicChange={this.handlePicChange}
+                  profilePic={this.state.profilePic}
+                />
                 <Input
                   name="email"
                   label="Email"
@@ -244,7 +264,7 @@ const ModalInner = styled(Card)`
   width: 90%;
   height: 90%;
   max-width: 700px;
-  max-height: 450px;
+  max-height: 550px;
   padding: 15px;
   display: flex;
   flex-direction: column;

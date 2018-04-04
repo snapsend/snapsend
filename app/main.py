@@ -20,9 +20,6 @@ from itsdangerous import URLSafeTimedSerializer
 
 from hashlib import md5
 
-# logging.getLogger('flask_cors').level = logging.DEBUG
-# CORS(app)
-
 # These environment variables are configured in app.yaml.
 #CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
 #CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')

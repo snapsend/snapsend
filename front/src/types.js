@@ -19,7 +19,7 @@ export type UnfinishedEnvelope = {
 };
 
 export type Envelope = UnfinishedEnvelope & {
-  envelopeId: number,
+  handle: string,
   images: Array<SuccessImage>,
   createdAt: number,
 };
