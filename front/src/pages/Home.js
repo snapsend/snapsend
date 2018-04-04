@@ -152,14 +152,16 @@ class Home extends Component<P, State> {
       },
     }));
 
-    // post to the networ
-    const res: { envelopeID: string } = await post('/envelope', {
+    // post to the network
+    const res: { handle: string } = await post('/envelope', {
       ...envelope,
       images: this.state.images,
     });
 
+    console.log('RESULT', res);
+
     // then set the reroute to the newly created envelope
-    this.setState({ redirect: res.envelopeID });
+    this.setState({ redirect: res.handle });
   };
 
   handleSizeChange: EventHandler = e => {

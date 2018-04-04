@@ -22,6 +22,7 @@ type State = {
   status: Status,
   error: boolean,
   profilePic: ?string,
+  username: string,
 };
 
 const initialState: State = {
@@ -32,6 +33,7 @@ const initialState: State = {
   status: 'LOGGED OUT',
   error: false,
   profilePic: null,
+  username: '',
 };
 
 export default class Login extends React.Component<Props, State> {
@@ -51,7 +53,6 @@ export default class Login extends React.Component<Props, State> {
     // now post
     const { email, password } = this.state;
     const res = await post('/login', { email, password });
-    console.log('RES', res);
     if (res.success) {
       return this.setState({ waiting: false, status: 'LOGGED IN' });
     }
@@ -66,6 +67,7 @@ export default class Login extends React.Component<Props, State> {
       password: password1,
       password2,
       profilePic: profile_url,
+      username,
     } = this.state;
     if (password1 !== password2) return;
     const res = await post('/signup', {
@@ -73,6 +75,7 @@ export default class Login extends React.Component<Props, State> {
       password1,
       password2,
       profile_url,
+      username,
     });
     console.log('RES', res);
     if (res.success) {
@@ -172,6 +175,14 @@ export default class Login extends React.Component<Props, State> {
                   style={{ alignSelf: 'center', marginTop: 30 }}
                   handlePicChange={this.handlePicChange}
                   profilePic={this.state.profilePic}
+                />
+                <Input
+                  name="username"
+                  label="Name"
+                  type="text"
+                  error={error}
+                  value={this.state.username}
+                  onChange={this.handleChange}
                 />
                 <Input
                   name="email"
