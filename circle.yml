@@ -36,7 +36,7 @@ dependencies:
 test:
   override:
     # run local unit tests
-      - nosetests app app/tests/*.py
+      # - nosetests app app/tests/*.py
       - cd front && npm run test
 
 deployment:
