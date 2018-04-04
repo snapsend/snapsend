@@ -16,13 +16,13 @@ class User(db.Model):
 	
  
 	#def __init__(self, uname, email, passw, generated_token, profile_url):
-	def __init__(self, uname, email, passw, profilepic):
+	def __init__(self, uname, email, passw, generated_token, profilepic):
 		#self.userID = userID
 	    self.uname = uname.title()
 	    self.email = email.title()
 	    self.password = passw.title()
-	    #self.token = generated_token.title()
-	    self.profilepic = profile_url.title()
+	    self.token = generated_token.title()
+	    self.profilepic = profilepic.title()
 	    #self.set_password(passw)
 	    
 
@@ -37,6 +37,7 @@ class User(db.Model):
     #Queries to see if the user email is taken. Same as seeing if 
     #user has an account or not.
     #	return cls.query.filter_by(email = email).first() is not None
+
 
 class Envelope(db.Model):
 	__table_args__ = {'extend_existing': True}

@@ -214,6 +214,8 @@ def logout():
   loaded_r = json.loads(r)
   tkn = loaded_r['token']
   loaded_usr = load_token(tkn)
+  print(loaded_usr)
+  print("******************")
 
   loaded_r = {}
 
