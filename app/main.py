@@ -1,7 +1,6 @@
 
 
-#from google.appengine.ext import vendor
-#vendor.add('lib')
+
 from flask import Flask, request, jsonify, make_response
 #adding another comment
 #adding comment
@@ -17,7 +16,7 @@ import os
 import logging
 # from app import db
 from app import app,db
-from model import User, Envelope, Image
+from model import User, Envelope, Image,History
 from sqlalchemy import func
 import md5
 from itsdangerous import URLSafeTimedSerializer
@@ -373,21 +372,23 @@ def profile(userID):
   for env in result2:
     envs = {"handle":env.handle,"sender":env.sender,"recipient":env.recipient}
     result3 = db.session.query(Image).filter(Image.inenvID==env.envelopeID).all()
-    imgs = {}
+    img_out = {}
     img_arr = []
     for img in result3:
       img_out = {"imageId": img.imageID, "url": img.imagelink, "filename": img.filename}
       img_arr.append(img_out)
       img_out = {}
     envs["images"] = img_arr
-    '''
+    
     result4 = db.session.query(History).filter(History.envelopeID==env.envelopeID).all()
+    hist_out = {}
+    hist_arr = []
     for hist in result4:
       hist_out={"act_type":hist.act_type,"dnum":hist.dnum,"actiondate":hist.actiondate}
       hist_arr.append(hist_out)
       hist_out={}
     envs["history"] = hist_arr
-    '''
+    
     envelopes.append(envs)
     envs = {}
 
