@@ -23,7 +23,7 @@ import md5
 from itsdangerous import URLSafeTimedSerializer
 
 
-
+from hashlib import md5
 
 logging.getLogger('flask_cors').level = logging.DEBUG
 CORS(app)
@@ -40,17 +40,17 @@ CORS(app)
 # CLOUDSQL_USER = 'root'
 # CLOUDSQL_PASSWORD = 'snapsend'
 
-#app.secret_key = 'snapsend_rocks'
-#login_serializer = URLSafeTimedSerializer(app.secret_key)
+# app.secret_key = 'snapsend_rocks'
+# login_serializer = URLSafeTimedSerializer(app.secret_key)
 
-#login_manager = flask_login.LoginManager()
-#login_manager.init_app(app)
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
 
 #Our mock database.
 
-#users = {'maitri@gmail.com': {'password': 'lol'}}
+users = {'maitri@gmail.com': {'password': 'lol'}}
 
-#class User(flask_login.UserMixin):
+# class User(flask_login.UserMixin):
 #   # def __init__(self, userid, password):
 #   #   self.id = userid
 #   #   self.password = password
@@ -76,11 +76,14 @@ CORS(app)
 #     return None
 
 
+def hash_envid(envid):
+	target = md5(str(envid).encode('utf-8')).hexdigest()[0:5].upper()
+	return target
 
-# def hash_pass(password):
-#     #Return the md5 hash of the password+salt
-#     salted_password = password + app.secret_key
-#     return md5.new(salted_password).hexdigest()
+def hash_pass(password):
+    #Return the md5 hash of the password+salt
+    salted_password = password + app.secret_key
+    return md5.new(salted_password).hexdigest()
 
 
 # @login_manager.token_loader
@@ -138,133 +141,132 @@ CORS(app)
 #   user.is_authenticated = request.form['password'] == users[email]['password']
 #   return user
 
-# @app.route('/login', methods=['POST'])
-# def login():
-#   if request.method == 'POST':
-#     loaded_r = request.get_json()
-#     r = json.dumps(loaded_r)
-#     loaded_r = json.loads(r)
+@app.route('/login', methods=['POST'])
+def login():
+  if request.method == 'POST':
+    loaded_r = request.get_json()
+    r = json.dumps(loaded_r)
+    loaded_r = json.loads(r)
 
-#     email = loaded_r['email']
-#     pwd = loaded_r['password']
+    email = loaded_r['email']
+    pwd = loaded_r['password']
 
-#     new_pwd = hash_pass(pwd)
+    new_pwd = hash_pass(pwd)
 
-#     user_tuple=User.query.filter_by(email=email).first()
+    user_tuple=User.query.filter_by(email=email).first()
 
-#     if new_pwd == user_tuple.password:
-#       user = User()
-#       user.id = email
-#       flask_login.login_user(user)
-#       some_token = user.get_auth_token()
-#       user_tuple.token = some_token
-#       db.session.commit()
+    if new_pwd == user_tuple.password:
+      user = User()
+      user.id = email
+      flask_login.login_user(user)
+      some_token = user.get_auth_token()
+      user_tuple.token = some_token
+      db.session.commit()
       
-#       loaded_r = {"success":True, 
-#                   "email" : email,
-#                   "password" : pwd,
-#                   "token" : some_token
-#                   }
+      loaded_r = {"success":True, 
+                  "email" : email,
+                  "password" : pwd,
+                  "token" : some_token
+                  }
 
-#       payload = json.dumps(loaded_r)
-#       response = make_response(payload)
-#       response.headers['Content-Type'] = 'text/json'
-#       response.headers['Access-Control-Allow-Origin'] = '*'
-#       return response
-#         #return flask.redirect(flask.url_for('protected'))
+      payload = json.dumps(loaded_r)
+      response = make_response(payload)
+      response.headers['Content-Type'] = 'text/json'
+      response.headers['Access-Control-Allow-Origin'] = '*'
+      return response
+        #return flask.redirect(flask.url_for('protected'))
 
-#     loaded_r = {"success":False}
+    loaded_r = {"success":False}
 
-#     payload = json.dumps(loaded_r)
-#     response = make_response(payload)
-#     response.headers['Content-Type'] = 'text/json'
-#         #response.headers['Access-Control-Allow-Origin'] = '*'
-#     return response
-
-
-# @app.route('/signup', methods=['POST'])
-# def signup(request):
-#   print("hit signup")
-#   if request.method == 'POST':
-#     loaded_r = request.get_json()
-#     r = json.dumps(loaded_r)
-#     loaded_r = json.loads(r)
-
-#     curr_email = loaded_r['email']
-#     pwd1 = loaded_r['password1']
-#     pwd2 = loaded_r['password2']
-#     user_name = loaded_r['username']
-#     profile_picture = loaded_r['profile_url'] 
-
-#     if(pwd1 == pwd2):
-#       users[curr_email] = {'password': pwd1 }
-#       print(users)
-#     else:
-#       loaded_r = {"success":False}
-#       payload = json.dumps(loaded_r)
-#       response = make_response(payload)
-#       response.headers['Content-Type'] = 'text/json'
-#       response.headers['Access-Control-Allow-Origin'] = '*'
-#       return response
-#       #return flask.redirect(flask.url_for('signup'))
-
-#     user = User()
-#     user.id = curr_email
-#     user.password = pwd1
-#     flask_login.login_user(user)
-#     some_token = user.get_auth_token()
-#     # print(some_token)
-
-#     hashed_pwd = hash_pass(pwd1)
-
-#     new_user = User(user_name, curr_email, hashed_pwd, some_token, profile_picture)
-#     db.session.add(new_user)
-#     db.session.commit()
-
-#     loaded_r = {"success":True, 
-#                 "token" : some_token, 
-#                 "email" : curr_email,
-#                 "username" : user_name,
-#                 "password" : hashed_pwd,
-#                 "profile_url" : profile_picture
-#                 }
-#     payload = json.dumps(loaded_r)
-#     response = make_response(payload)
-#     response.headers['Content-Type'] = 'text/json'
-#     response.headers['Access-Control-Allow-Origin'] = '*'
-#     return response
-
-#     #return flask.redirect(flask.url_for('protected'))
+    payload = json.dumps(loaded_r)
+    response = make_response(payload)
+    response.headers['Content-Type'] = 'text/json'
+        #response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 
-# @app.route('/protected')
-# @flask_login.login_required
-# def protected():
-#     return 'Logged in as: ' + flask_login.current_user.id
+@app.route('/signup', methods=['POST'])
+def signup(request):
+  print("hit signup")
+  if request.method == 'POST':
+    loaded_r = request.get_json()
+    r = json.dumps(loaded_r)
+    loaded_r = json.loads(r)
+
+    curr_email = loaded_r['email']
+    pwd1 = loaded_r['password1']
+    pwd2 = loaded_r['password2']
+    user_name = loaded_r['username']
+    profile_picture = loaded_r['profile_url'] 
+
+    if(pwd1 == pwd2):
+      users[curr_email] = {'password': pwd1 }
+      print(users)
+    else:
+      loaded_r = {"success":False}
+      payload = json.dumps(loaded_r)
+      response = make_response(payload)
+      response.headers['Content-Type'] = 'text/json'
+      response.headers['Access-Control-Allow-Origin'] = '*'
+      return response
+      #return flask.redirect(flask.url_for('signup'))
+
+    user = User()
+    user.id = curr_email
+    user.password = pwd1
+    flask_login.login_user(user)
+    some_token = user.get_auth_token()
+    # print(some_token)
+
+    hashed_pwd = hash_pass(pwd1)
+
+    new_user = User(user_name, curr_email, hashed_pwd, some_token, profile_picture)
+    db.session.add(new_user)
+    db.session.commit()
+
+    loaded_r = {"success":True, 
+                "token" : some_token, 
+                "email" : curr_email,
+                "username" : user_name,
+                "password" : hashed_pwd,
+                "profile_url" : profile_picture
+                }
+    payload = json.dumps(loaded_r)
+    response = make_response(payload)
+    response.headers['Content-Type'] = 'text/json'
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
+
+    #return flask.redirect(flask.url_for('protected'))
 
 
-# @app.route('/logout', methods=['POST'])
-# def logout():
+@app.route('/protected')
+@flask_login.login_required
+def protected():
+    return 'Logged in as: ' + flask_login.current_user.id
 
 
-#   usr_email = flask_login.current_user.id
-#   user_tuple=User.query.filter_by(email=usr_email).first()
+@app.route('/logout', methods=['POST'])
+def logout():
 
-#   user_tuple.token = NULL
-#   db.session.commit()
-#   flask_login.logout_user()
+  usr_email = flask_login.current_user.id
+  user_tuple=User.query.filter_by(email=usr_email).first()
 
-#   loaded_r = {"success":True}
+  user_tuple.token = NULL
+  db.session.commit()
+  flask_login.logout_user()
 
-#   payload = json.dumps(loaded_r)
-#   response = make_response(payload)
-#   response.headers['Content-Type'] = 'text/json'
-#             #response.headers['Access-Control-Allow-Origin'] = '*'
-#   return response 
+  loaded_r = {"success":True}
 
-# @login_manager.unauthorized_handler
-# def unauthorized_handler():
-#     return 'Unauthorized'
+  payload = json.dumps(loaded_r)
+  response = make_response(payload)
+  response.headers['Content-Type'] = 'text/json'
+            #response.headers['Access-Control-Allow-Origin'] = '*'
+  return response 
+
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+    return 'Unauthorized'
 
 
 
@@ -275,26 +277,6 @@ def index():
 
 
 
-'''
-@app.route('/databases')
-def showDatabases():
-  """Simple request handler that shows all of the MySQL SCHEMAS/DATABASES."""
-  #db = connect_to_cloudsql()
-
-  cursor = db.cursor()
-  cursor.execute('SHOW SCHEMAS')
-  res = ""
-  for r in cursor.fetchall():
-    res += ('{}\n'.format(r[0]))
-
-  response = make_response(res)
-  response.headers['Content-Type'] = 'text/json'
-
-  return response
-
-
-'''
-
 @app.route('/envelope', methods=['POST'])
 def postenvelope():
   loaded_r = request.get_json()
@@ -304,10 +286,14 @@ def postenvelope():
   rec_name = loaded_r['recipientName']
   sender_name = loaded_r['senderName']
   all_images = loaded_r['images']
-  newenvelope = Envelope(env_name,sender_name,rec_name)
+  
+  
+  j= db.session.query(func.max(Envelope.envelopeID)).scalar()
+
+  h = hash_envid(j)
+  newenvelope = Envelope(env_name,sender_name,rec_name,h)
   db.session.add(newenvelope)
   db.session.commit()
-  j= db.session.query(func.max(Envelope.envelopeID)).scalar()
   try:
     for i in range(len(all_images)):
       curr_dict = all_images[i]
@@ -319,7 +305,9 @@ def postenvelope():
 
   except Exception as e:
     raise e
-  loaded_r['envelopeID'] = j
+  #loaded_r['envelopeID'] = j
+  
+  loaded_r['handle']=h
   payload = json.dumps(loaded_r)
   response = make_response(payload)
   response.headers['Content-Type'] = 'text/json'
@@ -327,19 +315,24 @@ def postenvelope():
   return response
 
 
-@app.route('/envelope/<int:env_id>', methods=['GET'])
-def getenvelope(env_id):
-	loaded_r = {"envelopeID": env_id}
+@app.route('/envelope/<handle>', methods=['GET'])
+def getenvelope(handle):
+	loaded_r = {"handle": handle}
 	r = json.dumps(loaded_r)
 	loaded_r = json.loads(r)
-	env_id = loaded_r['envelopeID']
-	result = db.session.query(Envelope).filter(Envelope.envelopeID==env_id).first()
-	imgres = db.session.query(Image).filter(Image.inenvID==env_id).all()
+	handle = loaded_r['handle']
+	print handle
+	#env_id = loaded_r['envelopeID']
+	result = db.session.query(Envelope).filter(Envelope.handle==handle).first()
+	print result.envelopeID
+	envid = result.envelopeID
+	print envid
+	imgres = db.session.query(Image).filter(Image.inenvID==envid).all()
 	payload = ""
 	env_out = {}
 	try:
 		env_out = {
-		    "envelopeId": env_id,
+		    "handle": handle,
 		    "envelopeName": result.ename,
 		    "recipientName": result.recipient,
 		    "senderName": result.sender,

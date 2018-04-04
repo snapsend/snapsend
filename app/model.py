@@ -9,7 +9,7 @@ class User(db.Model):
 	email = db.Column(db.String(255),unique=True,nullable=True)
 	password = db.Column(db.String(16),nullable=True)
 	token = db.Column(db.String(255),nullable=True)
-	uname = db.Column(db.String(255))
+	uname = db.Column(db.String(255),nullable=True)
 	profilepic = db.Column(db.String(2550),nullable=True)
 	# picture = db.Column()
 	
@@ -45,15 +45,18 @@ class Envelope(db.Model):
 	sender = db.Column(db.String(255),nullable=True)
 	recipient = db.Column(db.String(255),nullable=True)
 	ename = db.Column(db.String(255),default = None, nullable=True)
+	handle = db.Column(db.String(255),nullable=True)
 	createddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 	updateddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
-	def __init__(self,ename,sender,recipient):
+	def __init__(self,ename,sender,recipient,handle):
 		#self.envelopeID = envelopeID
 		#self.eowner = eowner.title()
 		self.sender = sender.title()
 		self.recipient = recipient.title()
 		self.ename = ename.title()
+		self.handle = handle.title()
+
 
 
 
@@ -73,3 +76,23 @@ class Image(db.Model):
 		self.inenvID = inenvID
 		self.imagelink = imagelink.title()
 		self.filename = filename.title()
+
+
+class History(db.Model):
+	__table_args__ = {'extend_existing': True}
+	__tablename__ = 'History'
+	historyID = db.Column(db.Integer,primary_key=True, autoincrement=True)
+	envelopeID = db.Column(db.Integer,nullable=True)
+	act_type = db.Column(db.String(1),nullable=True)
+	userID = db.Column(db.Integer,nullable=True)
+	dnum = db.Column(db.Integer,nullable=True)
+	actiondate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+
+	def __init__(self,envelopeID,act_type,userID,dnum):
+		#self.imageID = imageID
+		self.envelopeID = envelopeID
+		self.act_type = act_type
+		self.userID = userID
+		self.dnum = dnum
+
+	

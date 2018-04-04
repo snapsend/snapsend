@@ -14,11 +14,8 @@ class BaseTestCase(TestCase):
         return app
     
     def setUp(self):
-
-
         #app = main.app.test_client()
         db.create_all()
-        
         db.session.add(User("Testname","test@tester.com", "test"))
         db.session.add(User("Adam","admin@admin.com", "admin"))
         db.session.add(Envelope("Envelope1","sender1","recipient1"))   # Shake Shack
@@ -35,16 +32,4 @@ class BaseTestCase(TestCase):
     
     
 
-    
-   
 
-    
-       
-    
-
-    
-'''    
-
-if __name__ == '__main__':
-    unittest.main()
-    '''
