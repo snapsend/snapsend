@@ -1,10 +1,8 @@
-from google.appengine.ext import vendor
-vendor.add('lib')
 from flask import Flask, request, jsonify, make_response
 #adding another comment
 #adding comment
 #needed for front and backend to work together
-from flask_cors import CORS
+# from flask_cors import CORS
 import flask
 import flask_login
 import os
@@ -21,9 +19,6 @@ import md5
 from itsdangerous import URLSafeTimedSerializer
 
 from hashlib import md5
-
-# logging.getLogger('flask_cors').level = logging.DEBUG
-CORS(app)
 
 # These environment variables are configured in app.yaml.
 #CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
