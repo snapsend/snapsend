@@ -1,6 +1,7 @@
 from app import db
 #from werkzeug import generate_password_hash, check_password_hash
 from datetime import datetime
+from hashlib import md5
 
 class User(db.Model):
 	__table_args__ = {'extend_existing': True}
@@ -15,13 +16,13 @@ class User(db.Model):
 	
  
 	#def __init__(self, uname, email, passw, generated_token, profile_url):
-	def __init__(self, uname, email, passw):
+	def __init__(self, uname, email, passw, profilepic):
 		#self.userID = userID
 	    self.uname = uname.title()
 	    self.email = email.title()
 	    self.password = passw.title()
 	    #self.token = generated_token.title()
-	    #self.profilepic = profile_url.title()
+	    self.profilepic = profile_url.title()
 	    #self.set_password(passw)
 	    
 
@@ -41,7 +42,7 @@ class Envelope(db.Model):
 	__table_args__ = {'extend_existing': True}
 	__tablename__ = 'Envelope'
 	envelopeID = db.Column(db.Integer,primary_key=True, autoincrement=True,  nullable=False)
-	eowner = db.Column(db.Integer,nullable=True)
+	eowner = db.Column(db.Integer,db.ForeignKey('User.userID'),nullable=False)
 	sender = db.Column(db.String(255),nullable=True)
 	recipient = db.Column(db.String(255),nullable=True)
 	ename = db.Column(db.String(255),default = None, nullable=True)
@@ -56,16 +57,19 @@ class Envelope(db.Model):
 		self.recipient = recipient.title()
 		self.ename = ename.title()
 		self.handle = handle.title()
+		#self.envelopeID = envelopeID
+	# 	self.handle = self.set_handle(Envelope.envelopeID)
+		
 
-
-
-
+	# def set_handle(self,envelopeID):
+	# 	self.handle = md5(str(Envelope.envelopeID).encode('utf-8')).hexdigest()[0:10].upper()
+		
 
 class Image(db.Model):
 	__table_args__ = {'extend_existing': True}
 	__tablename__ = 'Image'
 	imageID = db.Column(db.Integer,primary_key=True, autoincrement=True)
-	inenvID = db.Column(db.Integer,nullable=True)
+	inenvID = db.Column(db.Integer,db.ForeignKey('Envelope.envelopeID'))
 	imagelink = db.Column(db.String(255),nullable=True)
 	filename = db.Column(db.String(255),nullable=True)
 	updateddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
@@ -82,9 +86,9 @@ class History(db.Model):
 	__table_args__ = {'extend_existing': True}
 	__tablename__ = 'History'
 	historyID = db.Column(db.Integer,primary_key=True, autoincrement=True)
-	envelopeID = db.Column(db.Integer,nullable=True)
-	act_type = db.Column(db.String(1),nullable=True)
-	userID = db.Column(db.Integer,nullable=True)
+	envelopeID = db.Column(db.Integer,db.ForeignKey('Envelope.envelopeID'))
+	act_type = db.Column(db.String(1))
+	userID = db.Column(db.Integer,db.ForeignKey('User.userID'))
 	dnum = db.Column(db.Integer,nullable=True)
 	actiondate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
