@@ -21,7 +21,7 @@ type PendingImage = Promise<SuccessImage>;
 type P = {
   match: {
     params?: {
-      envelopeId?: string,
+      handle?: string,
     },
   },
 };
@@ -100,10 +100,8 @@ class Home extends Component<P, State> {
   async componentDidMount() {
     // if the component just mounted, check if there is an envelopeId and fetch it.
     const { match } = this.props;
-    if (match && match.params && match.params.envelopeId) {
-      const envelope: Envelope = await get(
-        `/envelope/${match.params.envelopeId}`
-      );
+    if (match && match.params && match.params.handle) {
+      const envelope: Envelope = await get(`/envelope/${match.params.handle}`);
       const images = envelope.images;
       this.setState(state => ({
         ...state,
@@ -190,14 +188,10 @@ class Home extends Component<P, State> {
     const { match } = this.props;
     const { images, pending, envelope, redirect, size, format } = this.state;
     const yetToDrop = pending === 0 && images.length === 0;
-    const isViewing: boolean = !!(
-      match &&
-      match.params &&
-      match.params.envelopeId
-    );
+    const isViewing: boolean = !!(match && match.params && match.params.handle);
 
     const downloadUrl = generateDownloadUrl(images, envelope, format, size);
-    const isAtEnvelope = !!(match && match.params && match.params.envelopeId);
+    const isAtEnvelope = !!(match && match.params && match.params.handle);
     return (
       <Dropzone onDrop={this.handleDrop}>
         <Flex>

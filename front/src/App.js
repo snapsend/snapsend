@@ -13,7 +13,7 @@ class App extends Component<P> {
         <BrowserRouter>
           <Fragment>
             <Route exact path="/" component={Home} />
-            <Route path="/envelope/:envelopeId" component={Home} />
+            <Route path="/envelope/:handle" component={Home} />
           </Fragment>
         </BrowserRouter>
       </ErrorBoundary>
