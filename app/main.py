@@ -1,5 +1,5 @@
-# from google.appengine.ext import vendor
-# vendor.add('lib')
+from google.appengine.ext import vendor
+vendor.add('lib')
 from flask import Flask, request, jsonify, make_response
 #needed for front and backend to work together
 from flask_cors import CORS
