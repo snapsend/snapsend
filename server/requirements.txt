@@ -10,7 +10,7 @@ Flask==0.12.2
 MySQL-python
 flask-cors
 flask-login
-md5
+#md5
 hashlib
 itsdangerous
 Flask-MySQL==1.4.0
