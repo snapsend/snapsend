@@ -11,7 +11,7 @@ MySQL-python
 flask-cors
 flask-login
 #md5
-hashlib
+#hashlib
 itsdangerous
 Flask-MySQL==1.4.0
 Flask-SQLAlchemy==2.3.1
