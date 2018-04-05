@@ -13,11 +13,11 @@ import os
 import logging
 # from app import db
 from app import app,db
-from model import User, Envelope, Image
+from model import User, Envelope, Image, History
 from sqlalchemy import func
-import md5
+from hashlib import md5
 from itsdangerous import URLSafeTimedSerializer
-import hashlib
+
 
 logging.getLogger('flask_cors').level = logging.DEBUG
 CORS(app)
@@ -63,7 +63,7 @@ def hash_envid(envid):
 def hash_pass(password):
     #Return the md5 hash of the password+salt
     salted_password = password + app.secret_key
-    return hashlib.md5(salted_password).hexdigest()[0:100]
+    return md5(salted_password).hexdigest()[0:50]
 
 
 @login_manager.request_loader
@@ -95,7 +95,7 @@ def load_token(token):
     # print()
  
     #Check Password and return user or None
-    if user and data[1].lower() == user.password.lower():
+    if user and data[1].lower().strip() == user.password.lower().strip():
         return user
     return None
 
@@ -144,7 +144,7 @@ def login():
     user_tuple=User.query.filter_by(email=email).first()
     curr_pwd = user_tuple.password
 
-    if new_pwd.lower() == curr_pwd.lower():
+    if new_pwd.lower().strip() == curr_pwd.lower().strip():
       user = User_Class(email,new_pwd)
       flask_login.login_user(user)
       some_token = user.get_auth_token()
@@ -250,22 +250,26 @@ def index():
 @app.route('/envelope', methods=['POST'])
 def postenvelope():
   loaded_r = request.get_json()
-  #print loaded_r.ename
   r = json.dumps(loaded_r)
   loaded_r = json.loads(r)
-  #print loaded_r.ename
   env_name = loaded_r['envelopeName']
   rec_name = loaded_r['recipientName']
   sender_name = loaded_r['senderName']
   all_images = loaded_r['images']
+  token = loaded_r['token']
 
   j= db.session.query(func.max(Envelope.envelopeID)).scalar()
   h = hash_envid(j+1)
-  newenvelope = Envelope(env_name,sender_name,rec_name,h)
-  db.session.add(newenvelope)
-  db.session.commit()
-  #
-
+  if token == "":
+    eow = None
+    newenvelope = Envelope(env_name,sender_name,eow,rec_name,h)
+    db.session.add(newenvelope)
+    db.session.commit()
+  else:
+    result = db.session.query(User).filter(User.token==token).first()
+    newenvelope = Envelope(env_name,sender_name,result.userID,rec_name,h)
+    db.session.add(newenvelope)
+    db.session.commit()
   
   
   try:
@@ -285,7 +289,7 @@ def postenvelope():
   #result = db.session.query(Envelope).filter(Envelope.envelopeID==j).first()
   loaded_r['handle'] = h
   payload = json.dumps(loaded_r)
-  response = make_response(payload)
+  response = return_success(payload,True)
   response.headers['Content-Type'] = 'text/json'
   response.headers['Access-Control-Allow-Origin'] = '*'
   return response
@@ -333,62 +337,65 @@ def getenvelope(handle):
   	raise e
 
 #@flask_login.login_required
-@app.route('/profile/<userID>',methods=['GET'])
-def profile(userID):
-  # loaded_r = {"userID": userID}
-  # r = json.dumps(loaded_r)
-  # loaded_r = json.loads(r)
-  # userID = loaded_r['userID']
+@app.route('/profile/<token>',methods=['GET'])
+def profile(token):
   pay = ""
   payload ={}
-  result1 = db.session.query(User).filter(User.userID==userID).first()
+  result1 = db.session.query(User).filter(User.token==token).first()
   payload = {"uname":result1.uname,"profilepic":result1.profilepic,"email":result1.email}
   
-  result2 = db.session.query(Envelope).filter(Envelope.eowner==userID).all()
+  result2 = db.session.query(Envelope).filter(Envelope.eowner==result1.userID).all()
   envelopes = []
   envs = {}
 
   for env in result2:
-    envs = {"handle":env.handle,"sender":env.sender,"recipient":env.recipient}
+    envs = {"handle":env.handle,"sender":env.sender,"recipient":env.recipient, "ename":env.ename}
     result3 = db.session.query(Image).filter(Image.inenvID==env.envelopeID).all()
-    imgs = {}
+    img_out = {}
     img_arr = []
     for img in result3:
       img_out = {"imageId": img.imageID, "url": img.imagelink, "filename": img.filename}
       img_arr.append(img_out)
       img_out = {}
     envs["images"] = img_arr
-    '''
+    
     result4 = db.session.query(History).filter(History.envelopeID==env.envelopeID).all()
+    hist_out = {}
+    hist_arr =[]
     for hist in result4:
+
       hist_out={"act_type":hist.act_type,"dnum":hist.dnum,"actiondate":hist.actiondate}
       hist_arr.append(hist_out)
       hist_out={}
     envs["history"] = hist_arr
-    '''
+    
     envelopes.append(envs)
     envs = {}
 
   payload["envelope"]=envelopes
-  return jsonify(payload)
+  
+  return return_success(payload,True)
+
 
 @app.route('/history',methods=['POST'])
 def history():
   loaded_r = request.get_json()
   r = json.dumps(loaded_r)
   loaded_r = json.loads(r)
-  userID = loaded_r['userID']
+  token = loaded_r['token']
   handle = loaded_r['handle']
   action = loaded_r['action']
   dnum = loaded_r['dnum']
 
+  result1 = db.session.query(User).filter(User.token==token).first()
+
   result = db.session.query(Envelope).filter(Envelope.handle==handle).first()
   envid = result.envelopeID
-  history = History(envid,action,userID,dnum)
+  history = History(envid,action,result1.userID,dnum)
   db.session.add(history)
   db.session.commit()
   
-  response = return_success(True)
+  response = return_success({},True)
   response.headers['Content-Type'] = 'text/json'
   response.headers['Access-Control-Allow-Origin'] = '*'
   return response
