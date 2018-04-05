@@ -6,13 +6,13 @@ threadsafe: yes
 # Handlers define how to route requests to your application.
 handlers:
 - url: .*  # This regex directs all routes to main.app
-  script: app.__init__.app
+  script: app.main.app
 
 # [START env_variables]
 env_variables:
     CLOUDSQL_CONNECTION_NAME: flask-snapsend:us-east1:snapsend-mysql
     CLOUDSQL_USER: root
-    CLOUDSQL_PASSWORD: snapsend
+    CLOUDSQL_PASSWORD: snapsend_rocks
 # [END env_variables]
 
 libraries:
