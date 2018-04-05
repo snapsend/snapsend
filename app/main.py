@@ -204,7 +204,7 @@ def signup():
 @app.route('/protected')
 @flask_login.login_required
 def protected():
-    return 'Logged in as: ' + flask_login.current_user.id
+  return 'Logged in as: ' + flask_login.current_user.id
 
 
 @app.route('/logout', methods=['POST'])
@@ -261,16 +261,17 @@ def postenvelope():
   j= db.session.query(func.max(Envelope.envelopeID)).scalar()
   h = hash_envid(j+1)
   if token == "":
-    eow = None
-    newenvelope = Envelope(env_name,sender_name,eow,rec_name,h)
+    newenvelope = Envelope(env_name,sender_name,rec_name,h)
+    newenvelope.eowner = None
     db.session.add(newenvelope)
     db.session.commit()
+
   else:
     result = db.session.query(User).filter(User.token==token).first()
-    newenvelope = Envelope(env_name,sender_name,result.userID,rec_name,h)
+    newenvelope = Envelope(env_name,sender_name,rec_name,h)
+    newenvelope.eowner = result.userID
     db.session.add(newenvelope)
     db.session.commit()
-  
   
   try:
     for i in range(len(all_images)):
@@ -289,7 +290,7 @@ def postenvelope():
   #result = db.session.query(Envelope).filter(Envelope.envelopeID==j).first()
   loaded_r['handle'] = h
   payload = json.dumps(loaded_r)
-  response = return_success(payload,True)
+  response = make_response(payload)
   response.headers['Content-Type'] = 'text/json'
   response.headers['Access-Control-Allow-Origin'] = '*'
   return response

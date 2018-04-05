@@ -51,12 +51,12 @@ class Envelope(db.Model):
 	createddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 	updateddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
-	def __init__(self,ename,sender,eowner,recipient,handle):
+	def __init__(self,ename,sender,recipient,handle):
 		#self.envelopeID = envelopeID
-		if eowner is None:
-			self.eowner = None
-		else:
-			self.eowner = eowner.title()
+		# if eowner is None:
+		# 	self.eowner = None
+		# else:
+		# 	self.eowner = eowner.title()
 		self.sender = sender.title()
 		self.recipient = recipient.title()
 		self.ename = ename.title()
