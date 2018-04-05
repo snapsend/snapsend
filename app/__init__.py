@@ -1,6 +1,6 @@
 from google.appengine.ext import vendor
 vendor.add('lib')
-from flask import Flask, render_template
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 # from model import User, Image, Envelope
