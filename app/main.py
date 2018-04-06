@@ -1,5 +1,5 @@
-# from google.appengine.ext import vendor
-# vendor.add('lib')
+#from google.appengine.ext import vendor
+#vendor.add('lib')
 from flask import Flask, request, jsonify, make_response
 #needed for front and backend to work together
 from flask_cors import CORS
@@ -19,8 +19,8 @@ from hashlib import md5
 from itsdangerous import URLSafeTimedSerializer
 
 
-# logging.getLogger('flask_cors').level = logging.DEBUG
-# CORS(app)
+logging.getLogger('flask_cors').level = logging.DEBUG
+CORS(app)
 
 app.secret_key = 'snapsend_rocks'
 login_serializer = URLSafeTimedSerializer(app.secret_key)
@@ -63,7 +63,7 @@ def hash_envid(envid):
 def hash_pass(password):
     #Return the md5 hash of the password+salt
     salted_password = password + app.secret_key
-    return md5(salted_password).hexdigest()[0:50].lower()
+    return md5(salted_password).hexdigest()[0:50]
 
 
 @login_manager.request_loader
