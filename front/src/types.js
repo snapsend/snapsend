@@ -51,6 +51,6 @@ export type CreateUser = (
 export type User = {
   uname: ?string,
   email: string,
-  envelope: Array<Env>,
+  envelope: Array<Envelope>,
   profilepic: ?string,
 };

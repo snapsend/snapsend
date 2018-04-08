@@ -9,4 +9,4 @@ export const setToken = (t: string, cookie: any) => {
   cookie.set('token', t, { path: '/', expires: oneyear });
 };
 
-export const getToken = cookie => cookie.get('token');
+export const getToken = (cookie: any) => cookie.get('token');

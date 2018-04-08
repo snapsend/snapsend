@@ -111,7 +111,6 @@ class LoginComponent extends React.Component<Props, State> {
   };
 
   render() {
-    console.log('PROPS', this.props, this.state);
     const { status, error, password, password2 } = this.state;
     const {
       createUser,
