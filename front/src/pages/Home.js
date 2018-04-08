@@ -21,6 +21,7 @@ import { post, get } from '../network';
 import Modal from '../components/Modal';
 import T from '../components/T';
 import Button from '../components/Button';
+import { withLoginStatus } from '../components/LoginStatus';
 
 type PendingImage = Promise<SuccessImage>;
 type P = {
@@ -109,7 +110,6 @@ const generateDownloadUrl = (
 
     resize = `resize=${w}${h}`;
   }
-  console.log('IMAGES', imagesString);
   const result = `${baseUrl}${resize}${formatString}zip/${imagesString}`;
   return result;
 };
@@ -186,16 +186,14 @@ class Home extends Component<P, State> {
         loading: true,
       },
     }));
-
     // post to the network
     const res: { handle: string } = await post('/envelope', {
       ...envelope,
       images: this.state.images,
+      token: this.props.token || null,
     });
 
-    console.log('RESULT', res);
-
-    // then set the reroute to the newly created envelope
+    // then set the reroute to the newly creaed envelope
     this.setState({ redirect: res.handle });
   };
 
@@ -337,7 +335,7 @@ class Home extends Component<P, State> {
   }
 }
 
-export default Home;
+export default withLoginStatus(Home);
 
 const Images = styled.div`
   display: grid;
