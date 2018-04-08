@@ -173,14 +173,15 @@ def signup():
     pwd2 = loaded_r['password2']
     user_name = loaded_r['username']
     profile_picture = loaded_r['profilepic'] 
+    print profile_picture
 
     try:
       hashed_pwd = hash_pass(pwd1)
       user_obj = User_Class(curr_email,hashed_pwd)
       flask_login.login_user(user_obj)
       some_token = user_obj.get_auth_token()
-      
       new_user = User(user_name, curr_email, hashed_pwd, some_token, profile_picture)
+    
       db.session.add(new_user)
       db.session.commit()
 
@@ -250,8 +251,8 @@ def index():
 @app.route('/envelope', methods=['POST'])
 def postenvelope():
   loaded_r = request.get_json()
-  r = json.dumps(loaded_r)
-  loaded_r = json.loads(r)
+  # r = json.dumps(loaded_r)
+  # loaded_r = json.loads(r)
   env_name = loaded_r['envelopeName']
   rec_name = loaded_r['recipientName']
   sender_name = loaded_r['senderName']
@@ -289,11 +290,8 @@ def postenvelope():
   #j= db.session.query(func.max(Envelope.envelopeID)).scalar()
   #result = db.session.query(Envelope).filter(Envelope.envelopeID==j).first()
   loaded_r['handle'] = h
-  payload = json.dumps(loaded_r)
-  response = make_response(payload)
-  response.headers['Content-Type'] = 'text/json'
-  response.headers['Access-Control-Allow-Origin'] = '*'
-  return response
+  return return_success(loaded_r,True)
+  
 
 
 @app.route('/envelope/<handle>', methods=['GET'])
@@ -312,8 +310,8 @@ def getenvelope(handle):
   	    "handle": handle,
   	    "envelopeName": result.ename,
   	    "recipientName": result.recipient,
-  	    "senderName": result.sender,
-  	    "created date": result.createddate
+  	    "senderName": result.sender
+  	    
   	}
 
   	img_arr = []
@@ -327,12 +325,8 @@ def getenvelope(handle):
   	payload = env_out
   	payload["images"] = img_arr
 
-  	return jsonify(payload)
-  	#response = make_response(payload)
-  	#response.headers['Content-Type'] = 'text/json'
-  	#response.headers['Access-Control-Allow-Origin'] = '*'
-  	#return response
-
+  	
+  	return return_success(payload,True)
 
   except Exception as e:
   	raise e
