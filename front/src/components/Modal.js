@@ -32,11 +32,11 @@ class Modal extends React.Component<Props> {
   }
 }
 
-export default ({ children }: { children: Node }) => {
+export default ({ children, style }: { children: Node, style?: any }) => {
   return (
     <Modal>
       <ModalWrap>
-        <ModalInner>{children}</ModalInner>
+        <ModalInner style={style}>{children}</ModalInner>
       </ModalWrap>
     </Modal>
   );

@@ -36,6 +36,8 @@ export default ({
   handleSizeChange,
   isAtEnvelope,
   isRedirect,
+  numSelected,
+  deselectAll,
 }: {
   envelope: ?UnfinishedEnvelope | Envelope,
   handleEnvelopeChange: EventHandler,
@@ -48,6 +50,8 @@ export default ({
   downloadUrl: string,
   isAtEnvelope: boolean,
   isRedirect: boolean,
+  numSelected: number,
+  deselectAll: () => void,
 }) => {
   const isEnvelope = isAtEnvelope;
   return (
@@ -148,8 +152,17 @@ export default ({
                   href={downloadUrl}
                   download={envelope.senderName || 'snapsend'}
                 >
-                  Download
+                  {`Download ${numSelected === 0 ? 'All' : numSelected}`}
                 </Button>
+                {numSelected > 0 && (
+                  <Button
+                    onClick={deselectAll}
+                    size="small"
+                    style={{ margin: 20 }}
+                  >
+                    Deselect all
+                  </Button>
+                )}
               </DownloadWrap>
             )}
         </Fragment>

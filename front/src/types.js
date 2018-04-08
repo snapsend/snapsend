@@ -9,6 +9,7 @@ export type SuccessImage = {
   size: number,
   status: 'Stored',
   url: string,
+  selected?: boolean,
 };
 
 export type NetworkResponse<T> =
