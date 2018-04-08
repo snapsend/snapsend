@@ -18,11 +18,11 @@ class User(db.Model):
 	#def __init__(self, uname, email, passw, generated_token, profile_url):
 	def __init__(self, uname, email, passw, generated_token, profilepic):
 		#self.userID = userID
-	    self.uname = uname.title()
-	    self.email = email.title()
-	    self.password = passw.title()
-	    self.token = generated_token.title()
-	    self.profilepic = profilepic.title()
+	    self.uname = uname
+	    self.email = email
+	    self.password = passw
+	    self.token = generated_token
+	    self.profilepic = profilepic
 	    #self.set_password(passw)
 	    
 
@@ -57,10 +57,10 @@ class Envelope(db.Model):
 		# 	self.eowner = None
 		# else:
 		# 	self.eowner = eowner.title()
-		self.sender = sender.title()
-		self.recipient = recipient.title()
-		self.ename = ename.title()
-		self.handle = handle.title()
+		self.sender = sender
+		self.recipient = recipient
+		self.ename = ename
+		self.handle = handle
 		#self.envelopeID = envelopeID
 	# 	self.handle = self.set_handle(Envelope.envelopeID)
 		
@@ -82,8 +82,8 @@ class Image(db.Model):
 	def __init__(self,inenvID,imagelink,filename):
 		#self.imageID = imageID
 		self.inenvID = inenvID
-		self.imagelink = imagelink.title()
-		self.filename = filename.title()
+		self.imagelink = imagelink
+		self.filename = filename
 
 
 class History(db.Model):
