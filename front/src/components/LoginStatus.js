@@ -73,6 +73,9 @@ class LoginStatus extends React.Component<P, S> {
     const res = await get('/profile', this.state.token);
     if (res.success) {
       this.setState({ user: res });
+    } else {
+      this.props.cookies.remove('token');
+      this.setState({ token: null });
     }
     console.log('RESULT', res);
   };

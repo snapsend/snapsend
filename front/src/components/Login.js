@@ -105,6 +105,11 @@ class LoginComponent extends React.Component<Props, State> {
     if (res) this.setState({ status: 'CLOSED' });
   };
 
+  handleLogout = async () => {
+    const res = await this.props.logout();
+    if (res) this.setState({ status: 'CLOSED' });
+  };
+
   render() {
     console.log('PROPS', this.props, this.state);
     const { status, error, password, password2 } = this.state;
@@ -264,7 +269,7 @@ class LoginComponent extends React.Component<Props, State> {
               value={user.email}
             />
             <Button
-              onClick={logout}
+              onClick={this.handleLogout}
               variant="raised"
               color="secondary"
               style={{ margin: 15, alignSelf: 'flex-end' }}

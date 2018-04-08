@@ -29,6 +29,7 @@ export async function get(endpoint: string, token: ?string): any {
     const res = await fetch(API_BASE + endpoint, {
       mode: 'cors',
       method: 'GET',
+      'Content-Type': 'application/json',
     });
     if (res.status > 299)
       return {

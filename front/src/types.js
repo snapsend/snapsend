@@ -22,13 +22,13 @@ export type UnfinishedEnvelope = {
   envelopeName: ?string,
 };
 
-export type Env = UnfinishedEnvelope & {
+export type Envelope = UnfinishedEnvelope & {
   handle: string,
   images: Array<SuccessImage>,
   createdAt: number,
+  success: boolean,
+  error?: string,
 };
-
-export type Envelope = NetworkResponse<Env>;
 
 export type Format = 'JPG' | 'PNG' | 'ORIGINAL';
 

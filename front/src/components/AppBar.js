@@ -22,6 +22,7 @@ import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import { InputLabel } from 'material-ui/Input';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 export default ({
   envelope,
@@ -182,31 +183,44 @@ const AppBar = withTheme()(styled(Paper)`
     background-color: ${props => props.theme.palette.primary.main};
   }
 `);
-
-const CopyLink = ({
-  envelope,
-}: {
+type P = {
   envelope: Envelope | UnfinishedEnvelope,
-}) => {
-  return (
-    <DownloadWrap style={{ alignItems: 'center' }}>
-      <T style={{ margin: 20 }} variant="body1">
-        Your link is:{' '}
-      </T>
-      <TextField
-        style={{ flex: 1 }}
-        value={`https://snapsend.xyz/envelope/${envelope.handle}`}
-      >
-        hi
-      </TextField>
-      <Button
-        style={{ minWidth: 86, margin: 20 }}
-        variant="raised"
-        color="secondary"
-        download={envelope.senderName || 'snapsend'}
-      >
-        Copy Link
-      </Button>
-    </DownloadWrap>
-  );
 };
+type S = {
+  isCopied: boolean,
+};
+class CopyLink extends React.Component<P, S> {
+  state = {
+    isCopied: false,
+  };
+
+  handleCopy = () => this.setState({ isCopied: true });
+
+  render() {
+    const { envelope } = this.props;
+
+    let url = 'https://snapsend.xyz/envelope/';
+    if (envelope && typeof envelope.handle === 'string') {
+      url = 'https://snapsend.xyz/envelope/' + envelope.handle;
+    }
+    return (
+      <DownloadWrap style={{ alignItems: 'center' }}>
+        <T style={{ margin: 20 }} variant="body1">
+          Your link is:{' '}
+        </T>
+        <TextField style={{ flex: 1 }} value={url}>
+          hi
+        </TextField>
+        <CopyToClipboard onCopy={this.handleCopy} text={url}>
+          <Button
+            style={{ minWidth: 86, margin: 20 }}
+            variant="raised"
+            color="secondary"
+          >
+            {this.state.isCopied ? 'Link Copied!' : 'Copy Link'}
+          </Button>
+        </CopyToClipboard>
+      </DownloadWrap>
+    );
+  }
+}
