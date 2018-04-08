@@ -11,6 +11,10 @@ export type SuccessImage = {
   url: string,
 };
 
+export type NetworkResponse<T> =
+  | { success: false, message?: string }
+  | ({ success: true } & T);
+
 export type UnfinishedEnvelope = {
   recipientName: string,
   senderName: string,
@@ -18,14 +22,35 @@ export type UnfinishedEnvelope = {
   envelopeName: ?string,
 };
 
-export type Envelope = UnfinishedEnvelope & {
+export type Env = UnfinishedEnvelope & {
   handle: string,
   images: Array<SuccessImage>,
   createdAt: number,
 };
+
+export type Envelope = NetworkResponse<Env>;
 
 export type Format = 'JPG' | 'PNG' | 'ORIGINAL';
 
 export type Size = { width: ?number, height: ?number };
 
 export type EventHandler = (SyntheticEvent<HTMLInputElement>) => void;
+
+export type Login = (string, string) => Promise<boolean>;
+
+export type Logout = void => Promise<void>;
+
+export type CreateUser = (
+  email: string,
+  password1: string,
+  password2: string,
+  profile_url: ?string,
+  username: string
+) => Promise<boolean>;
+
+export type User = {
+  uname: ?string,
+  email: string,
+  envelope: Array<Env>,
+  profilepic: ?string,
+};

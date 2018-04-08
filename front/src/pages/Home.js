@@ -13,6 +13,8 @@ import type {
   Format,
   Size,
   EventHandler,
+  Login,
+  Logout,
 } from '../types';
 import Image from '../components/Image';
 import { post, get } from '../network';
@@ -24,6 +26,14 @@ type P = {
       handle?: string,
     },
   },
+  location: {
+    state?: {
+      redirect?: boolean,
+    },
+  },
+  token: ?string,
+  login: Login,
+  logout: Logout,
 };
 
 type State = {
@@ -102,6 +112,7 @@ class Home extends Component<P, State> {
     const { match } = this.props;
     if (match && match.params && match.params.handle) {
       const envelope: Envelope = await get(`/envelope/${match.params.handle}`);
+      if (envelope.success !== true) return;
       const images = envelope.images;
       this.setState(state => ({
         ...state,
@@ -187,13 +198,18 @@ class Home extends Component<P, State> {
   };
 
   render() {
-    const { match } = this.props;
+    const { match, location, token, login, logout } = this.props;
     const { images, pending, envelope, redirect, size, format } = this.state;
     const yetToDrop = pending === 0 && images.length === 0;
     const isViewing: boolean = !!(match && match.params && match.params.handle);
 
     const downloadUrl = generateDownloadUrl(images, envelope, format, size);
     const isAtEnvelope = !!(match && match.params && match.params.handle);
+    const isRedirect = !!(
+      location &&
+      location.state &&
+      location.state.redirect
+    );
     return (
       <Dropzone onDrop={this.handleDrop}>
         <Flex>
@@ -208,6 +224,10 @@ class Home extends Component<P, State> {
             handleFormatChange={this.handleFormatChange}
             handleSizeChange={this.handleSizeChange}
             downloadUrl={downloadUrl}
+            isRedirect={isRedirect}
+            token={token}
+            login={login}
+            logout={logout}
           />
           {yetToDrop && (
             <Zone>
@@ -230,7 +250,15 @@ class Home extends Component<P, State> {
             {[...new Array(pending)].map((v, i) => <Image key={i} />)}
           </Images>
         </Flex>
-        {redirect && <Redirect to={`/envelope/${redirect}`} />}
+        {redirect && (
+          <Redirect
+            to={{
+              pathname: `/envelope/${redirect}`,
+              state: { redirect: true },
+            }}
+            push
+          />
+        )}
       </Dropzone>
     );
   }

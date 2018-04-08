@@ -3,22 +3,44 @@ import * as React from 'react';
 import Button from './Button';
 import Modal from './Modal';
 import styled from 'styled-components';
-import Card from 'material-ui/Card';
 import T from './T';
 import Logo from '../icons/Logo';
 import Input from 'material-ui/TextField';
 import { post } from '../network';
 import Close from 'material-ui-icons/Close';
+import AccountCircle from 'material-ui-icons/AccountCircle';
 import IconButton from 'material-ui/IconButton';
 import ProfileImage from './ProfileImage';
+import { setToken } from '../cookies';
+import { withCookies } from 'react-cookie';
+import Avatar from 'material-ui/Avatar';
+import type { Login, Logout, CreateUser, User } from '../types';
+import { withLoginStatus } from './LoginStatus';
 
-type Status = 'LOGGED OUT' | 'LOGGED IN' | 'LOGGING IN' | 'SIGNING UP';
-type Props = {};
+/**
+ * Logged out -> login button
+ * Logged in -> Profile button
+ * Logging in -> modal(login)
+ * Signing up -> modal(signup)
+ * Viewing profile -> modal(profile)
+ */
+
+type Status = 'CLOSED' | 'LOGGING IN' | 'SIGNING UP' | 'VIEWING PROFILE';
+type Props = {
+  cookies: any,
+  login: Login,
+  logout: Logout,
+  token: ?string,
+  createUser: CreateUser,
+  waiting: boolean,
+  user: User,
+  error: ?string,
+};
+
 type State = {
   email: string,
   password: string,
   password2: string,
-  waiting: boolean,
   status: Status,
   error: boolean,
   profilePic: ?string,
@@ -29,59 +51,26 @@ const initialState: State = {
   email: '',
   password: '',
   password2: '',
-  waiting: false,
-  status: 'LOGGED OUT',
+  status: 'CLOSED',
   error: false,
   profilePic: null,
   username: '',
 };
 
-export default class Login extends React.Component<Props, State> {
+class LoginComponent extends React.Component<Props, State> {
   state = initialState;
 
+  isLoggedIn() {
+    if (this.props.token) return true;
+    return false;
+  }
+
   handleClickLogin = async () => {
-    if (this.state.status === 'LOGGED IN') {
-      await post('/logout', {});
-      return this.setState({ status: 'LOGGED OUT' });
+    if (this.isLoggedIn()) {
+      return this.props.logout();
     }
 
     return this.setState({ status: 'LOGGING IN' });
-  };
-
-  handleLogin = async () => {
-    this.setState({ waiting: true });
-    // now post
-    const { email, password } = this.state;
-    const res = await post('/login', { email, password });
-    if (res.success) {
-      return this.setState({ waiting: false, status: 'LOGGED IN' });
-    }
-    this.setState({ waiting: false, error: true });
-  };
-
-  handleCreate = async () => {
-    this.setState({ waiting: true });
-    // now post
-    const {
-      email,
-      password: password1,
-      password2,
-      profilePic: profile_url,
-      username,
-    } = this.state;
-    if (password1 !== password2) return;
-    const res = await post('/signup', {
-      email,
-      password1,
-      password2,
-      profile_url,
-      username,
-    });
-    console.log('RES', res);
-    if (res.success) {
-      return this.setState({ waiting: false, status: 'LOGGED IN' });
-    }
-    this.setState({ waiting: false, error: true });
   };
 
   handleChange = (e: SyntheticEvent<HTMLInputElement>) => {
@@ -94,136 +83,205 @@ export default class Login extends React.Component<Props, State> {
 
   handleClickCreate = () => this.setState({ status: 'SIGNING UP' });
 
-  handleClose = () => this.setState({ status: 'LOGGED OUT' });
+  openProfile = () => this.setState({ status: 'VIEWING PROFILE' });
+
+  handleClose = () => this.setState({ status: 'CLOSED' });
+
+  handleCreate = async () => {
+    const success = await this.props.createUser(
+      this.state.email,
+      this.state.password,
+      this.state.password2,
+      this.state.profilePic,
+      this.state.username
+    );
+    if (success) {
+      this.setState({ status: 'CLOSED' });
+    }
+  };
+
+  handleLogin = async () => {
+    const res = await this.props.login(this.state.email, this.state.password);
+    if (res) this.setState({ status: 'CLOSED' });
+  };
 
   render() {
-    const { status, waiting, error, password, password2 } = this.state;
+    console.log('PROPS', this.props, this.state);
+    const { status, error, password, password2 } = this.state;
+    const {
+      createUser,
+      login,
+      logout,
+      token,
+      waiting,
+      user,
+      error: netError,
+    } = this.props;
+
     const passwordsMatch = password === password2;
+    const isLoggedIn = !!token;
+
     if (status === 'LOGGING IN') {
       return (
         <Modal>
-          <ModalWrap>
-            <ModalInner>
-              <CloseIcon onClick={this.handleClose}>
-                <Close />
-              </CloseIcon>
-              <Header>
-                <Logo style={{ height: 100, width: 100 }} />
-                <Title variant="subheading">Log in to Snapsend.</Title>
-              </Header>
-              <Form>
-                <Input
-                  name="email"
-                  error={error}
-                  label="Email"
-                  type="email"
-                  value={this.state.email}
-                  onChange={this.handleChange}
-                />
-                <Input
-                  name="password"
-                  label="Passwor"
-                  error={error}
-                  value={this.state.password}
-                  onChange={this.handleChange}
-                  type="password"
-                />
-                {error && <ErrorMsg>Login failed.</ErrorMsg>}
-                <Button
-                  disabled={waiting}
-                  onClick={this.handleLogin}
-                  variant="raised"
-                  color="secondary"
-                  style={{ margin: 15, alignSelf: 'flex-end' }}
-                >
-                  Login
-                </Button>
-              </Form>
-              <T
-                variant="body1"
-                style={{
-                  opacity: 0.8,
-                  textAlign: 'center',
-                  textDecoration: 'underline',
-                  cursor: 'pointer',
-                }}
-                onClick={this.handleClickCreate}
-              >
-                Or create a new account{' '}
-              </T>
-            </ModalInner>
-          </ModalWrap>
+          <CloseIcon onClick={this.handleClose}>
+            <Close />
+          </CloseIcon>
+          <Header>
+            <Logo style={{ height: 100, width: 100 }} />
+            <Title variant="subheading">Log in to Snapsend.</Title>
+          </Header>
+          <Form>
+            <Input
+              name="email"
+              error={error}
+              label="Email"
+              type="email"
+              value={this.state.email}
+              onChange={this.handleChange}
+            />
+            <Input
+              name="password"
+              label="Passwor"
+              error={error}
+              value={this.state.password}
+              onChange={this.handleChange}
+              type="password"
+            />
+            {netError && <ErrorMsg>{netError}</ErrorMsg>}
+            <Button
+              disabled={waiting}
+              onClick={this.handleLogin}
+              variant="raised"
+              color="secondary"
+              style={{ margin: 15, alignSelf: 'flex-end' }}
+            >
+              Login
+            </Button>
+          </Form>
+          <T
+            variant="body1"
+            style={{
+              opacity: 0.8,
+              textAlign: 'center',
+              textDecoration: 'underline',
+              cursor: 'pointer',
+            }}
+            onClick={this.handleClickCreate}
+          >
+            Or create a new account
+          </T>
         </Modal>
       );
-    }
-    if (status === 'SIGNING UP') {
+    } else if (status === 'SIGNING UP') {
       return (
         <Modal>
-          <ModalWrap>
-            <ModalInner>
-              <CloseIcon onClick={this.handleClose}>
-                <Close />
-              </CloseIcon>
-              <Header>
-                <Logo style={{ height: 100, width: 100 }} />
-                <Title variant="subheading">
-                  Create your Snapsend account.
-                </Title>
-              </Header>
-              <Form>
-                <ProfileImage
-                  style={{ alignSelf: 'center', marginTop: 30 }}
-                  handlePicChange={this.handlePicChange}
-                  profilePic={this.state.profilePic}
-                />
-                <Input
-                  name="username"
-                  label="Name"
-                  type="text"
-                  error={error}
-                  value={this.state.username}
-                  onChange={this.handleChange}
-                />
-                <Input
-                  name="email"
-                  label="Email"
-                  type="email"
-                  error={error}
-                  value={this.state.email}
-                  onChange={this.handleChange}
-                />
-                <Input
-                  name="password"
-                  label="Password"
-                  error={error || !passwordsMatch}
-                  value={this.state.password}
-                  onChange={this.handleChange}
-                  type="password"
-                  helperText={passwordsMatch ? '' : 'passwords do not match'}
-                />
-                <Input
-                  name="password2"
-                  label="Confirm Password"
-                  error={error || !passwordsMatch}
-                  value={this.state.password2}
-                  onChange={this.handleChange}
-                  type="password"
-                  helperText={passwordsMatch ? '' : 'passwords do not match'}
-                />
-                {error && <ErrorMsg>Account creation failed.</ErrorMsg>}
-                <Button
-                  disabled={waiting}
-                  onClick={this.handleCreate}
-                  variant="raised"
-                  color="secondary"
-                  style={{ margin: 15, alignSelf: 'flex-end' }}
-                >
-                  Create Account
-                </Button>
-              </Form>
-            </ModalInner>
-          </ModalWrap>
+          <CloseIcon onClick={this.handleClose}>
+            <Close />
+          </CloseIcon>
+          <Header>
+            <Logo style={{ height: 100, width: 100 }} />
+            <Title variant="subheading">Create your Snapsend account.</Title>
+          </Header>
+          <Form>
+            <ProfileImage
+              style={{ alignSelf: 'center', marginTop: 30 }}
+              handlePicChange={this.handlePicChange}
+              profilePic={this.state.profilePic}
+            />
+            <Input
+              name="username"
+              label="Name"
+              type="text"
+              error={error}
+              value={this.state.username}
+              onChange={this.handleChange}
+            />
+            <Input
+              name="email"
+              label="Email"
+              type="email"
+              error={error}
+              value={this.state.email}
+              onChange={this.handleChange}
+            />
+            <Input
+              name="password"
+              label="Password"
+              error={error || !passwordsMatch}
+              value={this.state.password}
+              onChange={this.handleChange}
+              type="password"
+              helperText={passwordsMatch ? '' : 'passwords do not match'}
+            />
+            <Input
+              name="password2"
+              label="Confirm Password"
+              error={error || !passwordsMatch}
+              value={this.state.password2}
+              onChange={this.handleChange}
+              type="password"
+              helperText={passwordsMatch ? '' : 'passwords do not match'}
+            />
+            {netError && <ErrorMsg>Account creation failed.</ErrorMsg>}
+            <Button
+              disabled={waiting}
+              onClick={this.handleCreate}
+              variant="raised"
+              color="secondary"
+              style={{ margin: 15, alignSelf: 'flex-end' }}
+            >
+              Create Account
+            </Button>
+          </Form>
         </Modal>
+      );
+    } else if (status === 'VIEWING PROFILE' && isLoggedIn) {
+      return (
+        <Modal>
+          <CloseIcon onClick={this.handleClose}>
+            <Close />
+          </CloseIcon>
+          <Form>
+            <ProfileImage
+              style={{ alignSelf: 'center', marginTop: 30 }}
+              handlePicChange={this.handlePicChange}
+              disabled
+              profilePic={user.profilepic}
+            />
+            <Input
+              name="username"
+              label="Name"
+              type="text"
+              disabled
+              value={user.uname || 'No username provided.'}
+            />
+            <Input
+              name="email"
+              label="Email"
+              type="email"
+              disabled
+              value={user.email}
+            />
+            <Button
+              onClick={logout}
+              variant="raised"
+              color="secondary"
+              style={{ margin: 15, alignSelf: 'flex-end' }}
+            >
+              Log out
+            </Button>
+          </Form>
+        </Modal>
+      );
+    } else if (isLoggedIn) {
+      // test if logged in.
+      return (
+        <ProfileButton
+          url={(user && user.profilepic) || null}
+          name={(user && user.uname) || null}
+          onClick={this.openProfile}
+        />
       );
     }
     return (
@@ -271,27 +329,23 @@ const Title = styled(T)`
   text-align: center;
 `;
 
-const ModalInner = styled(Card)`
-  width: 90%;
-  height: 90%;
-  max-width: 700px;
-  max-height: 550px;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: stretch;
-  position: relative;
-`;
+export default withLoginStatus(withCookies(LoginComponent));
 
-const ModalWrap = styled.div`
-  background-color: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  height: 100vh;
-  width: 100vw;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+const ProfileButton = ({
+  url,
+  name,
+  ...props
+}: {
+  url: ?string,
+  name: ?string,
+  props?: any,
+}) => {
+  return (
+    <Button {...props}>
+      <Avatar src={url} style={{ marginRight: 15, height: 30, width: 30 }}>
+        {!url && <AccountCircle />}
+      </Avatar>
+      {name || 'Your Account'}
+    </Button>
+  );
+};
