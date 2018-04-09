@@ -33,73 +33,89 @@ class BasicTestCases(BaseTestCase):
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue(r in response.data.lower())
 		
-
+				
 	def test_get_profile(self): 
 		print "Testing Get Profile"
 		response=self.client.get('/profile/121', content_type='application/json')    
 		
-		r = b'{"uname": "mtest", "profilepic": "picurl.jpeg", "envelope": [{"ename": "env1", "handle": "369", "sender": "mtest", "images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}], "recipient": "someone", "history": []}, {"ename": "env2", "handle": "248", "sender": "mtest", "images": [{"url": "image-a.com", "filename": "img.jpg", "imageid": 4}, {"url": "image-b.com", "filename": "img.png", "imageid": 5}], "recipient": "noone", "history": []}], "email": "mtest@mtester.com", "success": true}'
+		r = b'{"uname": "mtest", "profilepic": "picurl.jpeg", "envelope": [{"ename": "env1", "handle": "369", "sender": "mtest", "images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}], "recipient": "someone", "history": []}, {"ename": "env2", "handle": "248", "sender": "mtest", "images": [{"url": "image-a.com", "filename": "img.jpg", "imageid": 4}, {"url": "image-b.com", "filename": "img.png", "imageid": 5}], "recipient": "no one", "history": []}], "email": "mtest@mtester.com", "success": true}'
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue(r in response.data.lower())
 
 
+
 	def test_post_history_download(self): 
-		print "Testing Post History"
-		h = {"token":"121","handle":"369","action":"D","dnum":"2"}
+		print "Testing Post History - Download"
+		h = {"token":"121","handle":"248","action":"D","dnum":"2"}
 		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
 		
-		henv1 = History.query.filter_by(envelopeID="1").first()
+		henv1 = History.query.filter_by(envelopeID="2").first()
 		self.assertEqual(response.status_code, 200)
 		self.assertEqual(henv1.act_type,'D')
 		self.assertEqual(henv1.dnum, 2)
 		self.assertEqual(henv1.userID, 1)
+				
 		
+	def test_post_history_viewed(self): 
+		print "Testing Post History - Viewed"
+		h = {"token":"121","handle":"248","action":"V","dnum":"0"}
+		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
 		
-	'''
+		henv1 = History.query.filter_by(envelopeID="2").first()
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(henv1.act_type,'V')
+		self.assertEqual(henv1.dnum, 0)
+		self.assertEqual(henv1.userID, 1)
+
 	def test_junk(self):
 		# Tests to see if 404 page is yielded
 		response = self.client.get('/safjsdlkjfsdlkjf')
 		self.assertEquals(response.status_code, 404)
 
+		
+	'''
+	def test_post_envelope_negative(self): 
+		print "Testing Post Envelope - User does not exist"
+		d = {"envelopeName":"env4","recipientName":"everyone","senderName":"mtest","token":"120","images":[{"url":"mtest.image1.jpeg","filename":"image1.jpeg"}]}
+		response=self.client.post('/envelope', content_type='application/json', data=json.dumps(d))    
+		self.assertFalse(response.status_code, 200)
+		
 
-    def test_logout_for_example(self):
-        response=self.client.post('/logout', 
-                       data=json.dumps(dict(token='WyJkdW1teWVtYWlsOEBnbWFpbC5jb20iLCJhYjAwNWRlZTAyOTlhZmY1MDA2MTY5YzQ3NTljMjE0MiJd.DaguEA.ZfHaTSUvYK4pWxSl46qXy9nErVw')),
-                       content_type='application/json')
-        self.assertEqual(response.status_code, 200)
+	def test_get_envelope_negative(self): 
+		print "Testing Get Envelope - Handle doesn't exist"
+		response=self.client.get('/envelope/368', content_type='application/json')    
+		self.assertFalse(response.status_code, 200)
 
+	def test_get_profile_negative(self): 
+		print "Testing Get Profile - token doesn't exist"
+		response=self.client.get('/profile/120', content_type='application/json')    
+		self.assertFalse(response.status_code, 200)
+		
+		
+	def test_post_history_download_negative1(self): 
+		print "Testing Post History - Download - invalid token"
+		h = {"token":"120","handle":"248","action":"D","dnum":"2"}
+		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
+		self.assertFalse(response.status_code, 200)
+		
+	def test_post_history_viewed_negative1(self): 
+		print "Testing Post History - Viewed - invalid token"
+		h = {"token":"120","handle":"248","action":"D","dnum":"2"}
+		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
+		self.assertFalse(response.status_code, 200)
+		
+	def test_post_history_download_negative2(self): 
+		print "Testing Post History - Download - invalid handle"
+		h = {"token":"121","handle":"249","action":"D","dnum":"2"}
+		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
+		self.assertFalse(response.status_code, 200)
+		
+	def test_post_history_viewed_negative2(self): 
+		print "Testing Post History - Viewed - invalid token"
+		h = {"token":"121","handle":"249","action":"D","dnum":"2"}
+		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
+		self.assertFalse(response.status_code, 200)
 
-    def test_post_envelope(self):
-        response = self.client.post('/envelope',data=json.dumps(dict(envelopeName='env1',recipientName='rec1',senderName='send1',images=json.dumps(dict(url='url1',filename='file1')),token='')),content_type='application/json')
-        self.assertEqual(response.status_code, 200)
-    
-    def test_get_envelope(self):
-        response = self.client.get('/envelope/aaaa')
-        self.assertEqual(response.status_code, 200)
-    
-    def test_get_envelope_error(self):
-        response = self.client.get('/envelope', query_string='abc')
-        self.assertEqual(response.status_code, 405)
-
-
-    
-
-
-    
-    def test_logout(self):
-        rv = self.client.post('/logout',follow_redirects=True)
-        self.assertEqual(rv.status_code, 200)
-
-    def test_logout_json(self):
-        rv = self.client.post('/logout',follow_redirects=True)
-        assert("true" in rv.data.lower())
-        #self.assertEqual(rv.status_code, 200)
-	
-	def test_post_envelope(self):
-    	response = self.client.post('/envelope')
-        self.assertEqual(response.status_code, 200)
-    
-    
 	'''
     
 

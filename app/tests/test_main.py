@@ -23,7 +23,7 @@ class BaseTestCase(TestCase):
 		env1 = Envelope("env1","mtest","someone","369")
 		env1.eowner = "1"
 		db.session.add(env1)
-		env2 = Envelope("env2","mtest","noone","248")
+		env2 = Envelope("env2","mtest","no one","248")
 		env2.eowner = "1"
 		db.session.add(env2)
 		
@@ -40,8 +40,6 @@ class BaseTestCase(TestCase):
 		db.session.add(History("1","D","","1"))
 		db.session.add(History("1","V","2",""))
 		db.session.add(History("1","D","2","3"))
-		db.session.add(History("2","V","1",""))
-		db.session.add(History("2","D","","1"))
 		'''
 		db.session.commit()
 				
