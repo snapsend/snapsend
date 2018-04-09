@@ -78,43 +78,43 @@ class BasicTestCases(BaseTestCase):
 		print "Testing Post Envelope - User does not exist"
 		d = {"envelopeName":"env4","recipientName":"everyone","senderName":"mtest","token":"120","images":[{"url":"mtest.image1.jpeg","filename":"image1.jpeg"}]}
 		response=self.client.post('/envelope', content_type='application/json', data=json.dumps(d))    
-		self.assertFalse(response.status_code, 200)
+		self.assertNotEqual(response.status_code, 200)
 		
 
 	def test_get_envelope_negative(self): 
 		print "Testing Get Envelope - Handle doesn't exist"
 		response=self.client.get('/envelope/368', content_type='application/json')    
-		self.assertFalse(response.status_code, 200)
+		self.assertNotEqual(response.status_code, 200)
 
 	def test_get_profile_negative(self): 
 		print "Testing Get Profile - token doesn't exist"
 		response=self.client.get('/profile/120', content_type='application/json')    
-		self.assertFalse(response.status_code, 200)
+		self.assertNotEqual(response.status_code, 200)
 		
 		
 	def test_post_history_download_negative1(self): 
 		print "Testing Post History - Download - invalid token"
 		h = {"token":"120","handle":"248","action":"D","dnum":"2"}
 		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
-		self.assertFalse(response.status_code, 200)
+		self.assertNotEqual(response.status_code, 200)
 		
 	def test_post_history_viewed_negative1(self): 
 		print "Testing Post History - Viewed - invalid token"
 		h = {"token":"120","handle":"248","action":"D","dnum":"2"}
 		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
-		self.assertFalse(response.status_code, 200)
+		self.assertNotEqual(response.status_code, 200)
 		
 	def test_post_history_download_negative2(self): 
 		print "Testing Post History - Download - invalid handle"
 		h = {"token":"121","handle":"249","action":"D","dnum":"2"}
 		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
-		self.assertFalse(response.status_code, 200)
+		self.assertNotEqual(response.status_code, 200)
 		
 	def test_post_history_viewed_negative2(self): 
 		print "Testing Post History - Viewed - invalid token"
 		h = {"token":"121","handle":"249","action":"D","dnum":"2"}
 		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
-		self.assertFalse(response.status_code, 200)
+		self.assertNotEqual(response.status_code, 200)
 
 	'''
     
