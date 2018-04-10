@@ -21,6 +21,7 @@ env_variables:
     CLOUDSQL_CONNECTION_NAME: flask-snapsend-prod:us-east1:snapsend-mysql
     CLOUDSQL_USER: root
     CLOUDSQL_PASSWORD: snapsend
+    CLOUDSQL_DATABASE: snapsend
 # [END env_variables]
 
 libraries:
