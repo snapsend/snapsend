@@ -86,7 +86,7 @@ class LoginStatus extends React.Component<P, S> {
     // post to backend
     // change state
     await post('/logout', { token: this.state.token });
-    this.setState({ token: null });
+    this.setState({ token: null, user: null });
   };
 
   createUser: CreateUser = async (
@@ -110,7 +110,7 @@ class LoginStatus extends React.Component<P, S> {
     console.log('RES', res);
     if (res.success && res.token) {
       setToken(res.token, this.props.cookies);
-      this.setState({ token: res.token });
+      this.setState({ token: res.token }, () => this.getProfile());
       return true;
     }
     console.warn('FAILED SIGNUP', res);
