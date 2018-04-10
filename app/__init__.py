@@ -1,5 +1,7 @@
-from google.appengine.ext import vendor
-vendor.add('lib')
+import os
+if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine/'):
+    from google.appengine.ext import vendor
+    vendor.add('lib')
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
