@@ -49,7 +49,7 @@ class BaseTestCase(TestCase):
     def tearDown(self):
         db.session.remove()
         db.drop_all()
-        print "db torn down"
+#       print "db torn down"
         
     
     
