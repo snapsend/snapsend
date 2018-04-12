@@ -13,6 +13,7 @@ from model import User, Envelope, Image, History
 from sqlalchemy import func
 from hashlib import md5
 from itsdangerous import URLSafeTimedSerializer
+import datetime
 
 
 logging.getLogger('flask_cors').level = logging.DEBUG
@@ -25,6 +26,10 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
 #Our mock database.
+def datetime_handler(x):
+    if isinstance(x, datetime.datetime):
+        return x.isoformat()
+    raise TypeError("Unknown type")
 
 class User_Class(flask_login.UserMixin):
   def __init__(self, userid, password):
@@ -259,6 +264,8 @@ def postenvelope():
   if token == None:
     newenvelope = Envelope(env_name,sender_name,rec_name,h)
     newenvelope.eowner = None
+    history = History(j+1,'C',None,None)
+    db.session.add(history)
     db.session.add(newenvelope)
     db.session.commit()
 
@@ -271,6 +278,8 @@ def postenvelope():
     result = db.session.query(User).filter(User.token==token).first()
     newenvelope = Envelope(env_name,sender_name,rec_name,h)
     newenvelope.eowner = result.userID
+    history = History(j+1,'C',result.userID,None)
+    db.session.add(history)
     db.session.add(newenvelope)
     db.session.commit()
   
@@ -311,7 +320,8 @@ def getenvelope(handle):
   	    "handle": handle,
   	    "envelopeName": result.ename,
   	    "recipientName": result.recipient,
-  	    "senderName": result.sender
+  	    "senderName": result.sender,
+        "createddate":result.createddate
   	    
   	}
 
@@ -344,15 +354,28 @@ def profile(token):
     return return_success(payload,False)
   payload ={}
   result1 = db.session.query(User).filter(User.token==token).first()
-  payload = {"uname":result1.uname,"profilepic":result1.profilepic,"email":result1.email}
+  payload = {"username":result1.uname,"profilepic":result1.profilepic,"email":result1.email}
+  #users = []
+  results = db.session.query(History).filter(History.userID==result1.userID).all()
+  #titles = [row.envelopeID for row in results.all()]
   
-  result2 = db.session.query(Envelope).filter(Envelope.eowner==result1.userID).all()
+  res = []
+  for i in results:
+    print('hi')
+    print(type(i.envelopeID))
+    res.append(i.envelopeID)
+  
+  res = list(set(res))
+ 
   envelopes = []
   envs = {}
-
-  for env in result2:
-    envs = {"handle":env.handle,"sender":env.sender,"recipient":env.recipient, "ename":env.ename}
-    result3 = db.session.query(Image).filter(Image.inenvID==env.envelopeID).all()
+  for r in res:
+    result2 = db.session.query(Envelope).filter(Envelope.envelopeID==r).first()
+    if result2.eowner == result1.userID:
+      envs = {"handle":result2.handle,"senderName":result2.sender,"recipientName":result2.recipient, "envelopeName":result2.ename, "status":"S"}
+    else:
+      envs = {"handle":result2.handle,"senderName":result2.sender,"recipientName":result2.recipient, "envelopeName":result2.ename, "status":"R"}
+    result3 = db.session.query(Image).filter(Image.inenvID==result2.envelopeID).all()
     img_out = {}
     img_arr = []
     for img in result3:
@@ -361,21 +384,20 @@ def profile(token):
       img_out = {}
     envs["images"] = img_arr
     
-    result4 = db.session.query(History).filter(History.envelopeID==env.envelopeID).all()
+    result4 = db.session.query(History).filter(History.envelopeID==result2.envelopeID).all()
     hist_out = {}
     hist_arr =[]
     for hist in result4:
 
-      hist_out={"act_type":hist.act_type,"dnum":hist.dnum,"actiondate":hist.actiondate}
+      hist_out={"action":hist.act_type,"dnum":hist.dnum, "actiondate":hist.actiondate}
       hist_arr.append(hist_out)
       hist_out={}
     envs["history"] = hist_arr
     
-    envelopes.append(envs)
-    envs = {}
+  envelopes.append(envs)
+  envs = {}
 
   payload["envelope"]=envelopes
-  
   return return_success(payload,True)
 
 
@@ -388,22 +410,28 @@ def history():
   handle = loaded_r['handle']
   action = loaded_r['action']
   dnum = loaded_r['dnum']
-
-  result1 = db.session.query(User).filter(User.token==token).first()
-
   result = db.session.query(Envelope).filter(Envelope.handle==handle).first()
   envid = result.envelopeID
-  history = History(envid,action,result1.userID,dnum)
+  if token != None:
+    if db.session.query(User).filter_by(token = token).scalar() != None:
+      pass
+    else:
+      payload = {"error":"Invalid Token"}
+      return return_success(payload,False)
+    result1 = db.session.query(User).filter(User.token==token).first()
+    history = History(envid,action,result1.userID,dnum)
+  else:
+    history = History(envid,action,None,dnum)
+  
   db.session.add(history)
   db.session.commit()
-  
   response = return_success({},True)
-  response.headers['Content-Type'] = 'text/json'
-  response.headers['Access-Control-Allow-Origin'] = '*'
   return response
 
 def return_success(loaded_r,j):
   loaded_r['success'] = j
-  payload = json.dumps(loaded_r)
+  payload = json.dumps(loaded_r, default=datetime_handler)
   response = make_response(payload)
+  response.headers['Content-Type'] = 'text/json'
+  response.headers['Access-Control-Allow-Origin'] = '*'
   return response

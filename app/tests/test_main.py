@@ -17,7 +17,7 @@ class BaseTestCase(TestCase):
 		#app = main.app.test_client()
 		db.create_all()
 
-		db.session.add(User("mtest","mtest@mtester.com", "test","121","picurl.jpeg"))
+		db.session.add(User("mtest","mtester@mtest.com", "0d66db5457fc3e401b0eea9e1ba0a1dc","121","picurl.jpeg"))
 		mtest = User.query.filter_by(token="121").first()
 		
 		env1 = Envelope("env1","mtest","someone","369")
@@ -49,7 +49,7 @@ class BaseTestCase(TestCase):
     def tearDown(self):
         db.session.remove()
         db.drop_all()
-        print "db torn down"
+#       print "db torn down"
         
     
     

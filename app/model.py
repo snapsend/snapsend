@@ -62,12 +62,7 @@ class Envelope(db.Model):
 		self.ename = ename
 		self.handle = handle
 		#self.envelopeID = envelopeID
-	# 	self.handle = self.set_handle(Envelope.envelopeID)
-		
 
-	# def set_handle(self,envelopeID):
-	# 	self.handle = md5(str(Envelope.envelopeID).encode('utf-8')).hexdigest()[0:10].upper()
-		
 
 class Image(db.Model):
 	__table_args__ = {'extend_existing': True}
@@ -92,7 +87,7 @@ class History(db.Model):
 	historyID = db.Column(db.Integer,primary_key=True, autoincrement=True)
 	envelopeID = db.Column(db.Integer,db.ForeignKey('Envelope.envelopeID'))
 	act_type = db.Column(db.String(1))
-	userID = db.Column(db.Integer,db.ForeignKey('User.userID'))
+	userID = db.Column(db.Integer,nullable=True)
 	dnum = db.Column(db.Integer,nullable=True)
 	actiondate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
