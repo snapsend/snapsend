@@ -358,7 +358,12 @@ def postenvelope():
 
 
   j= db.session.query(func.max(Envelope.envelopeID)).scalar()
-  h = hash_envid(j+1)
+  if j == None:
+    j =0
+    h = hash_envid(j+1)
+  else: 
+    h = hash_envid(j+1)
+
   if token == None:
     newenvelope = Envelope(env_name,sender_name,rec_name,h)
     newenvelope.eowner = None
