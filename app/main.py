@@ -1,7 +1,5 @@
-from google.appengine.ext import vendor
-vendor.add('lib')
+
 from flask import Flask, request, jsonify, make_response
-#needed for front and backend to work together
 from flask_cors import CORS
 import flask
 import flask_login
@@ -9,9 +7,7 @@ import os
 import json
 import sys
 import os
-#import MySQLdb
 import logging
-# from app import db
 from app import app,db
 from model import User, Envelope, Image, History
 from sqlalchemy import func
@@ -173,14 +169,15 @@ def signup():
     pwd2 = loaded_r['password2']
     user_name = loaded_r['username']
     profile_picture = loaded_r['profilepic'] 
+    print profile_picture
 
     try:
       hashed_pwd = hash_pass(pwd1)
       user_obj = User_Class(curr_email,hashed_pwd)
       flask_login.login_user(user_obj)
       some_token = user_obj.get_auth_token()
-      
       new_user = User(user_name, curr_email, hashed_pwd, some_token, profile_picture)
+    
       db.session.add(new_user)
       db.session.commit()
 
@@ -204,7 +201,7 @@ def signup():
 @app.route('/protected')
 @flask_login.login_required
 def protected():
-    return 'Logged in as: ' + flask_login.current_user.id
+  return 'Logged in as: ' + flask_login.current_user.id
 
 
 @app.route('/logout', methods=['POST'])
@@ -250,27 +247,32 @@ def index():
 @app.route('/envelope', methods=['POST'])
 def postenvelope():
   loaded_r = request.get_json()
-  r = json.dumps(loaded_r)
-  loaded_r = json.loads(r)
   env_name = loaded_r['envelopeName']
   rec_name = loaded_r['recipientName']
   sender_name = loaded_r['senderName']
   all_images = loaded_r['images']
   token = loaded_r['token']
 
+
   j= db.session.query(func.max(Envelope.envelopeID)).scalar()
   h = hash_envid(j+1)
-  if token == "":
-    eow = None
-    newenvelope = Envelope(env_name,sender_name,eow,rec_name,h)
+  if token == None:
+    newenvelope = Envelope(env_name,sender_name,rec_name,h)
+    newenvelope.eowner = None
     db.session.add(newenvelope)
     db.session.commit()
+
   else:
+    if db.session.query(User).filter_by(token = token).scalar() != None:
+      pass
+    else:
+      payload = {"error":"Invalid token"}
+      return return_success(payload,False)
     result = db.session.query(User).filter(User.token==token).first()
-    newenvelope = Envelope(env_name,sender_name,result.userID,rec_name,h)
+    newenvelope = Envelope(env_name,sender_name,rec_name,h)
+    newenvelope.eowner = result.userID
     db.session.add(newenvelope)
     db.session.commit()
-  
   
   try:
     for i in range(len(all_images)):
@@ -283,16 +285,9 @@ def postenvelope():
 
   except Exception as e:
     raise e
-  #loaded_r['envelopeID'] = j
-  
-  #j= db.session.query(func.max(Envelope.envelopeID)).scalar()
-  #result = db.session.query(Envelope).filter(Envelope.envelopeID==j).first()
   loaded_r['handle'] = h
-  payload = json.dumps(loaded_r)
-  response = return_success(payload,True)
-  response.headers['Content-Type'] = 'text/json'
-  response.headers['Access-Control-Allow-Origin'] = '*'
-  return response
+  return return_success(loaded_r,True)
+  
 
 
 @app.route('/envelope/<handle>', methods=['GET'])
@@ -301,6 +296,11 @@ def getenvelope(handle):
   # r = json.dumps(loaded_r)
   # loaded_r = json.loads(r)
   # handle = loaded_r['handle']
+  if db.session.query(Envelope).filter_by(handle = handle).scalar() != None:
+    pass
+  else:
+    payload = {"error":"Handle does not exist"}
+    return return_success(payload,False)
   result = db.session.query(Envelope).filter(Envelope.handle==handle).first()
   envid = result.envelopeID
   imgres = db.session.query(Image).filter(Image.inenvID==envid).all()
@@ -311,8 +311,8 @@ def getenvelope(handle):
   	    "handle": handle,
   	    "envelopeName": result.ename,
   	    "recipientName": result.recipient,
-  	    "senderName": result.sender,
-  	    "created date": result.createddate
+  	    "senderName": result.sender
+  	    
   	}
 
   	img_arr = []
@@ -326,12 +326,8 @@ def getenvelope(handle):
   	payload = env_out
   	payload["images"] = img_arr
 
-  	return jsonify(payload)
-  	#response = make_response(payload)
-  	#response.headers['Content-Type'] = 'text/json'
-  	#response.headers['Access-Control-Allow-Origin'] = '*'
-  	#return response
-
+  	
+  	return return_success(payload,True)
 
   except Exception as e:
   	raise e
@@ -339,7 +335,13 @@ def getenvelope(handle):
 #@flask_login.login_required
 @app.route('/profile/<token>',methods=['GET'])
 def profile(token):
+
   pay = ""
+  if db.session.query(User).filter_by(token = token).scalar() != None:
+    pass
+  else:
+    payload = {"error":"Invalid Token"}
+    return return_success(payload,False)
   payload ={}
   result1 = db.session.query(User).filter(User.token==token).first()
   payload = {"uname":result1.uname,"profilepic":result1.profilepic,"email":result1.email}
