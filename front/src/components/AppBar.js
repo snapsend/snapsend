@@ -7,6 +7,8 @@ import { withTheme } from 'material-ui/styles';
 import Button from './Button';
 import Paper from 'material-ui/Paper';
 import Logo from '../icons/Logo';
+import { Link } from 'react-router-dom';
+import T from './T';
 import type {
   UnfinishedEnvelope,
   Format,
@@ -20,6 +22,7 @@ import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import { InputLabel } from 'material-ui/Input';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 export default ({
   envelope,
@@ -32,8 +35,11 @@ export default ({
   handleFormatChange,
   handleSizeChange,
   isAtEnvelope,
+  isRedirect,
+  numSelected,
+  deselectAll,
 }: {
-  envelope: ?UnfinishedEnvelope,
+  envelope: ?UnfinishedEnvelope | Envelope,
   handleEnvelopeChange: EventHandler,
   handleSave: () => Promise<void>,
   isViewing: boolean,
@@ -43,13 +49,26 @@ export default ({
   handleSizeChange: EventHandler,
   downloadUrl: string,
   isAtEnvelope: boolean,
+  isRedirect: boolean,
+  numSelected: number,
+  deselectAll: () => void,
 }) => {
   const isEnvelope = isAtEnvelope;
   return (
     <AppBar elevation={4} component="header" square>
       <Toolbar>
-        <Logo style={{ marginRight: 20 }} />
-        <Title variant="title">Snapsend.</Title>
+        <Link
+          to="/"
+          style={{
+            display: 'flex',
+            textDecoration: 'none',
+            alignItems: 'center',
+          }}
+        >
+          <Logo style={{ marginRight: 20 }} />
+          <Title variant="title">Snapsend.</Title>
+        </Link>
+        <div style={{ flex: 1 }} />
         <Login />
       </Toolbar>
       {envelope && (
@@ -82,59 +101,70 @@ export default ({
               </Button>
             )}
           </EditingWrapper>
-          {isEnvelope && (
-            <DownloadWrap>
-              <FormControl style={{ minWidth: 86, margin: 20 }}>
-                <InputLabel>Format</InputLabel>
-                <Select
-                  value={format}
-                  onChange={handleFormatChange}
-                  inputProps={{
-                    name: 'format',
+          {isRedirect && envelope && <CopyLink envelope={envelope} />}
+          {isEnvelope &&
+            !isRedirect && (
+              <DownloadWrap>
+                <FormControl style={{ minWidth: 86, margin: 20 }}>
+                  <InputLabel>Format</InputLabel>
+                  <Select
+                    value={format}
+                    onChange={handleFormatChange}
+                    inputProps={{
+                      name: 'format',
+                    }}
+                  >
+                    <MenuItem value="ORIGINAL">
+                      <em>Original</em>
+                    </MenuItem>
+                    <MenuItem value="JPG">jpg</MenuItem>
+                    <MenuItem value="PNG">png</MenuItem>
+                  </Select>
+                </FormControl>
+                <TextField
+                  style={{ minWidth: 86, margin: 20 }}
+                  label="Max width"
+                  name="width"
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true,
                   }}
+                  placeholder="Original"
+                  value={size.width || ''}
+                  onChange={handleSizeChange}
+                />
+                <TextField
+                  style={{ minWidth: 86, margin: 20 }}
+                  label="Max height"
+                  name="height"
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder="Original"
+                  value={size.height || ''}
+                  onChange={handleSizeChange}
+                />
+                <Button
+                  style={{ minWidth: 86, margin: 20 }}
+                  variant="raised"
+                  color="secondary"
+                  href={downloadUrl}
+                  download={envelope.senderName || 'snapsend'}
                 >
-                  <MenuItem value="ORIGINAL">
-                    <em>Original</em>
-                  </MenuItem>
-                  <MenuItem value="JPG">jpg</MenuItem>
-                  <MenuItem value="PNG">png</MenuItem>
-                </Select>
-              </FormControl>
-              <TextField
-                style={{ minWidth: 86, margin: 20 }}
-                label="Max width"
-                name="width"
-                type="number"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder="Original"
-                value={size.width || ''}
-                onChange={handleSizeChange}
-              />
-              <TextField
-                style={{ minWidth: 86, margin: 20 }}
-                label="Max height"
-                name="height"
-                type="number"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder="Original"
-                value={size.height || ''}
-                onChange={handleSizeChange}
-              />
-              <Button
-                style={{ minWidth: 86, margin: 20 }}
-                variant="raised"
-                color="secondary"
-                href={downloadUrl}
-                download={envelope.senderName || 'snapsend'}
-              >
-                Download
-              </Button>
-            </DownloadWrap>
-          )}
+                  {`Download ${numSelected === 0 ? 'All' : numSelected}`}
+                </Button>
+                {numSelected > 0 && (
+                  <Button
+                    onClick={deselectAll}
+                    size="small"
+                    style={{ margin: 20 }}
+                  >
+                    Deselect all
+                  </Button>
+                )}
+              </DownloadWrap>
+            )}
         </Fragment>
       )}
     </AppBar>
@@ -166,3 +196,44 @@ const AppBar = withTheme()(styled(Paper)`
     background-color: ${props => props.theme.palette.primary.main};
   }
 `);
+type P = {
+  envelope: Envelope | UnfinishedEnvelope,
+};
+type S = {
+  isCopied: boolean,
+};
+class CopyLink extends React.Component<P, S> {
+  state = {
+    isCopied: false,
+  };
+
+  handleCopy = () => this.setState({ isCopied: true });
+
+  render() {
+    const { envelope } = this.props;
+
+    let url = 'https://snapsend.xyz/envelope/';
+    if (envelope && typeof envelope.handle === 'string') {
+      url = 'https://snapsend.xyz/envelope/' + envelope.handle;
+    }
+    return (
+      <DownloadWrap style={{ alignItems: 'center' }}>
+        <T style={{ margin: 20 }} variant="body1">
+          Your link is:{' '}
+        </T>
+        <TextField style={{ flex: 1 }} value={url}>
+          hi
+        </TextField>
+        <CopyToClipboard onCopy={this.handleCopy} text={url}>
+          <Button
+            style={{ minWidth: 86, margin: 20 }}
+            variant="raised"
+            color="secondary"
+          >
+            {this.state.isCopied ? 'Link Copied!' : 'Copy Link'}
+          </Button>
+        </CopyToClipboard>
+      </DownloadWrap>
+    );
+  }
+}

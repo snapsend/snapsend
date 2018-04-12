@@ -9,6 +9,8 @@ import type { SuccessImage } from './types';
 const fs = filestack.init(process.env.REACT_APP_FILESTACK_SECRET);
 
 const SUCCESS_STATUS = 'Stored';
+const LOGGED_OUT_LIMIT = 40;
+const LOGGED_IN_LIMIT = 1000;
 
 const WRONG_TYPE_ERROR = 'Input is not the right format';
 
@@ -24,7 +26,10 @@ export const ACCEPTED_TYPES = [
 
 export const FAILED_MESSAGE = 'Image Upload Failed';
 
-export const handleDrop = (files: Array<File>) => {
+export const handleDrop = (files: Array<File>, isLoggedIn: boolean) => {
+  const overSignedOut = !isLoggedIn && files.length > LOGGED_OUT_LIMIT;
+  const overSignedIn = isLoggedIn && files.length > LOGGED_IN_LIMIT;
+  if (overSignedIn || overSignedOut) return 'Too many files';
   return files.map(file => uploadImage(file));
 };
 

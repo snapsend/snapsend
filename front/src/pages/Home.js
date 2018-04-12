@@ -13,9 +13,15 @@ import type {
   Format,
   Size,
   EventHandler,
+  Login,
+  Logout,
 } from '../types';
 import Image from '../components/Image';
 import { post, get } from '../network';
+import Modal from '../components/Modal';
+import T from '../components/T';
+import Button from '../components/Button';
+import { withLoginStatus } from '../components/LoginStatus';
 
 type PendingImage = Promise<SuccessImage>;
 type P = {
@@ -24,6 +30,14 @@ type P = {
       handle?: string,
     },
   },
+  location: {
+    state?: {
+      redirect?: boolean,
+    },
+  },
+  token: ?string,
+  login: Login,
+  logout: Logout,
 };
 
 type State = {
@@ -33,6 +47,7 @@ type State = {
   redirect: ?string,
   format: Format,
   size: Size,
+  uploadError: ?string,
 };
 
 const initialEnvelope: UnfinishedEnvelope = {
@@ -46,18 +61,31 @@ const generateDownloadUrl = (
   images: Array<SuccessImage>,
   envelope: ?UnfinishedEnvelope,
   format: Format,
-  size: Size
+  size: Size,
+  noneSelected: boolean
 ) => {
   // start with the base url
   const baseUrl = 'https://process.filestackapi.com/';
   // then get all the images into an array string
-  let imagesString = images
-    .map(im => {
-      const split = im.url.split('/');
-      const handle = split[split.length - 1];
+  // let imagesString = images
+  //   .map(im => {
+  //     const split = im.url.split('/');
+  //     const handle = split[split.length - 1];
+  //     if (im.selected || noneSelected) return handle;
+  //     return '';
+  //   })
+  //   .toString();
+
+  let imagesString = images.reduce((currString, im, ind) => {
+    const split = im.url.split('/');
+    const handle = split[split.length - 1];
+    if (im.selected || noneSelected) {
+      if (currString.length > 0) return `${currString},${handle}`;
       return handle;
-    })
-    .toString();
+    }
+    return currString;
+  }, '');
+
   if (images.length > 1) imagesString = `[${imagesString}]`;
 
   let formatString = '';
@@ -82,7 +110,6 @@ const generateDownloadUrl = (
 
     resize = `resize=${w}${h}`;
   }
-
   const result = `${baseUrl}${resize}${formatString}zip/${imagesString}`;
   return result;
 };
@@ -95,6 +122,7 @@ class Home extends Component<P, State> {
     redirect: null,
     format: 'ORIGINAL',
     size: { width: null, height: null },
+    uploadError: null,
   };
 
   async componentDidMount() {
@@ -102,6 +130,7 @@ class Home extends Component<P, State> {
     const { match } = this.props;
     if (match && match.params && match.params.handle) {
       const envelope: Envelope = await get(`/envelope/${match.params.handle}`);
+      if (envelope.success !== true) return;
       const images = envelope.images;
       this.setState(state => ({
         ...state,
@@ -112,7 +141,13 @@ class Home extends Component<P, State> {
   }
 
   handleDrop = (acceptedFiles: Array<File>) => {
-    uploadImages(acceptedFiles).forEach((pending: PendingImage) => {
+    const res = uploadImages(acceptedFiles, !!this.props.token);
+    if (typeof res === 'string') {
+      this.setState({ uploadError: res });
+      return;
+    }
+
+    res.forEach((pending: PendingImage) => {
       this.setState(state => ({
         ...state,
         pending: state.pending + 1,
@@ -151,16 +186,14 @@ class Home extends Component<P, State> {
         loading: true,
       },
     }));
-
     // post to the network
     const res: { handle: string } = await post('/envelope', {
       ...envelope,
       images: this.state.images,
+      token: this.props.token || null,
     });
 
-    console.log('RESULT', res);
-
-    // then set the reroute to the newly created envelope
+    // then set the reroute to the newly creaed envelope
     this.setState({ redirect: res.handle });
   };
 
@@ -186,16 +219,62 @@ class Home extends Component<P, State> {
     }));
   };
 
+  closeModal = () => this.setState({ uploadError: null });
+
+  toggleImage = (i: number) => {
+    this.setState(state => {
+      const images = [...state.images];
+      images[i].selected = images[i].selected ? !images[i].selected : true;
+      return {
+        ...state,
+        images,
+      };
+    });
+  };
+
+  howManySelected = () => {
+    return this.state.images.reduce(
+      (prev, curr, currI) => prev + (curr.selected ? 1 : 0),
+      0
+    );
+  };
+
+  deselectAll = () => {
+    this.setState(state => {
+      const images = [...state.images].map(im => ({ ...im, selected: false }));
+      return {
+        ...state,
+        images,
+      };
+    });
+  };
+
   render() {
-    const { match } = this.props;
+    const { match, location, token, login, logout } = this.props;
     const { images, pending, envelope, redirect, size, format } = this.state;
     const yetToDrop = pending === 0 && images.length === 0;
     const isViewing: boolean = !!(match && match.params && match.params.handle);
 
-    const downloadUrl = generateDownloadUrl(images, envelope, format, size);
+    const numSelected = this.howManySelected();
+    const downloadUrl = generateDownloadUrl(
+      images,
+      envelope,
+      format,
+      size,
+      numSelected === 0
+    );
     const isAtEnvelope = !!(match && match.params && match.params.handle);
+    const isRedirect = !!(
+      location &&
+      location.state &&
+      location.state.redirect
+    );
+
     return (
       <Dropzone onDrop={this.handleDrop}>
+        {this.state.uploadError && (
+          <TooManyFiles closeModal={this.closeModal} />
+        )}
         <Flex>
           <AppBar
             isAtEnvelope={isAtEnvelope}
@@ -208,6 +287,12 @@ class Home extends Component<P, State> {
             handleFormatChange={this.handleFormatChange}
             handleSizeChange={this.handleSizeChange}
             downloadUrl={downloadUrl}
+            isRedirect={isRedirect}
+            token={token}
+            login={login}
+            logout={logout}
+            numSelected={numSelected}
+            deselectAll={this.deselectAll}
           />
           {yetToDrop && (
             <Zone>
@@ -226,17 +311,31 @@ class Home extends Component<P, State> {
             </Zone>
           )}
           <Images>
-            {images.map(img => <Image key={img.url} img={img} />)}
+            {images.map((img, i) => (
+              <Image
+                toggle={() => this.toggleImage(i)}
+                key={img.url}
+                img={img}
+              />
+            ))}
             {[...new Array(pending)].map((v, i) => <Image key={i} />)}
           </Images>
         </Flex>
-        {redirect && <Redirect to={`/envelope/${redirect}`} />}
+        {redirect && (
+          <Redirect
+            to={{
+              pathname: `/envelope/${redirect}`,
+              state: { redirect: true },
+            }}
+            push
+          />
+        )}
       </Dropzone>
     );
   }
 }
 
-export default Home;
+export default withLoginStatus(Home);
 
 const Images = styled.div`
   display: grid;
@@ -270,3 +369,18 @@ const Flex = styled.div`
   flex-direction: column;
   flex: 1;
 `;
+
+const TooManyFiles = ({ closeModal }) => (
+  <Modal style={{ maxHeight: 370, alignItems: 'center' }}>
+    <T style={{ textAlign: 'center' }} variant="display1">
+      Too many files.
+    </T>
+    <T style={{ margin: 40 }}>
+      Logged out users can only upload 40 images per envelope. Logged in users
+      can upload up to 1000 images per envelope
+    </T>
+    <Button variant="raised" color="secondary" onClick={closeModal}>
+      Got it
+    </Button>
+  </Modal>
+);
