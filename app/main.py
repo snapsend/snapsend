@@ -492,8 +492,8 @@ def profile(token):
       hist_out={}
     envs["history"] = hist_arr
     
-  envelopes.append(envs)
-  envs = {}
+    envelopes.append(envs)
+    envs = {}
 
   payload["envelope"]=envelopes
   return return_success(payload,True)
