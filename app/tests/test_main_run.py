@@ -12,7 +12,99 @@ class BasicTestCases(BaseTestCase):
 		self.assertTrue(b'hello' in rv.data.lower())
 		self.assertEqual(rv.status_code, 200)
 		
+		
+	def test_signup_new_user (self): 
+		print "Testing Sign-up - new user"
+		d = {"email":"mytest@mtest.com","password1":"pwd","password2":"pwd","username":"mtest","profilepic":"mtest.jpeg"}
+		response=self.client.post('/signup', content_type='application/json', data=json.dumps(d))    
+		
+		usr2 = User.query.filter_by(email="mytest@mtest.com").first()		
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(usr2.uname, "mtest")
+		self.assertEqual(usr2.profilepic, "mtest.jpeg")
 	
+
+	def test_signup_negative_existing_user (self): 
+		print "Testing Sign-up - email exists"
+		d = {"email":"mtester@mtest.com","password1":"pwd","password2":"pwd","username":"mtest","profilepic":"mtest.jpeg"}
+		response=self.client.post('/signup', content_type='application/json', data=json.dumps(d))    
+
+		r=b'"success": false'
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue(r in response.data.lower())
+
+	'''	
+	def test_signup_negative_email_null (self): 
+		print "Testing Sign-up - email is null"
+		d = {"email":None,"password1":"pwd","password2":"pwd","username":"mtest","profilepic":"mtest.jpeg"}
+		response=self.client.post('/signup', content_type='application/json', data=json.dumps(d))    
+		print response.data.lower()
+		r=b'"success": false'
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue(r in response.data.lower())
+	'''
+	
+	def test_login_logout_existing_user (self): 
+		print "Testing Login and Logout - existing user"
+		d = {"email":"mtester@mtest.com","password":"test"}
+		response = self.client.post('/login', content_type='application/json', data=json.dumps(d))
+		
+		self.assertEqual(response.status_code, 200)
+		usr2 = User.query.filter_by(email="mtester@mtest.com").first()
+		self.assertNotEqual(usr2.token, None)
+		
+		lo = {"token":usr2.token}
+		response = self.client.post('/logout', content_type='application/json', data=json.dumps(lo))
+		self.assertEqual(response.status_code, 200)
+		usr2 = User.query.filter_by(email="mtester@mtest.com").first()
+		self.assertEqual(usr2.token, None)
+
+
+
+	def test_login_negative_wrong_password (self): 
+		print "Testing Login - Incorrect password"
+		d = {"email":"mtester@mtest.com","password":"test1"}
+		response = self.client.post('/login', content_type='application/json', data=json.dumps(d))
+		
+		r=b'"success": false'
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue(r in response.data.lower())
+		usr2 = User.query.filter_by(email="mtester@mtest.com").first()
+		self.assertNotEqual(usr2.token, None)
+		
+	
+	'''
+	def test_login_negative_wrong_email (self): 
+		print "Testing Login - Incorrect password"
+		d = {"email":"mtester1@mtest.com","password":"test"}
+		response = self.client.post('/login', content_type='application/json', data=json.dumps(d))
+		print response.data.lower()
+		r=b'"success": false'
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue(r in response.data.lower())
+	
+
+		
+	def test_logout_negative_wrong_token (self): 
+		print "Testing Logout - Incorrect or expired token"
+		lo = {"token":"wyjob25liiwiyme2nwmxzdm5zgiynjayymu2ndu0ztljzgnjmtrmm2yixq.dbbc3w.i0_l7flsj7p_cklc2t0ju88r2kc"}
+		response = self.client.post('/logout', content_type='application/json', data=json.dumps(lo))
+		print response.data.lower()
+		r=b'"success": false'
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue(r in response.data.lower())
+		
+		
+	def test_logout_negative_null_token (self): 
+		print "Testing Logout - Incorrect or expired token"
+		lo = {"token":None}
+		response = self.client.post('/logout', content_type='application/json', data=json.dumps(lo))
+		print response.data.lower()
+		r=b'"success": false'
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue(r in response.data.lower())
+	'''	
+		
 	def test_post_envelope_logged_user(self): 
 		print "Testing Post Envelope"
 		d = {"envelopeName":"env3","recipientName":"everyone","senderName":"mtest","token":"121","images":[{"url":"mtest.image1.jpeg","filename":"image1.jpeg"}]}
@@ -27,6 +119,7 @@ class BasicTestCases(BaseTestCase):
 		self.assertEqual(env3.recipient, 'everyone')
 		self.assertEqual(img1.filename, 'image1.jpeg')
 		self.assertEqual(img1.imagelink, 'mtest.image1.jpeg')
+
 
 
 	def test_post_envelope_null_user(self): 
@@ -45,6 +138,7 @@ class BasicTestCases(BaseTestCase):
 		self.assertEqual(img1.imagelink, 'mtest.image1.jpeg')		
 		
 		
+
 	def test_post_envelope_negative(self): 
 		print "Testing Post Envelope - User does not exist"
 		d = {"envelopeName":"env4","recipientName":"everyone","senderName":"mtest","token":"120","images":[{"url":"mtest.image1.jpeg","filename":"image1.jpeg"}]}
@@ -79,7 +173,7 @@ class BasicTestCases(BaseTestCase):
 		print "Testing Get Profile"
 		response=self.client.get('/profile/121', content_type='application/json')    
 		
-		r = b'{"uname": "mtest", "profilepic": "picurl.jpeg", "envelope": [{"ename": "env1", "handle": "369", "sender": "mtest", "images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}], "recipient": "someone", "history": []}, {"ename": "env2", "handle": "248", "sender": "mtest", "images": [{"url": "image-a.com", "filename": "img.jpg", "imageid": 4}, {"url": "image-b.com", "filename": "img.png", "imageid": 5}], "recipient": "no one", "history": []}], "email": "mtest@mtester.com", "success": true}'
+		r = b'{"uname": "mtest", "profilepic": "picurl.jpeg", "envelope": [{"ename": "env1", "handle": "369", "sender": "mtest", "images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}], "recipient": "someone", "history": []}, {"ename": "env2", "handle": "248", "sender": "mtest", "images": [{"url": "image-a.com", "filename": "img.jpg", "imageid": 4}, {"url": "image-b.com", "filename": "img.png", "imageid": 5}], "recipient": "no one", "history": []}], "email": "mtester@mtest.com", "success": true}'
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue(r in response.data.lower())
 
