@@ -73,7 +73,7 @@ class BasicTestCases(BaseTestCase):
 		self.assertNotEqual(usr2.token, None)
 		
 	
-	'''
+	
 	def test_login_negative_wrong_email (self): 
 		print "Testing Login - Incorrect password"
 		d = {"email":"mtester1@mtest.com","password":"test"}
@@ -103,7 +103,7 @@ class BasicTestCases(BaseTestCase):
 		r=b'"success": false'
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue(r in response.data.lower())
-	'''	
+		
 		
 	def test_post_envelope_logged_user(self): 
 		print "Testing Post Envelope"

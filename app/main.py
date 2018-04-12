@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 import flask
@@ -31,6 +30,7 @@ def datetime_handler(x):
         return x.isoformat()
     raise TypeError("Unknown type")
 
+
 class User_Class(flask_login.UserMixin):
   def __init__(self, userid, password):
     self.id = userid
@@ -39,8 +39,14 @@ class User_Class(flask_login.UserMixin):
 
   def get_auth_token(self):
     #Encode a secure token for cookie
-    data = [str(self.id), self.password]
-    return login_serializer.dumps(data)
+    # print "hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    try:
+      data = [str(self.id), self.password]
+      return login_serializer.dumps(data)
+    except Exception as e:
+      return None
+    
+    
 
 
   @staticmethod
@@ -58,13 +64,17 @@ class User_Class(flask_login.UserMixin):
 
 
 def hash_envid(envid):
-	target = md5(str(envid).encode('utf-8')).hexdigest()[0:10].upper()
-	return target
+  target = md5(str(envid).encode('utf-8')).hexdigest()[0:10].upper()
+  return target
+
 
 def hash_pass(password):
     #Return the md5 hash of the password+salt
-    salted_password = password + app.secret_key
-    return md5(salted_password).hexdigest()[0:50]
+    if password != "" and password is not None:
+      salted_password = password + app.secret_key
+      return md5(salted_password).hexdigest()[0:50]
+    else:
+      return None
 
 
 @login_manager.request_loader
@@ -88,17 +98,21 @@ def load_token(token):
     # max_age = app.config["REMEMBER_COOKIE_DURATION"].total_seconds()
  
     #Decrypt the Security Token, data = [username, hashpass]
-    data = login_serializer.loads(token)
+    try:
+      data = login_serializer.loads(token)
+    except Exception as e:
+      return None,1
  
     #Find the User
     user = User_Class.get(data[0])
-    # print("inside token function")
-    # print()
+    if user is None:
+      return None,2
  
     #Check Password and return user or None
-    if user and data[1].lower().strip() == user.password.lower().strip():
-        return user
-    return None
+    if data[1].lower().strip() == user.password.lower().strip():
+      return user,0
+    else:
+      return None,3
 
 
 
@@ -117,87 +131,149 @@ def load_user(email):
 
 
 
-@login_manager.request_loader
-def request_loader(request):
-  email = request.form.get('email')
-  if email not in users:
-      return
+# @login_manager.request_loader
+# def request_loader(request):
+#   email = request.form.get('email')
+#   if email not in users:
+#       return
 
-  user = User()
-  user.id = email
+#   user = User()
+#   user.id = email
 
-  user.is_authenticated = request.form['password'] == users[email]['password']
-  return user
+#   user.is_authenticated = request.form['password'] == users[email]['password']
+#   return user
 
 
 
 @app.route('/login', methods=['POST'])
 def login():
   if request.method == 'POST':
-    loaded_r = request.get_json()
-    r = json.dumps(loaded_r)
-    loaded_r = json.loads(r)
+    try:
+      loaded_r = request.get_json()
+      r = json.dumps(loaded_r)
+      loaded_r = json.loads(r)
 
-    email = loaded_r['email']
-    pwd = loaded_r['password']
+      email = loaded_r['email']
+      pwd = loaded_r['password']
+    except Exception as e:
+      loaded_r = {"error" : "Accessing the received JSON has failed"}
+      return return_success(loaded_r,False)
+    
+    if pwd is None or pwd == "":
+      loaded_r = {"error" : "Password is empty or None"}
+      return return_success(loaded_r,False)
+
     new_pwd = hash_pass(pwd)
 
-    user_tuple=User.query.filter_by(email=email).first()
-    curr_pwd = user_tuple.password
+    if email == "" or email is None:
+      loaded_r = {"error" : "Email ID is empty or None"}
+      return return_success(loaded_r,False)
+
+
+    try:
+      user_tuple=User.query.filter_by(email=email).first()
+      curr_pwd = user_tuple.password
+    except Exception as e:
+      loaded_r = {"error" : "User does not exist"}
+      return return_success(loaded_r,False)
+    
 
     if new_pwd.lower().strip() == curr_pwd.lower().strip():
       user = User_Class(email,new_pwd)
       flask_login.login_user(user)
-      some_token = user.get_auth_token()
-      user_tuple.token = some_token
-      db.session.commit()
+      try:
+        some_token = user.get_auth_token()
+      except Exception as e:
+        loaded_r = {"error" : "Token could not be generated"}
+        return return_success(loaded_r,False)
+      
+      try:
+        user_tuple.token = some_token
+        db.session.commit()
+      except Exception as e:
+        loaded_r = {"error" : "Generated token could not be added to the database"}
+        return return_success(loaded_r,False)
+      
       
       loaded_r = {
                   "token" : some_token
                   }
       return return_success(loaded_r,True)
-    else:
 
-      loaded_r = {"error" : "Possible incorrect password"}
+    else:
+      loaded_r = {"error" : "Incorrect password"}
       return return_success(loaded_r,False)
 
 
 @app.route('/signup', methods=['POST'])
 def signup():
   if request.method == 'POST':
-    loaded_r = request.get_json()
-    r = json.dumps(loaded_r)
-    loaded_r = json.loads(r)
+    try:
+      loaded_r = request.get_json()
+      r = json.dumps(loaded_r)
+      loaded_r = json.loads(r)
 
-    curr_email = loaded_r['email']
-    pwd1 = loaded_r['password1']
-    pwd2 = loaded_r['password2']
-    user_name = loaded_r['username']
-    profile_picture = loaded_r['profilepic'] 
-    print profile_picture
+      curr_email = loaded_r['email']
+      pwd1 = loaded_r['password1']
+      pwd2 = loaded_r['password2']
+      user_name = loaded_r['username']
+      profile_picture = loaded_r['profilepic'] 
+    except Exception as e:
+      loaded_r = {"error" : "Accessing the received JSON has failed"}
+      return return_success(loaded_r,False)
+
 
     try:
       hashed_pwd = hash_pass(pwd1)
-      user_obj = User_Class(curr_email,hashed_pwd)
-      flask_login.login_user(user_obj)
-      some_token = user_obj.get_auth_token()
-      new_user = User(user_name, curr_email, hashed_pwd, some_token, profile_picture)
-    
-      db.session.add(new_user)
-      db.session.commit()
+      if hashed_pwd is None:
+        loaded_r = {
+                  "error" : "Password is empty or None"
+                  }
+        return return_success(loaded_r,False)
 
+      if curr_email != "" and curr_email is not None:
+        user_obj = User_Class(curr_email,hashed_pwd)
+      else:
+        loaded_r = {
+                  "error" : "Email is empty or None"
+                  }
+        return return_success(loaded_r,False)
+
+      some_token = user_obj.get_auth_token()
+      if some_token is None:
+        loaded_r = {
+                  "error" : "Token could not be generated"
+                  }
+        return return_success(loaded_r,False)
+
+      try:
+        new_user = User(user_name, curr_email, hashed_pwd, some_token, profile_picture)
+        db.session.add(new_user)
+        db.session.commit()
+      except Exception as e:
+        loaded_r = {
+                  "error" : "User addition to database failed (pre-existing email ID)"
+                  }
+        return return_success(loaded_r,False)
+
+      flask_login.login_user(user_obj)
+
+      #passed all cases
       loaded_r = {
                   "token" : some_token 
                   }
       return return_success(loaded_r,True)
 
-
+    #in case of some other error
     except:
       loaded_r = {
                   "error" : "Signup failed"
                   }
 
       return return_success(loaded_r,False)
+
+
+
 
 #       #return flask.redirect(flask.url_for('signup'))
 #     #return flask.redirect(flask.url_for('protected'))
@@ -211,25 +287,47 @@ def protected():
 
 @app.route('/logout', methods=['POST'])
 def logout():
-  loaded_r = request.get_json()
-  r = json.dumps(loaded_r)
-  loaded_r = json.loads(r)
-  tkn = loaded_r['token']
-  loaded_usr = load_token(tkn)
-
-  loaded_r = {}
-
-  if(loaded_usr):
-    email = loaded_usr.id
-    user_tuple=User.query.filter_by(email=email).first()
-
-    user_tuple.token = None
-    db.session.commit()
-    flask_login.logout_user()
-    return return_success(loaded_r,True)
-  
-  else:
+  try:
+    loaded_r = request.get_json()
+    r = json.dumps(loaded_r)
+    loaded_r = json.loads(r)
+    tkn = loaded_r['token']
+  except Exception as e:
+    loaded_r = {"error" : "Accessing the received JSON has failed"}
     return return_success(loaded_r,False)
+  
+  loaded_usr, code = load_token(tkn)
+
+  if code == 1:
+    loaded_r = {"error" : "Invalid token"}
+    return return_success(loaded_r,False)
+
+  elif code == 2:
+    loaded_r = {"error" : "Getting user data has failed"}
+    return return_success(loaded_r,False)
+
+  elif code == 3:
+    loaded_r = {"error" : "Login manager password mismatch"}
+    return return_success(loaded_r,False)
+
+  elif code == 0:
+    loaded_r = {}
+    email = loaded_usr.id
+    try:
+      user_tuple=User.query.filter_by(email=email).first()
+      user_tuple.token = None
+      db.session.commit()
+    except Exception as e:
+      loaded_r = {"error" : "Fetching user from database failed"}
+      return return_success(loaded_r,False)
+
+    try:
+      flask_login.logout_user()
+    except Exception as e:
+      loaded_r = {"error" : "Login Manager logout failed"}
+      return return_success(loaded_r,False)
+    
+    return return_success(loaded_r,True)
 
 
 
@@ -316,31 +414,31 @@ def getenvelope(handle):
   payload = ""
   env_out = {}
   try:
-  	env_out = {
-  	    "handle": handle,
-  	    "envelopeName": result.ename,
-  	    "recipientName": result.recipient,
-  	    "senderName": result.sender,
+    env_out = {
+        "handle": handle,
+        "envelopeName": result.ename,
+        "recipientName": result.recipient,
+        "senderName": result.sender,
         "createddate":result.createddate
-  	    
-  	}
+        
+    }
 
-  	img_arr = []
-  	img_out = {}
+    img_arr = []
+    img_out = {}
 
-  	for imgs in imgres:
-  	  img_out = {"imageId": imgs.imageID, "url": imgs.imagelink, "filename": imgs.filename}
-  	  img_arr.append(img_out)
-  	  img_out = {}
+    for imgs in imgres:
+      img_out = {"imageId": imgs.imageID, "url": imgs.imagelink, "filename": imgs.filename}
+      img_arr.append(img_out)
+      img_out = {}
 
-  	payload = env_out
-  	payload["images"] = img_arr
+    payload = env_out
+    payload["images"] = img_arr
 
-  	
-  	return return_success(payload,True)
+    
+    return return_success(payload,True)
 
   except Exception as e:
-  	raise e
+    raise e
 
 #@flask_login.login_required
 @app.route('/profile/<token>',methods=['GET'])
