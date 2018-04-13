@@ -7,7 +7,7 @@ import PicIcon from 'material-ui-icons/CameraRoll';
 import { Redirect } from 'react-router-dom';
 import Dropzone, { handleDrop as uploadImages } from '../uploadImage';
 import type {
-  SuccessImage,
+  Image as ImageType,
   UnfinishedEnvelope,
   Envelope,
   Format,
@@ -15,15 +15,18 @@ import type {
   EventHandler,
   Login,
   Logout,
+  User,
 } from '../types';
 import Image from '../components/Image';
-import { post, get } from '../network';
+import { post, get, track } from '../network';
 import Modal from '../components/Modal';
 import T from '../components/T';
 import Button from '../components/Button';
 import { withLoginStatus } from '../components/LoginStatus';
+import History from '../components/History';
+import Drawer from '../components/Drawer';
 
-type PendingImage = Promise<SuccessImage>;
+type PendingImage = Promise<ImageType>;
 type P = {
   match: {
     params?: {
@@ -38,27 +41,30 @@ type P = {
   token: ?string,
   login: Login,
   logout: Logout,
+  user: ?User,
+  refreshProfile: void => Promise<void>,
 };
 
 type State = {
-  envelope: ?UnfinishedEnvelope,
+  envelope: ?(UnfinishedEnvelope | Envelope),
   pending: number,
-  images: Array<SuccessImage>,
+  images: Array<ImageType>,
   redirect: ?string,
   format: Format,
   size: Size,
   uploadError: ?string,
+  historyOpen: boolean,
 };
 
 const initialEnvelope: UnfinishedEnvelope = {
-  senderName: '',
-  recipientName: '',
   loading: false,
   envelopeName: '',
 };
 
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
 const generateDownloadUrl = (
-  images: Array<SuccessImage>,
+  images: Array<ImageType>,
   envelope: ?UnfinishedEnvelope,
   format: Format,
   size: Size,
@@ -66,15 +72,6 @@ const generateDownloadUrl = (
 ) => {
   // start with the base url
   const baseUrl = 'https://process.filestackapi.com/';
-  // then get all the images into an array string
-  // let imagesString = images
-  //   .map(im => {
-  //     const split = im.url.split('/');
-  //     const handle = split[split.length - 1];
-  //     if (im.selected || noneSelected) return handle;
-  //     return '';
-  //   })
-  //   .toString();
 
   let imagesString = images.reduce((currString, im, ind) => {
     const split = im.url.split('/');
@@ -123,13 +120,17 @@ class Home extends Component<P, State> {
     format: 'ORIGINAL',
     size: { width: null, height: null },
     uploadError: null,
+    historyOpen: false,
   };
 
   async componentDidMount() {
     // if the component just mounted, check if there is an envelopeId and fetch it.
     const { match } = this.props;
-    if (match && match.params && match.params.handle) {
+    if (match && match.params && typeof match.params.handle !== 'undefined') {
       const envelope: Envelope = await get(`/envelope/${match.params.handle}`);
+      match.params &&
+        match.params.handle &&
+        track('V', match.params.handle, this.props.token);
       if (envelope.success !== true) return;
       const images = envelope.images;
       this.setState(state => ({
@@ -141,26 +142,35 @@ class Home extends Component<P, State> {
   }
 
   handleDrop = (acceptedFiles: Array<File>) => {
+    const { match, location } = this.props;
+
+    const isAtEnvelope = !!(match && match.params && match.params.handle);
+    const isRedirect = !!(
+      location &&
+      location.state &&
+      location.state.redirect
+    );
+    if (isAtEnvelope || isRedirect) return;
+
     const res = uploadImages(acceptedFiles, !!this.props.token);
     if (typeof res === 'string') {
       this.setState({ uploadError: res });
       return;
     }
 
-    res.forEach((pending: PendingImage) => {
+    res.forEach(async (pending: PendingImage) => {
       this.setState(state => ({
         ...state,
         pending: state.pending + 1,
         envelope: state.envelope ? state.envelope : initialEnvelope,
       }));
       // now
-      pending.then(img => {
-        this.setState(state => ({
-          ...state,
-          pending: state.pending - 1,
-          images: [...state.images, img],
-        }));
-      });
+      const img = await pending;
+      this.setState(state => ({
+        ...state,
+        pending: state.pending - 1,
+        images: [...state.images, img],
+      }));
     });
   };
 
@@ -194,7 +204,7 @@ class Home extends Component<P, State> {
     });
 
     // then set the reroute to the newly creaed envelope
-    this.setState({ redirect: res.handle });
+    this.setState({ redirect: res.handle }, () => this.props.refreshProfile());
   };
 
   handleSizeChange: EventHandler = e => {
@@ -232,6 +242,20 @@ class Home extends Component<P, State> {
     });
   };
 
+  toggleHistory = () =>
+    this.setState(state => ({ historyOpen: !state.historyOpen }));
+
+  deleteImage = (i: number) => {
+    this.setState(state => {
+      const images = [...state.images];
+      images.splice(i, 1);
+      return {
+        ...state,
+        images,
+      };
+    });
+  };
+
   howManySelected = () => {
     return this.state.images.reduce(
       (prev, curr, currI) => prev + (curr.selected ? 1 : 0),
@@ -249,8 +273,19 @@ class Home extends Component<P, State> {
     });
   };
 
+  handleDownload = () => {
+    const params = this.props.match.params;
+    if (!params) return;
+    const handle = params.handle;
+    if (typeof handle !== 'string') return;
+
+    let number = this.howManySelected();
+    if (number === 0) number = this.state.images.length;
+    track('D', handle, this.props.token, number);
+  };
+
   render() {
-    const { match, location, token, login, logout } = this.props;
+    const { match, location, token, login, logout, user } = this.props;
     const { images, pending, envelope, redirect, size, format } = this.state;
     const yetToDrop = pending === 0 && images.length === 0;
     const isViewing: boolean = !!(match && match.params && match.params.handle);
@@ -269,7 +304,9 @@ class Home extends Component<P, State> {
       location.state &&
       location.state.redirect
     );
-
+    const status = isRedirect
+      ? 'REVIEWING'
+      : isViewing ? 'DOWNLOADING' : 'EDITING';
     return (
       <Dropzone onDrop={this.handleDrop}>
         {this.state.uploadError && (
@@ -292,7 +329,10 @@ class Home extends Component<P, State> {
             login={login}
             logout={logout}
             numSelected={numSelected}
+            pending={pending}
             deselectAll={this.deselectAll}
+            handleDownload={this.handleDownload}
+            toggleHistory={this.toggleHistory}
           />
           {yetToDrop && (
             <Zone>
@@ -310,16 +350,36 @@ class Home extends Component<P, State> {
               </Circle>
             </Zone>
           )}
-          <Images>
-            {images.map((img, i) => (
-              <Image
-                toggle={() => this.toggleImage(i)}
-                key={img.url}
-                img={img}
-              />
-            ))}
-            {[...new Array(pending)].map((v, i) => <Image key={i} />)}
-          </Images>
+          {(images.length > 0 || pending > 0) && (
+            <Content>
+              <Images>
+                {images.map((img, i) => (
+                  <Image
+                    toggle={
+                      isViewing && !isRedirect
+                        ? () => this.toggleImage(i)
+                        : undefined
+                    }
+                    delete={
+                      !isViewing && !isRedirect
+                        ? () => this.deleteImage(i)
+                        : undefined
+                    }
+                    key={img.url}
+                    img={img}
+                    status={status}
+                  />
+                ))}
+                {[...new Array(pending)].map((v, i) => <Image key={i} />)}
+              </Images>
+              {status === 'DOWNLOADING' &&
+                envelope &&
+                envelope.images && (
+                  <Drawer open={this.state.historyOpen} envelope={envelope} />
+                )}
+            </Content>
+          )}
+          <History user={user} show={yetToDrop && !isViewing} />
         </Flex>
         {redirect && (
           <Redirect
@@ -341,7 +401,8 @@ const Images = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   grid-gap: 30px;
-  margin: 15px;
+  margin: 30px;
+  flex: 1;
 `;
 
 const Zone = styled.div`
@@ -350,7 +411,11 @@ const Zone = styled.div`
   justify-content: center;
   align-items: center;
   flex: 1;
+  background: #c2c2c2;
+  z-index: 0;
+  padding: 30px;
 `;
+
 const Circle = styled.div`
   border-radius: 100%;
   background: #ededed;
@@ -368,6 +433,13 @@ const Flex = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+`;
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  align-items: flex-start;
 `;
 
 const TooManyFiles = ({ closeModal }) => (

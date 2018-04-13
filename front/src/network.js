@@ -4,7 +4,6 @@ const API_BASE = process.env.REACT_APP_API_URL || '';
 
 export async function post(endpoint: string, data: { token?: ?string }): any {
   if (!data.token) data.token = null;
-  console.log('POSTING', data);
   try {
     const res = await fetch(API_BASE + endpoint, {
       body: JSON.stringify(data),
@@ -42,4 +41,20 @@ export async function get(endpoint: string, token: ?string): any {
     console.warn(`GET Error occurred at ${endpoint}`, rejectedValue);
     return { success: false, error: 'An error occurred fetching data' };
   }
+}
+
+export async function track(
+  action: 'V' | 'D',
+  handle: string,
+  token: ?string,
+  dnum?: ?number
+): Promise<void> {
+  dnum = typeof dnum === 'number' ? dnum : null;
+  token = typeof token === 'string' ? token : null;
+  return post('/history', {
+    token,
+    action,
+    handle,
+    dnum,
+  });
 }

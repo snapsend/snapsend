@@ -43,7 +43,7 @@ type State = {
   password2: string,
   status: Status,
   error: boolean,
-  profilePic: ?string,
+  profilepic: ?string,
   username: string,
 };
 
@@ -53,7 +53,7 @@ const initialState: State = {
   password2: '',
   status: 'CLOSED',
   error: false,
-  profilePic: null,
+  profilepic: null,
   username: '',
 };
 
@@ -79,7 +79,7 @@ class LoginComponent extends React.Component<Props, State> {
     this.setState({ [name]: value });
   };
 
-  handlePicChange = (url: string) => this.setState({ profilePic: url });
+  handlePicChange = (url: string) => this.setState({ profilepic: url });
 
   handleClickCreate = () => this.setState({ status: 'SIGNING UP' });
 
@@ -92,7 +92,7 @@ class LoginComponent extends React.Component<Props, State> {
       this.state.email,
       this.state.password,
       this.state.password2,
-      this.state.profilePic,
+      this.state.profilepic,
       this.state.username
     );
     if (success) {
@@ -146,7 +146,7 @@ class LoginComponent extends React.Component<Props, State> {
             />
             <Input
               name="password"
-              label="Passwor"
+              label="Password"
               error={error}
               value={this.state.password}
               onChange={this.handleChange}
@@ -191,7 +191,7 @@ class LoginComponent extends React.Component<Props, State> {
             <ProfileImage
               style={{ alignSelf: 'center', marginTop: 30 }}
               handlePicChange={this.handlePicChange}
-              profilePic={this.state.profilePic}
+              profilePic={this.state.profilepic}
             />
             <Input
               name="username"
@@ -258,7 +258,7 @@ class LoginComponent extends React.Component<Props, State> {
               label="Name"
               type="text"
               disabled
-              value={user.uname || 'No username provided.'}
+              value={user.username || 'No username provided.'}
             />
             <Input
               name="email"
@@ -283,7 +283,7 @@ class LoginComponent extends React.Component<Props, State> {
       return (
         <ProfileButton
           url={(user && user.profilepic) || null}
-          name={(user && user.uname) || null}
+          name={(user && user.username) || null}
           onClick={this.openProfile}
         />
       );

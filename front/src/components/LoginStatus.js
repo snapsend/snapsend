@@ -20,6 +20,7 @@ type S = {
   createUser: CreateUser,
   waiting: boolean,
   user: ?User,
+  refreshProfile: void => Promise<void>,
 };
 
 type P = {
@@ -39,6 +40,7 @@ class LoginStatus extends React.Component<P, S> {
       createUser: this.createUser,
       waiting: false,
       user: null,
+      refreshProfile: this.getProfile,
     };
   }
 
@@ -77,7 +79,6 @@ class LoginStatus extends React.Component<P, S> {
       this.props.cookies.remove('token');
       this.setState({ token: null });
     }
-    console.log('RESULT', res);
   };
 
   logout: Logout = async () => {
@@ -86,7 +87,7 @@ class LoginStatus extends React.Component<P, S> {
     // post to backend
     // change state
     await post('/logout', { token: this.state.token });
-    this.setState({ token: null });
+    this.setState({ token: null, user: null });
   };
 
   createUser: CreateUser = async (
@@ -107,10 +108,9 @@ class LoginStatus extends React.Component<P, S> {
       profilepic,
       username,
     });
-    console.log('RES', res);
     if (res.success && res.token) {
       setToken(res.token, this.props.cookies);
-      this.setState({ token: res.token });
+      this.setState({ token: res.token }, () => this.getProfile());
       return true;
     }
     console.warn('FAILED SIGNUP', res);

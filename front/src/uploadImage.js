@@ -4,7 +4,7 @@ import type { Node } from 'react';
 import filestack from 'filestack-js';
 import accept from 'attr-accept';
 import DropzoneComp from 'react-dropzone';
-import type { SuccessImage } from './types';
+import type { Image as ImageType } from './types';
 
 const fs = filestack.init(process.env.REACT_APP_FILESTACK_SECRET);
 
@@ -33,7 +33,7 @@ export const handleDrop = (files: Array<File>, isLoggedIn: boolean) => {
   return files.map(file => uploadImage(file));
 };
 
-export const uploadImage = (file: File): Promise<SuccessImage> =>
+export const uploadImage = (file: File): Promise<ImageType> =>
   new Promise((resolve, reject) => {
     // make sure you got the right file type
     if (!accept(file, ACCEPTED_TYPES)) return reject(WRONG_TYPE_ERROR);

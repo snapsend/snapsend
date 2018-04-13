@@ -23,6 +23,9 @@ import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import { InputLabel } from 'material-ui/Input';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { baseUrl } from '../utils';
+import History from 'material-ui-icons/AccessTime';
+import IconButton from 'material-ui/IconButton';
 
 export default ({
   envelope,
@@ -38,6 +41,9 @@ export default ({
   isRedirect,
   numSelected,
   deselectAll,
+  handleDownload,
+  toggleHistory,
+  pending,
 }: {
   envelope: ?UnfinishedEnvelope | Envelope,
   handleEnvelopeChange: EventHandler,
@@ -52,6 +58,9 @@ export default ({
   isRedirect: boolean,
   numSelected: number,
   deselectAll: () => void,
+  handleDownload: () => void,
+  toggleHistory: () => void,
+  pending: ?number,
 }) => {
   const isEnvelope = isAtEnvelope;
   return (
@@ -74,28 +83,30 @@ export default ({
       {envelope && (
         <Fragment>
           <EditingWrapper>
-            <TextField
-              autoFocus
-              label="Sender"
-              name="senderName"
-              disabled={!!isViewing}
-              value={envelope.senderName}
-              onChange={handleEnvelopeChange}
-            />
-            <TextField
-              name="recipientName"
-              onChange={handleEnvelopeChange}
-              autoFocus
-              disabled={!!isViewing}
-              label="Recipient"
-              value={envelope.recipientName}
-            />
+            {!isViewing ? (
+              <TextField
+                autoFocus
+                label="Envelope Name"
+                name="envelopeName"
+                required
+                autoFocus
+                disabled={!!isViewing}
+                value={envelope.envelopeName}
+                onChange={handleEnvelopeChange}
+              />
+            ) : (
+              <T variant="display1">
+                {envelope.envelopeName && envelope.envelopeName.length > 0
+                  ? envelope.envelopeName
+                  : 'Unnamed envelope'}
+              </T>
+            )}
             {!isViewing && (
               <Button
                 onClick={handleSave}
                 variant="raised"
                 color="secondary"
-                disabled={envelope.loading}
+                disabled={envelope.loading || (pending && pending > 0)}
               >
                 Get Link
               </Button>
@@ -105,7 +116,7 @@ export default ({
           {isEnvelope &&
             !isRedirect && (
               <DownloadWrap>
-                <FormControl style={{ minWidth: 86, margin: 20 }}>
+                <FormControl style={{ width: 86, margin: '0px 15px' }}>
                   <InputLabel>Format</InputLabel>
                   <Select
                     value={format}
@@ -122,7 +133,7 @@ export default ({
                   </Select>
                 </FormControl>
                 <TextField
-                  style={{ minWidth: 86, margin: 20 }}
+                  style={{ width: 86, margin: '0px 15px' }}
                   label="Max width"
                   name="width"
                   type="number"
@@ -134,7 +145,7 @@ export default ({
                   onChange={handleSizeChange}
                 />
                 <TextField
-                  style={{ minWidth: 86, margin: 20 }}
+                  style={{ width: 86, margin: '0px 15px' }}
                   label="Max height"
                   name="height"
                   type="number"
@@ -146,11 +157,12 @@ export default ({
                   onChange={handleSizeChange}
                 />
                 <Button
-                  style={{ minWidth: 86, margin: 20 }}
+                  style={{ margin: '15px 15px 0px' }}
                   variant="raised"
                   color="secondary"
+                  onClick={handleDownload}
                   href={downloadUrl}
-                  download={envelope.senderName || 'snapsend'}
+                  download={`${envelope.envelopeName || 'snapsend'}.zip`}
                 >
                   {`Download ${numSelected === 0 ? 'All' : numSelected}`}
                 </Button>
@@ -158,11 +170,18 @@ export default ({
                   <Button
                     onClick={deselectAll}
                     size="small"
-                    style={{ margin: 20 }}
+                    style={{ margin: '15px 15px 0px' }}
                   >
                     Deselect all
                   </Button>
                 )}
+                <div style={{ flex: 1 }} />
+                <IconButton
+                  onClick={toggleHistory}
+                  style={{ margin: '15px 15px 0px' }}
+                >
+                  <History />
+                </IconButton>
               </DownloadWrap>
             )}
         </Fragment>
@@ -175,6 +194,7 @@ const DownloadWrap = styled.div`
   display: flex;
   align-items: flex-end;
   flex-wrap: wrap;
+  margin-bottom: 15px;
 `;
 
 const TextField = styled(Input)`
@@ -183,7 +203,7 @@ const TextField = styled(Input)`
 
 const EditingWrapper = styled.div`
   display: flex;
-  margin: 20px;
+  margin: 15px;
   align-items: flex-end;
 `;
 
@@ -194,6 +214,7 @@ const Title = styled(Typography)`
 const AppBar = withTheme()(styled(Paper)`
   && {
     background-color: ${props => props.theme.palette.primary.main};
+    z-index: 10;
   }
 `);
 type P = {
@@ -212,9 +233,9 @@ class CopyLink extends React.Component<P, S> {
   render() {
     const { envelope } = this.props;
 
-    let url = 'https://snapsend.xyz/envelope/';
+    let url = baseUrl;
     if (envelope && typeof envelope.handle === 'string') {
-      url = 'https://snapsend.xyz/envelope/' + envelope.handle;
+      url = `${baseUrl}/envelope/${envelope.handle}`;
     }
     return (
       <DownloadWrap style={{ alignItems: 'center' }}>
