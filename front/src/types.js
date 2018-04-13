@@ -29,7 +29,10 @@ export type Envelope = UnfinishedEnvelope & {
 };
 
 export type RecordedAction = {
-  action: 'VIEW' | 'DOWNLOAD' | 'CREATE',
+  action: 'C' | 'V' | 'D',
+  actiondate: string,
+  dnum: ?number,
+  username: ?string,
 };
 
 export type Format = 'JPG' | 'PNG' | 'ORIGINAL';

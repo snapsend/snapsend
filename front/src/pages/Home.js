@@ -130,7 +130,7 @@ class Home extends Component<P, State> {
       const envelope: Envelope = await get(`/envelope/${match.params.handle}`);
       match.params &&
         match.params.handle &&
-        track('VIEW', match.params.handle, this.props.token);
+        track('V', match.params.handle, this.props.token);
       if (envelope.success !== true) return;
       console.log('ENV', envelope);
       const images = envelope.images;
@@ -284,7 +284,7 @@ class Home extends Component<P, State> {
 
     let number = this.howManySelected();
     if (number === 0) number = this.state.images.length;
-    track('DOWNLOAD', handle, this.props.token, this.howManySelected());
+    track('D', handle, this.props.token, number);
   };
 
   render() {

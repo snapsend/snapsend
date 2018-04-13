@@ -45,12 +45,13 @@ export async function get(endpoint: string, token: ?string): any {
 }
 
 export async function track(
-  action: 'VIEW' | 'DOWNLOAD',
+  action: 'V' | 'D',
   handle: string,
   token: ?string,
   dnum?: ?number
 ): Promise<void> {
   dnum = typeof dnum === 'number' ? dnum : null;
+  token = typeof token === 'string' ? token : null;
   return post('/history', {
     token,
     action,

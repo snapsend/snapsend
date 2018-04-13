@@ -28,13 +28,17 @@ export default (props: Props) => {
   let name = envelope.envelopeName;
   if (!name || name === '') name = 'Unnamed Envelope';
   line += name;
+
+  line = 'Created by you ';
+  if (envelope.status === 'R') line = 'Created by Anonymous ';
   return (
     <Wrap>
       <Header>
         <T variant="body2" style={{ lineHeight: 'inherit' }}>
-          {line}
+          {name}
         </T>
         <Date variant="caption">
+          {line}
           {moment.utc(envelope.createdAt).fromNow()}
         </Date>
         <div style={{ flex: 1 }} />
