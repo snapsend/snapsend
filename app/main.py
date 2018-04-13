@@ -436,7 +436,7 @@ def getenvelope(handle):
       img_out = {"imageId": imgs.imageID, "url": imgs.imagelink, "filename": imgs.filename}
       img_arr.append(img_out)
       img_out = {}
-      
+
     payload = env_out
     payload["images"] = img_arr
 
@@ -543,32 +543,37 @@ def history():
   response = return_success({},True)
   return response
 
-# @app.route('/envelope', methods=['DELETE'])
-# def delete():
-#   loaded_r = request.get_json()
-#   r = json.dumps(loaded_r)
-#   loaded_r = json.loads(r)
-#   token = loaded_r['token']
-#   handle = loaded_r['handle']
-#   if token != None:
-#     if db.session.query(User).filter_by(token = token).scalar() != None:
-#       pass
-#     else:
-#       payload = {"error":"401 Unauthorised User"}
-#       return return_success(payload,False)
-#     if db.session.query(Envelope).filter_by(handle = handle).scalar() != None:
-#       pass
-#     else:
-#       payload = {"error":"Envelope does not exist"}
-#       return return_success(payload,False)
+@app.route('/envelope', methods=['DELETE'])
+def delete():
+  loaded_r = request.get_json()
+  r = json.dumps(loaded_r)
+  loaded_r = json.loads(r)
+  token = loaded_r['token']
+  handle = loaded_r['handle']
+  if token != None:
+    if db.session.query(User).filter_by(token = token).scalar() != None:
+      pass
+    else:
+      payload = {"error":"401 Unauthorised User"}
+      return return_success(payload,False)
+    if db.session.query(Envelope).filter_by(handle = handle).scalar() != None:
+      pass
+    else:
+      payload = {"error":"Envelope does not exist"}
+      return return_success(payload,False)
 
-#   env = db.session.query(Envelope).filter(Envelope.handle==handle).first()
-#   db.session.query(Image).filter(Image.inenvID==env.envelopeID).delete()
-#   db.session.query(History).filter(History.envelopeID==env.envelopeID).delete()
-#   db.session.query(Envelope).filter(Envelope)
-#   db.session.commit()
-#   response = return_success({},True)
-#   return response
+  env = db.session.query(Envelope).filter(Envelope.handle==handle).first()
+  img = db.session.query(Image).filter(Image.inenvID==env.envelopeID).all()
+  hist = db.session.query(History).filter(History.envelopeID==env.envelopeID).all()
+  for i in img:
+    db.session.delete(i)
+  for h in hist:
+    db.session.delete(h)
+  
+  db.session.delete(env)
+  db.session.commit()
+  response = return_success({},True)
+  return response
 
 
 def return_success(loaded_r,j):
