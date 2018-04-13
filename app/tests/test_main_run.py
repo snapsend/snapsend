@@ -33,16 +33,16 @@ class BasicTestCases(BaseTestCase):
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue(r in response.data.lower())
 
-	'''	
+	
 	def test_signup_negative_email_null (self): 
 		print "Testing Sign-up - email is null"
 		d = {"email":None,"password1":"pwd","password2":"pwd","username":"mtest","profilepic":"mtest.jpeg"}
 		response=self.client.post('/signup', content_type='application/json', data=json.dumps(d))    
-		print response.data.lower()
+		
 		r=b'"success": false'
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue(r in response.data.lower())
-	'''
+	
 	
 	def test_login_logout_existing_user (self): 
 		print "Testing Login and Logout - existing user"
@@ -75,11 +75,11 @@ class BasicTestCases(BaseTestCase):
 	
 	
 	def test_login_negative_wrong_email (self): 
-		print "Testing Login - Incorrect password"
+		print "Testing Login - Wrong email"
 		d = {"email":"mtester1@mtest.com","password":"test"}
 		response = self.client.post('/login', content_type='application/json', data=json.dumps(d))
-		print response.data.lower()
-		r=b'"success": false'
+		
+		r=b'"success": false, "error": "user does not exist"'
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue(r in response.data.lower())
 	
@@ -89,20 +89,22 @@ class BasicTestCases(BaseTestCase):
 		print "Testing Logout - Incorrect or expired token"
 		lo = {"token":"wyjob25liiwiyme2nwmxzdm5zgiynjayymu2ndu0ztljzgnjmtrmm2yixq.dbbc3w.i0_l7flsj7p_cklc2t0ju88r2kc"}
 		response = self.client.post('/logout', content_type='application/json', data=json.dumps(lo))
-		print response.data.lower()
-		r=b'"success": false'
+		
+		r=b'"success": false, "error": "invalid token"'
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue(r in response.data.lower())
+		
 		
 		
 	def test_logout_negative_null_token (self): 
-		print "Testing Logout - Incorrect or expired token"
+		print "Testing Logout - Null token"
 		lo = {"token":None}
 		response = self.client.post('/logout', content_type='application/json', data=json.dumps(lo))
-		print response.data.lower()
-		r=b'"success": false'
+		
+		r=b'"success": false, "error": "invalid token"'
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue(r in response.data.lower())
+		
 		
 		
 	def test_post_envelope_logged_user(self): 
@@ -119,6 +121,7 @@ class BasicTestCases(BaseTestCase):
 		self.assertEqual(env3.recipient, 'everyone')
 		self.assertEqual(img1.filename, 'image1.jpeg')
 		self.assertEqual(img1.imagelink, 'mtest.image1.jpeg')
+
 
 
 
@@ -149,16 +152,16 @@ class BasicTestCases(BaseTestCase):
 		self.assertTrue(r in response.data.lower())
 		
 	
-	'''	
+		
 	def test_get_envelope(self): 
 		print "Testing Get Envelope"
 		response=self.client.get('/envelope/369', content_type='application/json')    
 		
-		r = b'{"envelopeName": "env1", "handle": "369", "success": true, "images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}], "recipientname": "someone", "sendername": "mtest"}'
+		r = b'"images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}], "recipientname": "someone", "sendername": "mtest"'
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue(r in response.data.lower())
 		
-	'''	
+	
 	def test_get_envelope_negative(self): 
 		print "Testing Get Envelope - Handle doesn't exist"
 		response=self.client.get('/envelope/368', content_type='application/json')    
@@ -168,15 +171,16 @@ class BasicTestCases(BaseTestCase):
 		self.assertTrue(r in response.data.lower())
 		
 		
-	'''					
+	
 	def test_get_profile(self): 
 		print "Testing Get Profile"
 		response=self.client.get('/profile/121', content_type='application/json')    
 		
-		r = b'{"uname": "mtest", "profilepic": "picurl.jpeg", "envelope": [{"ename": "env1", "handle": "369", "sender": "mtest", "images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}], "recipient": "someone", "history": []}, {"ename": "env2", "handle": "248", "sender": "mtest", "images": [{"url": "image-a.com", "filename": "img.jpg", "imageid": 4}, {"url": "image-b.com", "filename": "img.png", "imageid": 5}], "recipient": "no one", "history": []}], "email": "mtester@mtest.com", "success": true}'
+		r = b'"username": "mtest", "profilepic": "picurl.jpeg", "envelope": [{"status": "s", "envelopename": "env1", "handle": "369", "images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}], "recipientname": "someone", "sendername": "mtest"'
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue(r in response.data.lower())
 
+        
         
 	def test_get_profile_negative(self): 
 		print "Testing Get Profile - token doesn't exist"
@@ -185,17 +189,16 @@ class BasicTestCases(BaseTestCase):
 		r = b'{"success": false, "error": "invalid token"}'
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue(r in response.data.lower())
-        '''
+        
 
-
+	
 	def test_post_history_download(self): 
 		print "Testing Post History - Download"
 		h = {"token":"121","handle":"248","action":"D","dnum":"2"}
 		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
-		
-		henv1 = History.query.filter_by(envelopeID="2").first()
+	
+		henv1 = History.query.filter_by(envelopeID="2", act_type="D").first()
 		self.assertEqual(response.status_code, 200)
-		self.assertEqual(henv1.act_type,'D')
 		self.assertEqual(henv1.dnum, 2)
 		self.assertEqual(henv1.userID, 1)
 
@@ -203,34 +206,26 @@ class BasicTestCases(BaseTestCase):
 		
 	def test_post_history_viewed(self): 
 		print "Testing Post History - Viewed"
-		h = {"token":"121","handle":"248","action":"V","dnum":"0"}
+		h = {"token":"121","handle":"248","action":"V","dnum":None}
 		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
-		
-		henv1 = History.query.filter_by(envelopeID="2").first()
+	
+		henv1 = History.query.filter_by(envelopeID="2", act_type="V").first()
 		self.assertEqual(response.status_code, 200)
-		self.assertEqual(henv1.act_type,'V')
-		self.assertEqual(henv1.dnum, 0)
+		self.assertEqual(henv1.dnum, None)
 		self.assertEqual(henv1.userID, 1)
 
-
-
-	def test_junk(self):
-		# Tests to see if 404 page is yielded
-		response = self.client.get('/safjsdlkjfsdlkjf')
-		self.assertEquals(response.status_code, 404)
-
-			
-		
 	
-	'''	
+		
+		
 	def test_post_history_download_negative1(self): 
 		print "Testing Post History - Download - invalid token"
 		h = {"token":"120","handle":"248","action":"D","dnum":"2"}
 		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
 		
+		r = b'{"success": false, "error": "invalid token"}'
 		self.assertEqual(response.status_code, 200)
-		print response.data.lower()
-		print response
+		self.assertTrue(r in response.data.lower())
+	
 	
 		
 	def test_post_history_viewed_negative1(self): 
@@ -238,11 +233,12 @@ class BasicTestCases(BaseTestCase):
 		h = {"token":"120","handle":"248","action":"D","dnum":"2"}
 		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
 	
+		r = b'{"success": false, "error": "invalid token"}'
 		self.assertEqual(response.status_code, 200)
-		print response.data.lower()
-		print response
+		self.assertTrue(r in response.data.lower())
 		
 		
+	'''
 	def test_post_history_download_negative2(self): 
 		print "Testing Post History - Download - invalid handle"
 		h = {"token":"121","handle":"249","action":"D","dnum":"2"}
@@ -254,7 +250,7 @@ class BasicTestCases(BaseTestCase):
 		
 		
 	def test_post_history_viewed_negative2(self): 
-		print "Testing Post History - Viewed - invalid token"
+		print "Testing Post History - Viewed - invalid handle"
 		h = {"token":"121","handle":"249","action":"D","dnum":"2"}
 		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
 	
