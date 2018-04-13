@@ -475,9 +475,9 @@ def profile(token):
   for r in res:
     result2 = db.session.query(Envelope).filter(Envelope.envelopeID==r).first()
     if result2.eowner == result1.userID:
-      envs = {"handle":result2.handle,"senderName":result2.sender,"recipientName":result2.recipient, "envelopeName":result2.ename, "status":"S"}
+      envs = {"handle":result2.handle,"senderName":result2.sender,"recipientName":result2.recipient, "envelopeName":result2.ename, "status":"S", "createddate":result2.createddate}
     else:
-      envs = {"handle":result2.handle,"senderName":result2.sender,"recipientName":result2.recipient, "envelopeName":result2.ename, "status":"R"}
+      envs = {"handle":result2.handle,"senderName":result2.sender,"recipientName":result2.recipient, "envelopeName":result2.ename, "status":"R", "createddate":result2.createddate}
     result3 = db.session.query(Image).filter(Image.inenvID==result2.envelopeID).all()
     img_out = {}
     img_arr = []
@@ -507,8 +507,8 @@ def profile(token):
 @app.route('/history',methods=['POST'])
 def history():
   loaded_r = request.get_json()
-  r = json.dumps(loaded_r)
-  loaded_r = json.loads(r)
+  # r = json.dumps(loaded_r)
+  # loaded_r = json.loads(r)
   token = loaded_r['token']
   handle = loaded_r['handle']
   action = loaded_r['action']
@@ -522,6 +522,7 @@ def history():
       payload = {"error":"Invalid Token"}
       return return_success(payload,False)
     result1 = db.session.query(User).filter(User.token==token).first()
+
     history = History(envid,action,result1.userID,dnum)
   else:
     history = History(envid,action,None,dnum)
