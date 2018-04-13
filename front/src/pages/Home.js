@@ -132,7 +132,6 @@ class Home extends Component<P, State> {
         match.params.handle &&
         track('V', match.params.handle, this.props.token);
       if (envelope.success !== true) return;
-      console.log('ENV', envelope);
       const images = envelope.images;
       this.setState(state => ({
         ...state,
@@ -166,9 +165,7 @@ class Home extends Component<P, State> {
         envelope: state.envelope ? state.envelope : initialEnvelope,
       }));
       // now
-      console.log('ABOUT TO AWAIT');
       const img = await pending;
-      console.log('DONE AWAITING');
       this.setState(state => ({
         ...state,
         pending: state.pending - 1,
@@ -310,7 +307,6 @@ class Home extends Component<P, State> {
     const status = isRedirect
       ? 'REVIEWING'
       : isViewing ? 'DOWNLOADING' : 'EDITING';
-    console.log('DRAWER', status, this.state.historyOpen);
     return (
       <Dropzone onDrop={this.handleDrop}>
         {this.state.uploadError && (

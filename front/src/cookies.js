@@ -5,7 +5,6 @@ export const setToken = (t: string, cookie: any) => {
   const oneyear = new Date();
   const year = oneyear.getFullYear();
   oneyear.setFullYear(year + 1);
-  console.log('SETTING', t);
   cookie.set('token', t, { path: '/', expires: oneyear });
 };
 

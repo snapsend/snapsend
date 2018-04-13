@@ -79,7 +79,6 @@ class LoginStatus extends React.Component<P, S> {
       this.props.cookies.remove('token');
       this.setState({ token: null });
     }
-    console.log('RESULT', res);
   };
 
   logout: Logout = async () => {
@@ -109,7 +108,6 @@ class LoginStatus extends React.Component<P, S> {
       profilepic,
       username,
     });
-    console.log('RES', res);
     if (res.success && res.token) {
       setToken(res.token, this.props.cookies);
       this.setState({ token: res.token }, () => this.getProfile());

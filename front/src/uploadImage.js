@@ -27,7 +27,6 @@ export const ACCEPTED_TYPES = [
 export const FAILED_MESSAGE = 'Image Upload Failed';
 
 export const handleDrop = (files: Array<File>, isLoggedIn: boolean) => {
-  console.log('HANDLE DROP');
   const overSignedOut = !isLoggedIn && files.length > LOGGED_OUT_LIMIT;
   const overSignedIn = isLoggedIn && files.length > LOGGED_IN_LIMIT;
   if (overSignedIn || overSignedOut) return 'Too many files';
@@ -36,7 +35,6 @@ export const handleDrop = (files: Array<File>, isLoggedIn: boolean) => {
 
 export const uploadImage = (file: File): Promise<ImageType> =>
   new Promise((resolve, reject) => {
-    console.log('BEGGINING UPLOAD OF', file);
     // make sure you got the right file type
     if (!accept(file, ACCEPTED_TYPES)) return reject(WRONG_TYPE_ERROR);
 
@@ -44,7 +42,6 @@ export const uploadImage = (file: File): Promise<ImageType> =>
       .upload(file, {}, {})
       .then(res => {
         const { status } = res;
-        console.log('DONE UPLOAD');
         if (status === SUCCESS_STATUS) {
           return resolve(res);
         }

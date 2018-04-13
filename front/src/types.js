@@ -21,7 +21,7 @@ export type UnfinishedEnvelope = {|
 export type Envelope = UnfinishedEnvelope & {
   handle: string,
   images: Array<Image>,
-  createdAt?: string,
+  createddate?: string,
   success?: boolean,
   error?: string,
   history: any,

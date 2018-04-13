@@ -4,7 +4,6 @@ const API_BASE = process.env.REACT_APP_API_URL || '';
 
 export async function post(endpoint: string, data: { token?: ?string }): any {
   if (!data.token) data.token = null;
-  console.log('POSTING', data);
   try {
     const res = await fetch(API_BASE + endpoint, {
       body: JSON.stringify(data),

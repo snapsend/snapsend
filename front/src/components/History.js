@@ -101,7 +101,6 @@ type Props = {
 
 export default (props: Props) => {
   const { user, show } = props;
-  console.log('USER', user);
   if (!user || user.envelope.length < 1 || !show) return null;
   return (
     <Wrap>

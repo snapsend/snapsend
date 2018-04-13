@@ -146,7 +146,7 @@ class LoginComponent extends React.Component<Props, State> {
             />
             <Input
               name="password"
-              label="Passwor"
+              label="Password"
               error={error}
               value={this.state.password}
               onChange={this.handleChange}

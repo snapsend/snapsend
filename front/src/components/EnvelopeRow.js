@@ -31,6 +31,10 @@ export default (props: Props) => {
 
   line = 'Created by you ';
   if (envelope.status === 'R') line = 'Created by Anonymous ';
+  const owner = envelope.history.find(h => h.action === 'C');
+  if (owner && owner.username && envelope.status === 'R')
+    line = `Created by ${owner.username} `;
+
   return (
     <Wrap>
       <Header>
@@ -39,7 +43,7 @@ export default (props: Props) => {
         </T>
         <Date variant="caption">
           {line}
-          {moment.utc(envelope.createdAt).fromNow()}
+          {moment.utc(envelope.createddate).fromNow()}
         </Date>
         <div style={{ flex: 1 }} />
         <T
