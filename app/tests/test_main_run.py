@@ -175,10 +175,18 @@ class BasicTestCases(BaseTestCase):
 	def test_get_profile(self): 
 		print "Testing Get Profile"
 		response=self.client.get('/profile/121', content_type='application/json')    
-		
-		r = b'"username": "mtest", "profilepic": "picurl.jpeg", "envelope": [{"status": "s", "envelopename": "env1", "handle": "369", "images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}], "recipientname": "someone", "sendername": "mtest"'
+		print response.data.lower()
+		u = b'"username": "mtest", "profilepic": "picurl.jpeg"'
+		e1 = b'"envelopename": "env1", "handle": "369"'
+		i1 = b'"images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}], "recipientname": "someone", "sendername": "mtest"'
+		e2 = b'"envelopename": "env2", "handle": "248"'
+		i2 = b'"images": [{"url": "image-a.com", "filename": "img.jpg", "imageid": 4}, {"url": "image-b.com", "filename": "img.png", "imageid": 5}]'
 		self.assertEqual(response.status_code, 200)
-		self.assertTrue(r in response.data.lower())
+		self.assertTrue(u in response.data.lower())
+		self.assertTrue(e1 in response.data.lower())
+		self.assertTrue(e2 in response.data.lower())
+		self.assertTrue(i1 in response.data.lower())
+		self.assertTrue(i2 in response.data.lower())
 
         
         
