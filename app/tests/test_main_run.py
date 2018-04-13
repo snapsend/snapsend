@@ -152,7 +152,7 @@ class BasicTestCases(BaseTestCase):
 		self.assertTrue(r in response.data.lower())
 		
 	
-		
+	'''	
 	def test_get_envelope(self): 
 		print "Testing Get Envelope"
 		response=self.client.get('/envelope/369', content_type='application/json')    
@@ -246,7 +246,7 @@ class BasicTestCases(BaseTestCase):
 		self.assertTrue(r in response.data.lower())
 		
 		
-	'''
+
 	def test_post_history_download_negative2(self): 
 		print "Testing Post History - Download - invalid handle"
 		h = {"token":"121","handle":"249","action":"D","dnum":"2"}
