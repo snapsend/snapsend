@@ -120,7 +120,7 @@ class Home extends Component<P, State> {
     format: 'ORIGINAL',
     size: { width: null, height: null },
     uploadError: null,
-    historyOpen: false,
+    historyOpen: true,
   };
 
   async componentDidMount() {

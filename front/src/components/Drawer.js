@@ -19,8 +19,7 @@ type Props = { open: boolean, envelope: Envelope };
 type State = {};
 export default class HistoryDrawer extends React.Component<Props, State> {
   render() {
-    const open = true;
-    const { envelope } = this.props;
+    const { envelope, open } = this.props;
     if (!envelope.history) return null;
 
     const history = envelope.history.sort((a, b) =>
