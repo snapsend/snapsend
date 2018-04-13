@@ -2,13 +2,10 @@
 
 import react from 'React';
 
-export type SuccessImage = {
+export type Image = {
   filename: string,
-  handle: string,
-  mimetype: string,
-  size: number,
-  status: 'Stored',
   url: string,
+  status?: 'Stored',
   selected?: boolean,
 };
 
@@ -16,19 +13,23 @@ export type NetworkResponse<T> =
   | { success: false, message?: string }
   | ({ success: true } & T);
 
-export type UnfinishedEnvelope = {
-  recipientName: string,
-  senderName: string,
-  loading: boolean,
+export type UnfinishedEnvelope = {|
+  loading?: boolean,
   envelopeName: ?string,
-};
+|};
 
 export type Envelope = UnfinishedEnvelope & {
   handle: string,
-  images: Array<SuccessImage>,
-  createdAt: number,
-  success: boolean,
+  images: Array<Image>,
+  createdAt?: string,
+  success?: boolean,
   error?: string,
+  history: any,
+  status?: 'S' | 'R',
+};
+
+export type RecordedAction = {
+  action: 'VIEW' | 'DOWNLOAD' | 'CREATE',
 };
 
 export type Format = 'JPG' | 'PNG' | 'ORIGINAL';
@@ -45,12 +46,12 @@ export type CreateUser = (
   email: string,
   password1: string,
   password2: string,
-  profile_url: ?string,
+  profilepic: ?string,
   username: string
 ) => Promise<boolean>;
 
 export type User = {
-  uname: ?string,
+  username: ?string,
   email: string,
   envelope: Array<Envelope>,
   profilepic: ?string,

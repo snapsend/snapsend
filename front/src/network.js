@@ -43,3 +43,18 @@ export async function get(endpoint: string, token: ?string): any {
     return { success: false, error: 'An error occurred fetching data' };
   }
 }
+
+export async function track(
+  action: 'VIEW' | 'DOWNLOAD',
+  handle: string,
+  token: ?string,
+  dnum?: ?number
+): Promise<void> {
+  dnum = typeof dnum === 'number' ? dnum : null;
+  return post('/history', {
+    token,
+    action,
+    handle,
+    dnum,
+  });
+}

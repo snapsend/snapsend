@@ -20,6 +20,7 @@ type S = {
   createUser: CreateUser,
   waiting: boolean,
   user: ?User,
+  refreshProfile: void => Promise<void>,
 };
 
 type P = {
@@ -39,6 +40,7 @@ class LoginStatus extends React.Component<P, S> {
       createUser: this.createUser,
       waiting: false,
       user: null,
+      refreshProfile: this.getProfile,
     };
   }
 
