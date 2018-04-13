@@ -416,6 +416,7 @@ def getenvelope(handle):
   result = db.session.query(Envelope).filter(Envelope.handle==handle).first()
   envid = result.envelopeID
   imgres = db.session.query(Image).filter(Image.inenvID==envid).all()
+  history = db.session.query(History).filter(History.envelopeID==envid).all()
   payload = ""
   env_out = {}
   try:
@@ -435,10 +436,22 @@ def getenvelope(handle):
       img_out = {"imageId": imgs.imageID, "url": imgs.imagelink, "filename": imgs.filename}
       img_arr.append(img_out)
       img_out = {}
-
+      
     payload = env_out
     payload["images"] = img_arr
 
+    hist_arr = []
+    hist_out = {}
+    for hist in history:
+      hist_user = hist.userID
+      use = db.session.query(User).filter(User.userID==hist_user).first()
+      hist_out = {"action":hist.act_type,"dnum":hist.dnum, "actiondate":hist.actiondate, "username":use.uname}
+      hist_arr.append(hist_out)
+      hist_out = {}
+
+    payload["history"] = hist_arr
+
+    
     
     return return_success(payload,True)
 
@@ -458,14 +471,11 @@ def profile(token):
   payload ={}
   result1 = db.session.query(User).filter(User.token==token).first()
   payload = {"username":result1.uname,"profilepic":result1.profilepic,"email":result1.email}
-  #users = []
   results = db.session.query(History).filter(History.userID==result1.userID).all()
-  #titles = [row.envelopeID for row in results.all()]
+
   
   res = []
   for i in results:
-    print('hi')
-    print(type(i.envelopeID))
     res.append(i.envelopeID)
   
   res = list(set(res))
@@ -491,8 +501,9 @@ def profile(token):
     hist_out = {}
     hist_arr =[]
     for hist in result4:
-
-      hist_out={"action":hist.act_type,"dnum":hist.dnum, "actiondate":hist.actiondate}
+      hist_user = hist.userID
+      use = db.session.query(User).filter(User.userID==hist_user).first()
+      hist_out={"action":hist.act_type,"dnum":hist.dnum, "actiondate":hist.actiondate, "username":use.uname}
       hist_arr.append(hist_out)
       hist_out={}
     envs["history"] = hist_arr
@@ -507,8 +518,8 @@ def profile(token):
 @app.route('/history',methods=['POST'])
 def history():
   loaded_r = request.get_json()
-  # r = json.dumps(loaded_r)
-  # loaded_r = json.loads(r)
+  r = json.dumps(loaded_r)
+  loaded_r = json.loads(r)
   token = loaded_r['token']
   handle = loaded_r['handle']
   action = loaded_r['action']
@@ -531,6 +542,34 @@ def history():
   db.session.commit()
   response = return_success({},True)
   return response
+
+# @app.route('/envelope', methods=['DELETE'])
+# def delete():
+#   loaded_r = request.get_json()
+#   r = json.dumps(loaded_r)
+#   loaded_r = json.loads(r)
+#   token = loaded_r['token']
+#   handle = loaded_r['handle']
+#   if token != None:
+#     if db.session.query(User).filter_by(token = token).scalar() != None:
+#       pass
+#     else:
+#       payload = {"error":"401 Unauthorised User"}
+#       return return_success(payload,False)
+#     if db.session.query(Envelope).filter_by(handle = handle).scalar() != None:
+#       pass
+#     else:
+#       payload = {"error":"Envelope does not exist"}
+#       return return_success(payload,False)
+
+#   env = db.session.query(Envelope).filter(Envelope.handle==handle).first()
+#   db.session.query(Image).filter(Image.inenvID==env.envelopeID).delete()
+#   db.session.query(History).filter(History.envelopeID==env.envelopeID).delete()
+#   db.session.query(Envelope).filter(Envelope)
+#   db.session.commit()
+#   response = return_success({},True)
+#   return response
+
 
 def return_success(loaded_r,j):
   loaded_r['success'] = j
