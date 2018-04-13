@@ -1,3 +1,6 @@
+
+![circleco build](https://img.shields.io/circleci/project/github/snapsend/snapsend.svg)
+
 # Snapsend 
 
 
