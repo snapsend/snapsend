@@ -93,4 +93,6 @@ Logged in users can delete a created envelope.
 
 ### Delete Image 
 
-An uploaded image can be deleted before envelope is created
+An uploaded image can be deleted before envelope is created.
+
+
