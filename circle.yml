@@ -15,10 +15,14 @@ machine:
     # Replace this with your project ID
     GCLOUD_PROJECT_DEV: "$GCLOUD_PROJECT_ID"
     GCLOUD_PROJECT: "$GCLOUD_PROJECT_ID1"
+    COVERALLS_REPO_TOKEN: "$COVERALLS_REPO_TOKEN"
+    COVERALLS_PARALLEL: true
 
     node:
       version: 8.9.4
-
+notify:
+  webhooks:
+    - url: https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN
 dependencies:
   pre:
     # Download App Engine SDK
@@ -36,7 +40,7 @@ dependencies:
 test:
   override:
     # run local unit tests
-      # - nosetests app app/tests/*.py
+      - nosetests app app/tests/*.py
       - cd front && npm run test
 
 deployment:

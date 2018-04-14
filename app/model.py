@@ -18,11 +18,11 @@ class User(db.Model):
 	#def __init__(self, uname, email, passw, generated_token, profile_url):
 	def __init__(self, uname, email, passw, generated_token, profilepic):
 		#self.userID = userID
-	    self.uname = uname.title()
-	    self.email = email.title()
-	    self.password = passw.title()
-	    self.token = generated_token.title()
-	    self.profilepic = profilepic.title()
+	    self.uname = uname
+	    self.email = email
+	    self.password = passw
+	    self.token = generated_token
+	    self.profilepic = profilepic
 	    #self.set_password(passw)
 	    
 
@@ -51,23 +51,18 @@ class Envelope(db.Model):
 	createddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 	updateddate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
-	def __init__(self,ename,sender,eowner,recipient,handle):
+	def __init__(self,ename,sender,recipient,handle):
 		#self.envelopeID = envelopeID
-		if eowner is None:
-			self.eowner = None
-		else:
-			self.eowner = eowner.title()
-		self.sender = sender.title()
-		self.recipient = recipient.title()
-		self.ename = ename.title()
-		self.handle = handle.title()
+		# if eowner is None:
+		# 	self.eowner = None
+		# else:
+		# 	self.eowner = eowner.title()
+		self.sender = sender
+		self.recipient = recipient
+		self.ename = ename
+		self.handle = handle
 		#self.envelopeID = envelopeID
-	# 	self.handle = self.set_handle(Envelope.envelopeID)
-		
 
-	# def set_handle(self,envelopeID):
-	# 	self.handle = md5(str(Envelope.envelopeID).encode('utf-8')).hexdigest()[0:10].upper()
-		
 
 class Image(db.Model):
 	__table_args__ = {'extend_existing': True}
@@ -82,8 +77,8 @@ class Image(db.Model):
 	def __init__(self,inenvID,imagelink,filename):
 		#self.imageID = imageID
 		self.inenvID = inenvID
-		self.imagelink = imagelink.title()
-		self.filename = filename.title()
+		self.imagelink = imagelink
+		self.filename = filename
 
 
 class History(db.Model):
@@ -92,7 +87,7 @@ class History(db.Model):
 	historyID = db.Column(db.Integer,primary_key=True, autoincrement=True)
 	envelopeID = db.Column(db.Integer,db.ForeignKey('Envelope.envelopeID'))
 	act_type = db.Column(db.String(1))
-	userID = db.Column(db.Integer,db.ForeignKey('User.userID'))
+	userID = db.Column(db.Integer,nullable=True)
 	dnum = db.Column(db.Integer,nullable=True)
 	actiondate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
@@ -102,5 +97,3 @@ class History(db.Model):
 		self.act_type = act_type
 		self.userID = userID
 		self.dnum = dnum
-
-	

@@ -2,13 +2,13 @@
 
 exports[`Image Component Image renders correctly when pending 1`] = `
 <div
-  className="sc-bdVaJa ewHNwH"
+  className="sc-bdVaJa grdsmr"
 >
   <div
     className="sc-bwzfXH IQLxr"
   >
     <p
-      className="MuiTypography-root-1 MuiTypography-body1-10"
+      className="MuiTypography-root-7 MuiTypography-body1-16"
     >
       Uploading image
     </p>
