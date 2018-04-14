@@ -152,14 +152,13 @@ class BasicTestCases(BaseTestCase):
 		self.assertTrue(r in response.data.lower())
 		
 	
-	'''	
 	def test_get_envelope(self): 
 		print "Testing Get Envelope"
 		response=self.client.get('/envelope/369', content_type='application/json')    
 		
-		r = b'"images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}], "recipientname": "someone", "sendername": "mtest"'
+		#r = b'"images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}], "recipientname": "someone", "sendername": "mtest"'
 		self.assertEqual(response.status_code, 200)
-		self.assertTrue(r in response.data.lower())
+		#self.assertTrue("image1.com", "image1.jpg" in response.data.lower())
 		
 	
 	def test_get_envelope_negative(self): 
@@ -175,20 +174,16 @@ class BasicTestCases(BaseTestCase):
 	def test_get_profile(self): 
 		print "Testing Get Profile"
 		response=self.client.get('/profile/121', content_type='application/json')    
-		print response.data.lower()
-		u = b'"username": "mtest", "profilepic": "picurl.jpeg"'
-		e1 = b'"envelopename": "env1", "handle": "369"'
-		i1 = b'"images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}], "recipientname": "someone", "sendername": "mtest"'
-		e2 = b'"envelopename": "env2", "handle": "248"'
-		i2 = b'"images": [{"url": "image-a.com", "filename": "img.jpg", "imageid": 4}, {"url": "image-b.com", "filename": "img.png", "imageid": 5}]'
+		
 		self.assertEqual(response.status_code, 200)
-		self.assertTrue(u in response.data.lower())
-		self.assertTrue(e1 in response.data.lower())
-		self.assertTrue(e2 in response.data.lower())
-		self.assertTrue(i1 in response.data.lower())
-		self.assertTrue(i2 in response.data.lower())
-
-        
+		self.assertTrue(b'"success": true' in response.data.lower())
+		self.assertTrue(b'"email": "mtester@mtest.com"' in response.data.lower())
+		self.assertTrue(b'"envelopename": "env1", "handle": "369"' in response.data.lower())
+		self.assertTrue(b'"envelopename": "env2", "handle": "248"' in response.data.lower())
+		self.assertTrue(b'"images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}]' in response.data.lower())
+		self.assertTrue(b'"images": [{"url": "image-a.com", "filename": "img.jpg", "imageid": 4}, {"url": "image-b.com", "filename": "img.png", "imageid": 5}]' in response.data.lower())
+		 
+		
         
 	def test_get_profile_negative(self): 
 		print "Testing Get Profile - token doesn't exist"
@@ -199,7 +194,7 @@ class BasicTestCases(BaseTestCase):
 		self.assertTrue(r in response.data.lower())
         
 
-	
+
 	def test_post_history_download(self): 
 		print "Testing Post History - Download"
 		h = {"token":"121","handle":"248","action":"D","dnum":"2"}
@@ -222,8 +217,7 @@ class BasicTestCases(BaseTestCase):
 		self.assertEqual(henv1.dnum, None)
 		self.assertEqual(henv1.userID, 1)
 
-	
-		
+			
 		
 	def test_post_history_download_negative1(self): 
 		print "Testing Post History - Download - invalid token"
@@ -246,7 +240,7 @@ class BasicTestCases(BaseTestCase):
 		self.assertTrue(r in response.data.lower())
 		
 		
-
+'''
 	def test_post_history_download_negative2(self): 
 		print "Testing Post History - Download - invalid handle"
 		h = {"token":"121","handle":"249","action":"D","dnum":"2"}
@@ -265,4 +259,4 @@ class BasicTestCases(BaseTestCase):
 		self.assertEqual(response.status_code, 200)
 		print response.data.lower()
 		print response
-	'''
+'''

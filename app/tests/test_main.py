@@ -35,13 +35,14 @@ class BaseTestCase(TestCase):
 		db.session.add(Image("2","image-a.com","img.jpg"))
 		db.session.add(Image("2","image-b.com","img.png"))
 		
-		
-		db.session.add(History("1","V","1",""))
-		db.session.add(History("1","D","","1"))
-		db.session.add(History("1","V","2",""))
+		'''
+		db.session.add(History("1","V","1",None))
+		db.session.add(History("1","D",None,"1"))
+		db.session.add(History("1","V","2",None))
 		db.session.add(History("1","D","2","3"))
-		db.session.add(History("1","C","1",""))
-		db.session.add(History("2","C","1",""))
+		'''
+		db.session.add(History("1","C","1",None))
+		db.session.add(History("2","C","1",None))
 		
 		db.session.commit()
 				
