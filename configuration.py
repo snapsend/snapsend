@@ -18,9 +18,12 @@ class BaseConfig(object):
     CLOUDSQL_PASSWORD = os.environ['CLOUDSQL_PASSWORD']
     CLOUDSQL_DATABASE = os.environ['CLOUDSQL_DATABASE']
     CLOUDSQL_CONNECTION_NAME = os.environ['CLOUDSQL_CONNECTION_NAME']
-    SQLALCHEMY_DATABASE_URI =  'mysql://{user}:{password}@/{database}?unix_socket=/cloudsql/{instance}'format(
+    SQLALCHEMY_DATABASE_URI =  (
+      'mysql://{user}:{password}@/{database}'
+      '?unix_socket=/cloudsql/{connection_name}').format(
           user=CLOUDSQL_USER, password=CLOUDSQL_PASSWORD,
-          database=CLOUDSQL_DATABASE, instance=CLOUDSQL_CONNECTION_NAME)
+          database=CLOUDSQL_DATABASE, connection_name=CLOUDSQL_CONNECTION_NAME)
+
   else:
     CLOUDSQL_USER = 'root'
     CLOUDSQL_PASSWORD = 'snapsend_rocks'
