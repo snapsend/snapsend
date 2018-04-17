@@ -63,10 +63,17 @@ class LoginStatus extends React.Component<P, S> {
 
     if (res.success && res.token) {
       setToken(res.token, this.props.cookies);
-      this.setState({ token: res.token }, () => this.getProfile());
+      this.setState({ token: res.token, waiting: false, error: null }, () =>
+        this.getProfile()
+      );
       return true;
     }
-    this.setState({ waiting: false, error: 'Login failed.' });
+    this.setState({
+      waiting: false,
+      error: 'Login failed.',
+      token: null,
+      user: null,
+    });
     return false;
   };
 
@@ -77,7 +84,7 @@ class LoginStatus extends React.Component<P, S> {
       this.setState({ user: res });
     } else {
       this.props.cookies.remove('token');
-      this.setState({ token: null });
+      this.setState({ token: null, user: null, error: null });
     }
   };
 
@@ -87,7 +94,7 @@ class LoginStatus extends React.Component<P, S> {
     // post to backend
     // change state
     await post('/logout', { token: this.state.token });
-    this.setState({ token: null, user: null });
+    this.setState({ token: null, user: null, error: null });
   };
 
   createUser: CreateUser = async (
@@ -110,13 +117,17 @@ class LoginStatus extends React.Component<P, S> {
     });
     if (res.success && res.token) {
       setToken(res.token, this.props.cookies);
-      this.setState({ token: res.token }, () => this.getProfile());
+      this.setState({ token: res.token, waiting: false, error: null }, () =>
+        this.getProfile()
+      );
       return true;
     }
     console.warn('FAILED SIGNUP', res);
     this.setState({
       waiting: false,
       error: res.error ? res.error : 'Signup failed.',
+      user: null,
+      token: null,
     });
     return false;
   };
