@@ -403,7 +403,9 @@ def getenvelope(handle):
     return return_success(payload,True)
 
   except Exception as e:
-    raise e
+    payload = {"error":str(e)}
+    return return_success(payload,False)
+    
 
 #@flask_login.login_required
 @app.route('/profile/<token>',methods=['GET'])
@@ -460,6 +462,7 @@ def profile(token):
 
   payload["envelope"]=envelopes
   return return_success(payload,True)
+
 
 
 @app.route('/history',methods=['POST'])
