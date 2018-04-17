@@ -2,7 +2,6 @@
 
 // switch based on BRANC
 const BRANCH = process.env.BRANCH;
-console.log(BRANCH);
 
 const API_BASE =
   (BRANCH === 'master'
