@@ -13,14 +13,14 @@ class App extends Component<P> {
     return (
       <ErrorBoundary>
         <CookiesProvider>
-          <LoginStatus>
-            <BrowserRouter>
+          <BrowserRouter>
+            <LoginStatus>
               <Fragment>
                 <Route exact path="/" component={Home} />
                 <Route path="/envelope/:handle" component={Home} />
               </Fragment>
-            </BrowserRouter>
-          </LoginStatus>
+            </LoginStatus>
+          </BrowserRouter>
         </CookiesProvider>
       </ErrorBoundary>
     );

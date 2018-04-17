@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { withRouter } from 'react-router-dom';
 import { withCookies } from 'react-cookie';
 import type { Login, Logout, CreateUser, User } from '../types';
 import { setToken } from '../cookies';
@@ -26,6 +27,7 @@ type S = {
 type P = {
   children: React.ComponentType<any>,
   cookies: any,
+  history: any,
 };
 
 class LoginStatus extends React.Component<P, S> {
@@ -95,6 +97,7 @@ class LoginStatus extends React.Component<P, S> {
     // change state
     await post('/logout', { token: this.state.token });
     this.setState({ token: null, user: null, error: null });
+    this.props.history.push('/');
   };
 
   createUser: CreateUser = async (
@@ -141,7 +144,7 @@ class LoginStatus extends React.Component<P, S> {
   }
 }
 
-export default withCookies(LoginStatus);
+export default withRouter(withCookies(LoginStatus));
 
 const LoginContext = React.createContext();
 
