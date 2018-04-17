@@ -391,8 +391,11 @@ def getenvelope(handle):
     hist_out = {}
     for hist in history:
       hist_user = hist.userID
-      use = db.session.query(User).filter(User.userID==hist_user).first()
-      hist_out = {"action":hist.act_type,"dnum":hist.dnum, "actiondate":hist.actiondate, "username":use.uname}
+      if hist_user != None:
+        use = db.session.query(User).filter(User.userID==hist_user).first()
+        hist_out = {"action":hist.act_type,"dnum":hist.dnum, "actiondate":hist.actiondate, "username":use.uname}
+      else:
+        hist_out = {"action":hist.act_type,"dnum":hist.dnum, "actiondate":hist.actiondate, "username":None}
       hist_arr.append(hist_out)
       hist_out = {}
 
@@ -451,10 +454,13 @@ def profile(token):
     hist_arr =[]
     for hist in result4:
       hist_user = hist.userID
-      use = db.session.query(User).filter(User.userID==hist_user).first()
-      hist_out={"action":hist.act_type,"dnum":hist.dnum, "actiondate":hist.actiondate, "username":use.uname}
+      if hist_user != None:
+        use = db.session.query(User).filter(User.userID==hist_user).first()
+        hist_out = {"action":hist.act_type,"dnum":hist.dnum, "actiondate":hist.actiondate, "username":use.uname}
+      else:
+        hist_out = {"action":hist.act_type,"dnum":hist.dnum, "actiondate":hist.actiondate, "username":None}
       hist_arr.append(hist_out)
-      hist_out={}
+      hist_out = {}
     envs["history"] = hist_arr
     
     envelopes.append(envs)
