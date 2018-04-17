@@ -1,6 +1,13 @@
 // @flow
 
-const API_BASE = process.env.REACT_APP_API_URL || '';
+// switch based on BRANC
+const BRANCH = process.env.BRANCH;
+console.log(BRANCH);
+
+const API_BASE =
+  (BRANCH === 'master'
+    ? process.env.REACT_APP_MASTER_API_URL
+    : process.env.REACT_APP_DEV_API_URL) || '';
 
 export async function post(endpoint: string, data: { token?: ?string }): any {
   if (!data.token) data.token = null;
