@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { withRouter } from 'react-router-dom';
 import { withCookies } from 'react-cookie';
 import type { Login, Logout, CreateUser, User } from '../types';
 import { setToken } from '../cookies';
@@ -26,6 +27,7 @@ type S = {
 type P = {
   children: React.ComponentType<any>,
   cookies: any,
+  history: any,
 };
 
 class LoginStatus extends React.Component<P, S> {
@@ -63,10 +65,17 @@ class LoginStatus extends React.Component<P, S> {
 
     if (res.success && res.token) {
       setToken(res.token, this.props.cookies);
-      this.setState({ token: res.token }, () => this.getProfile());
+      this.setState({ token: res.token, waiting: false, error: null }, () =>
+        this.getProfile()
+      );
       return true;
     }
-    this.setState({ waiting: false, error: 'Login failed.' });
+    this.setState({
+      waiting: false,
+      error: 'Login failed.',
+      token: null,
+      user: null,
+    });
     return false;
   };
 
@@ -77,7 +86,7 @@ class LoginStatus extends React.Component<P, S> {
       this.setState({ user: res });
     } else {
       this.props.cookies.remove('token');
-      this.setState({ token: null });
+      this.setState({ token: null, user: null, error: null });
     }
   };
 
@@ -87,7 +96,8 @@ class LoginStatus extends React.Component<P, S> {
     // post to backend
     // change state
     await post('/logout', { token: this.state.token });
-    this.setState({ token: null, user: null });
+    this.setState({ token: null, user: null, error: null });
+    this.props.history.push('/');
   };
 
   createUser: CreateUser = async (
@@ -110,13 +120,17 @@ class LoginStatus extends React.Component<P, S> {
     });
     if (res.success && res.token) {
       setToken(res.token, this.props.cookies);
-      this.setState({ token: res.token }, () => this.getProfile());
+      this.setState({ token: res.token, waiting: false, error: null }, () =>
+        this.getProfile()
+      );
       return true;
     }
     console.warn('FAILED SIGNUP', res);
     this.setState({
       waiting: false,
       error: res.error ? res.error : 'Signup failed.',
+      user: null,
+      token: null,
     });
     return false;
   };
@@ -130,7 +144,7 @@ class LoginStatus extends React.Component<P, S> {
   }
 }
 
-export default withCookies(LoginStatus);
+export default withRouter(withCookies(LoginStatus));
 
 const LoginContext = React.createContext();
 

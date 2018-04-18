@@ -11,9 +11,9 @@ export const Wrapper = ({
 }) => {
   return (
     <CookiesProvider>
-      <LoginStatus>
-        <BrowserRouter>{children}</BrowserRouter>
-      </LoginStatus>
+      <BrowserRouter>
+        <LoginStatus>{children}</LoginStatus>
+      </BrowserRouter>
     </CookiesProvider>
   );
 };

@@ -1,5 +1,5 @@
-
-![circleco build](https://img.shields.io/circleci/project/github/snapsend/snapsend.svg)
+[![Coverage Status](https://coveralls.io/repos/github/snapsend/snapsend/badge.svg?branch=master)](https://coveralls.io/github/snapsend/snapsend?branch=master)
+![circleci build](https://img.shields.io/circleci/project/github/snapsend/snapsend.svg)
 
 # Snapsend 
 

@@ -199,6 +199,8 @@ class Home extends Component<P, State> {
     // post to the network
     const res: { handle: string } = await post('/envelope', {
       ...envelope,
+		senderName: '',
+		recipientName: '',
       images: this.state.images,
       token: this.props.token || null,
     });

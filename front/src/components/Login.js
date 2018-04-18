@@ -96,18 +96,18 @@ class LoginComponent extends React.Component<Props, State> {
       this.state.username
     );
     if (success) {
-      this.setState({ status: 'CLOSED' });
+      this.setState(initialState);
     }
   };
 
   handleLogin = async () => {
     const res = await this.props.login(this.state.email, this.state.password);
-    if (res) this.setState({ status: 'CLOSED' });
+    if (res) this.setState(initialState);
   };
 
   handleLogout = async () => {
     const res = await this.props.logout();
-    if (res) this.setState({ status: 'CLOSED' });
+    if (res) this.setState(initialState);
   };
 
   render() {
