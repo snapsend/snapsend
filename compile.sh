@@ -8,6 +8,7 @@ then
   mkdir -p lib
   pip install --upgrade pip
   pip install -r server/requirements.txt -t lib
+  pip install coverage
   gcloud --quiet components update app
   gcloud auth activate-service-account --key-file ${HOME}/client-secret.json
   
@@ -19,6 +20,7 @@ then
   mkdir -p lib
   pip install --upgrade pip
   pip install -r server/requirements.txt -t lib
+  pip install coverage
   gcloud --quiet components update app
   gcloud auth activate-service-account --key-file ${HOME}/client-secret.json
   
