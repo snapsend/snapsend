@@ -2,6 +2,7 @@
 import * as React from 'react';
 import Avatar from 'material-ui/Avatar';
 import AddAPhoto from 'material-ui-icons/AddAPhoto';
+import AccountCircle from 'material-ui-icons/AccountCircle';
 import { uploadImage } from '../uploadImage';
 import { CircularProgress } from 'material-ui/Progress';
 
@@ -10,6 +11,7 @@ type P = {
   handlePicChange: string => void,
   props?: any,
   profilePic: ?string,
+  disabled?: boolean,
 };
 type S = {
   url: ?string,
@@ -43,18 +45,30 @@ export default class ProfilePic extends React.Component<P, S> {
   };
 
   render() {
-    const { profilePic, style = {}, handlePicChange, ...props } = this.props;
+    const {
+      profilePic,
+      disabled,
+      style = {},
+      handlePicChange,
+      ...props
+    } = this.props;
     const { loading } = this.state;
     return (
       <React.Fragment>
         <Avatar
           style={{ width: 100, height: 100, ...style }}
-          onClick={this.openPicker}
+          onClick={!disabled ? this.openPicker : undefined}
           src={profilePic}
           {...props}
         >
           {!profilePic &&
-            (loading ? <CircularProgress color="secondary" /> : <AddAPhoto />)}
+            (loading ? (
+              <CircularProgress color="secondary" />
+            ) : disabled ? (
+              <AccountCircle />
+            ) : (
+              <AddAPhoto />
+            ))}
         </Avatar>
         <input
           type="file"

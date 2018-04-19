@@ -83,12 +83,24 @@ After completing their work, users can securely logout of their accounts. Even i
 
 6# Snapsend Accounts - Additional Features For Envelope Owners
 
+<<<<<<< HEAD
 When a user (say, professional photographer) creates a Snapsend account, they enjoy additional benefits. Upon logging in, the user will be redirected to a profile page which they can personalize by adding a profile picture. 
+=======
+### Profile Picture
+
+Option to add profile picture to the user who is signing up
+
+### Logout
+>>>>>>> ea39cd768002763ae1472cd1d06024e68625c2da
 
 The user can quickly create an envelope by simply dragging and dropping images on to their profile page. An envelope thus created will be directly linked to the user's profile. As an added benefit, the user can upload as many images as he/she wants (there is a limit on the number of images that can be added to an envelope created without a Snapsend account). 
 
 The most important benefit is that the user's profile page displays all the envelopes he created. So the user can can now keep track the envelopes that he created by simply visiting his profile page. Also, he can quickly retrieve the link to an envelope if he decides to share the envelope with more recipients later.
 
+<<<<<<< HEAD
+=======
+Once an envelope of images is sent to the reciepent, they can download them. The user can select all or some of the picture and download them in any format and size and then select the any other set of images in the size they want. 
+>>>>>>> ea39cd768002763ae1472cd1d06024e68625c2da
 
 
 7# Snapsend Accounts - Additional Features For Recipients
@@ -101,3 +113,33 @@ The most important benefit is that the user's profile page displays all the enve
 
 Users can not only keep track of all the envelopes they created and viewed as long as they have a Snapsend account, they can also see the number of times the envelope was viewed and the number of times it was downloaded. Pretty cool, right? But we're not done yet. If the recipients also have Snapsend accounts, the user can also see who viewed and who downloaded the envelope. So, no more follow-up emails to ask, "Did you see the envelope?" as long as everyone is on "Snapsend".
 
+<<<<<<< HEAD
+=======
+This link can simply be shared with the client who can then download images in the required format and size.
+
+### Upload Limit 
+
+The user with an account can upload upto 1000 images per envelope while a non-user can only upload 40 per envelope.
+
+### Envelope Hashed for security 
+ 
+The envelopes are hashed in such a way that they cannot be looked at by others.
+
+### Profile 
+
+A logged in user can view his own profile with preview of all the envelopes he created and the envelopes whose linkes he recieved. He can click on view all and view the whole envelope. 
+
+### History 
+
+Users can view history of their envelope in the history tab. It shows the history of create, view and download actions along with names of the users who did the action.
+
+### Delete Action 
+
+Logged in users can delete a created envelope. 
+
+### Delete Image 
+
+An uploaded image can be deleted before envelope is created.
+
+
+>>>>>>> ea39cd768002763ae1472cd1d06024e68625c2da

@@ -25,27 +25,23 @@ class BasicTestCases(BaseTestCase):
     	response = self.client.post('/envelope')
         self.assertEqual(response.status_code, 200)
     '''
-    def test_junk(self):
-		""" Tests to see if 404 page is yielded """ 
-		response = self.client.get('/safjsdlkjfsdlkjf', follow_redirects=True)
-		self.assertEquals(response.status_code, 404)
+  #   def test_junk(self):
+		# """ Tests to see if 404 page is yielded """ 
+		# response = self.client.get('/safjsdlkjfsdlkjf', follow_redirects=True)
+		# self.assertEquals(response.status_code, 404)
 	
     
 	
-    def test_get_envelope(self):
-        response = self.client.get('/envelope/1')
-        self.assertEqual(response.status_code, 200)
+  #   def test_get_envelope(self):
+  #       response = self.client.get('/envelope/1')
+  #       self.assertEqual(response.status_code, 200)
     
-    def test_get_envelope_error(self):
+  #   def test_get_envelope_error(self):
         
-        response = self.client.get('/envelope/abc',follow_redirects=True)
-        self.assertEqual(response.status_code, 404)
+  #       response = self.client.get('/envelope/abc',follow_redirects=True)
+  #       self.assertEqual(response.status_code, 404)
 
-    def test_get_envelope_error2(self):
+  #   def test_get_envelope_error2(self):
         
-        response = self.client.get('/envelope/@@')
-        self.assertEqual(response.status_code, 404)
-
-    
-
-
+  #       response = self.client.get('/envelope/@@')
+  #       self.assertEqual(response.status_code, 404)

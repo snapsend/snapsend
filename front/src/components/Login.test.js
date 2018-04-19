@@ -2,6 +2,7 @@ import React from 'react';
 import Login from './Login';
 import ReactDOM from 'react-dom';
 import renderer from 'react-test-renderer';
+import { Wrapper } from '../Wrapper';
 
 /**
  * Login renders a button
@@ -18,7 +19,12 @@ describe('Login Component', () => {
   // });
   it('Login renders without crashing', () => {
     const div = document.createElement('div');
-    ReactDOM.render(<Login />, div);
+    ReactDOM.render(
+      <Wrapper>
+        <Login />
+      </Wrapper>,
+      div
+    );
     ReactDOM.unmountComponentAtNode(div);
   });
 });
