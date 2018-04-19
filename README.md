@@ -40,7 +40,7 @@ Terminal command to execute Snapsend backend code is:
 python run.py
 
 Terminal command to execute all the backend tests is: 
-nosetests app app/tests/**.py**
+nosetests app app/tests//*.py/*
 
 
 
