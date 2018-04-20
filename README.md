@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/snapsend/snapsend/badge.svg?branch=dev)](https://coveralls.io/github/snapsend/snapsend?branch=dev)
+
 ![circleci build](https://img.shields.io/circleci/project/github/snapsend/snapsend.svg)
 
 ## SNAPSEND
