@@ -18,10 +18,10 @@ class BasicTestCases(BaseTestCase):
 		d = {"email":"mytest@mtest.com","password1":"pwd","password2":"pwd","username":"mtest","profilepic":"mtest.jpeg"}
 		response=self.client.post('/signup', content_type='application/json', data=json.dumps(d))    
 		
-		usr2 = User.query.filter_by(email="mytest@mtest.com").first()		
 		self.assertEqual(response.status_code, 200)
-		self.assertEqual(usr2.uname, "mtest")
-		self.assertEqual(usr2.profilepic, "mtest.jpeg")
+		usr3 = User.query.filter_by(email="mytest@mtest.com").first()		
+		self.assertEqual(usr3.uname, "mtest")
+		self.assertEqual(usr3.profilepic, "mtest.jpeg")
 	
 
 	def test_signup_negative_existing_user (self): 
@@ -182,7 +182,8 @@ class BasicTestCases(BaseTestCase):
 		self.assertTrue(b'"envelopename": "env2", "handle": "248"' in response.data.lower())
 		self.assertTrue(b'"images": [{"url": "image1.com", "filename": "image1.jpg", "imageid": 1}, {"url": "image2.com", "filename": "image2.png", "imageid": 2}, {"url": "image3.com", "filename": "image3.gif", "imageid": 3}]' in response.data.lower())
 		self.assertTrue(b'"images": [{"url": "image-a.com", "filename": "img.jpg", "imageid": 4}, {"url": "image-b.com", "filename": "img.png", "imageid": 5}]' in response.data.lower())
-		 
+		self.assertTrue(b'"history": [{"action": "v", "dnum": null, "username": "mtest"' in response.data.lower())
+		self.assertTrue(b'"history": [{"action": "c", "dnum": null, "username": "mtest"' in response.data.lower())
 		
         
 	def test_get_profile_negative(self): 
@@ -240,23 +241,23 @@ class BasicTestCases(BaseTestCase):
 		self.assertTrue(r in response.data.lower())
 		
 		
-'''
+
 	def test_post_history_download_negative2(self): 
 		print "Testing Post History - Download - invalid handle"
 		h = {"token":"121","handle":"249","action":"D","dnum":"2"}
 		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
 		
+		r = b'{"success": false, "error": "invalid handle"}'
 		self.assertEqual(response.status_code, 200)
-		print response.data.lower()
-		print response
+		self.assertTrue(r in response.data.lower())
 		
-		
+	
 	def test_post_history_viewed_negative2(self): 
 		print "Testing Post History - Viewed - invalid handle"
 		h = {"token":"121","handle":"249","action":"D","dnum":"2"}
 		response=self.client.post('/history', content_type='application/json', data=json.dumps(h))    
 	
+		r = b'{"success": false, "error": "invalid handle"}'
 		self.assertEqual(response.status_code, 200)
-		print response.data.lower()
-		print response
-'''
+		self.assertTrue(r in response.data.lower())
+

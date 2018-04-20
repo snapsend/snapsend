@@ -18,8 +18,8 @@ class BaseTestCase(TestCase):
 		db.create_all()
 
 		db.session.add(User("mtest","mtester@mtest.com", "0d66db5457fc3e401b0eea9e1ba0a1dc","121","picurl.jpeg"))
-		mtest = User.query.filter_by(token="121").first()
-		
+		db.session.add(User("m2test","m2tester@mtest.com", "0d66db5457fc3e401b0eea9e1ba0a1dc","345","mypic.jpeg"))
+				
 		env1 = Envelope("env1","mtest","someone","369")
 		env1.eowner = "1"
 		db.session.add(env1)
@@ -35,12 +35,11 @@ class BaseTestCase(TestCase):
 		db.session.add(Image("2","image-a.com","img.jpg"))
 		db.session.add(Image("2","image-b.com","img.png"))
 		
-		'''
 		db.session.add(History("1","V","1",None))
-		db.session.add(History("1","D",None,"1"))
 		db.session.add(History("1","V","2",None))
-		db.session.add(History("1","D","2","3"))
-		'''
+		db.session.add(History("1","D","2","3"))		
+		db.session.add(History("1","D",None,"1"))
+		
 		db.session.add(History("1","C","1",None))
 		db.session.add(History("2","C","1",None))
 		
