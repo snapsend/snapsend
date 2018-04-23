@@ -61,7 +61,7 @@ const initialEnvelope: UnfinishedEnvelope = {
   envelopeName: '',
 };
 
-const wait = ms => new Promise(r => setTimeout(r, ms));
+// const wait = ms => new Promise(r => setTimeout(r, ms));
 
 const generateDownloadUrl = (
   images: Array<ImageType>,

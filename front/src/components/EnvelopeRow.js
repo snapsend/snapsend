@@ -8,7 +8,6 @@ import T from './T';
 import moment from 'moment';
 import Button from './Button';
 import Arrow from 'material-ui-icons/ArrowForward';
-import { baseUrl } from '../utils';
 import { Link } from 'react-router-dom';
 
 /**
@@ -97,7 +96,7 @@ const Date = styled(T)`
 const ViewAll = styled(Button)``;
 
 type ImProps = { image: ImageType };
-const RowImage = props => {
+const RowImage = (props: ImProps) => {
   const { image } = props;
   return <Image img={image} />;
 };

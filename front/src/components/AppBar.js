@@ -89,7 +89,6 @@ export default ({
                 label="Envelope Name"
                 name="envelopeName"
                 required
-                autoFocus
                 disabled={!!isViewing}
                 value={envelope.envelopeName}
                 onChange={handleEnvelopeChange}
