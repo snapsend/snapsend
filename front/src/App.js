@@ -14,17 +14,21 @@ class App extends Component<P> {
       <ErrorBoundary>
         <CookiesProvider>
           <BrowserRouter>
-            <LoginStatus>
-              <Fragment>
-                <Route exact path="/" component={Home} />
-                <Route path="/envelope/:handle" component={Home} />
-              </Fragment>
-            </LoginStatus>
+            <ContextProvider />
           </BrowserRouter>
         </CookiesProvider>
       </ErrorBoundary>
     );
   }
 }
+
+const ContextProvider = () => (
+  <LoginStatus>
+    <Fragment>
+      <Route exact path="/" component={Home} />
+      <Route path="/envelope/:handle" component={Home} />
+    </Fragment>
+  </LoginStatus>
+);
 
 export default App;
