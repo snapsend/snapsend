@@ -106,7 +106,7 @@ export default ({
                 onClick={handleSave}
                 variant="raised"
                 color="secondary"
-                disabled={envelope.loading || (pending && pending > 0)}
+                disabled={!!(envelope.loading || (pending && pending > 0))}
               >
                 Get Link
               </Button>

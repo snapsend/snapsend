@@ -199,8 +199,8 @@ class Home extends Component<P, State> {
     // post to the network
     const res: { handle: string } = await post('/envelope', {
       ...envelope,
-		senderName: '',
-		recipientName: '',
+      senderName: '',
+      recipientName: '',
       images: this.state.images,
       token: this.props.token || null,
     });
@@ -308,7 +308,10 @@ class Home extends Component<P, State> {
     );
     const status = isRedirect
       ? 'REVIEWING'
-      : isViewing ? 'DOWNLOADING' : 'EDITING';
+      : isViewing
+        ? 'DOWNLOADING'
+        : 'EDITING';
+
     return (
       <Dropzone onDrop={this.handleDrop}>
         {this.state.uploadError && (
