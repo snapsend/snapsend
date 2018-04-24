@@ -25,6 +25,7 @@ import Button from '../components/Button';
 import { withLoginStatus } from '../components/LoginStatus';
 import History from '../components/History';
 import Drawer from '../components/Drawer';
+import downloadImages from '../zipDownload';
 
 type PendingImage = Promise<ImageType>;
 type P = {
@@ -54,6 +55,8 @@ type State = {
   size: Size,
   uploadError: ?string,
   historyOpen: boolean,
+  downloadProgress: number,
+  isDownloading: boolean,
 };
 
 const initialEnvelope: UnfinishedEnvelope = {
@@ -62,54 +65,6 @@ const initialEnvelope: UnfinishedEnvelope = {
 };
 
 // const wait = ms => new Promise(r => setTimeout(r, ms));
-
-const generateDownloadUrl = (
-  images: Array<ImageType>,
-  envelope: ?UnfinishedEnvelope,
-  format: Format,
-  size: Size,
-  noneSelected: boolean
-) => {
-  // start with the base url
-  const baseUrl = 'https://process.filestackapi.com/';
-
-  let imagesString = images.reduce((currString, im, ind) => {
-    const split = im.url.split('/');
-    const handle = split[split.length - 1];
-    if (im.selected || noneSelected) {
-      if (currString.length > 0) return `${currString},${handle}`;
-      return handle;
-    }
-    return currString;
-  }, '');
-
-  if (images.length > 1) imagesString = `[${imagesString}]`;
-
-  let formatString = '';
-  if (format === 'JPG') {
-    formatString = 'output=format:jpg/';
-  } else if (format === 'PNG') {
-    formatString = 'output=format:png/';
-  }
-
-  let resize = '';
-  if (size.width || size.height) {
-    let w = '';
-    let h = '';
-    if (size.width) w = `width:${size.width}`;
-    if (size.height) h = `height:${size.height}`;
-    if (size.width && size.height) {
-      w = `${w},`;
-      h = `${h}/`;
-    } else {
-      w = `${w}/`;
-    }
-
-    resize = `resize=${w}${h}`;
-  }
-  const result = `${baseUrl}${resize}${formatString}zip/${imagesString}`;
-  return result;
-};
 
 class Home extends Component<P, State> {
   state: State = {
@@ -121,6 +76,8 @@ class Home extends Component<P, State> {
     size: { width: null, height: null },
     uploadError: null,
     historyOpen: true,
+    downloadProgress: 0,
+    isDownloading: false,
   };
 
   async componentDidMount() {
@@ -275,7 +232,7 @@ class Home extends Component<P, State> {
     });
   };
 
-  handleDownload = () => {
+  trackDownload = () => {
     const params = this.props.match.params;
     if (!params) return;
     const handle = params.handle;
@@ -286,20 +243,49 @@ class Home extends Component<P, State> {
     track('D', handle, this.props.token, number);
   };
 
+  handleDownload = async () => {
+    const { images, envelope, format, size } = this.state;
+    // pass in the right images
+    if (!envelope) return;
+    this.setState({ isDownloading: true });
+    let selected = images.filter(im => !!im.selected);
+    let numSelected = selected.length;
+    if (numSelected === 0) {
+      selected = images;
+      numSelected = images.length;
+    }
+
+    const handleProgress = (num: number) => {
+      this.setState({ downloadProgress: num });
+    };
+    await downloadImages(
+      selected,
+      size.width,
+      size.height,
+      format,
+      envelope.envelopeName || 'snapsend',
+      handleProgress
+    );
+    this.trackDownload();
+    this.setState({ isDownloading: false });
+  };
+
   render() {
     const { match, location, token, login, logout, user } = this.props;
-    const { images, pending, envelope, redirect, size, format } = this.state;
+    const {
+      images,
+      pending,
+      envelope,
+      redirect,
+      size,
+      format,
+      downloadProgress,
+      isDownloading,
+    } = this.state;
     const yetToDrop = pending === 0 && images.length === 0;
     const isViewing: boolean = !!(match && match.params && match.params.handle);
 
     const numSelected = this.howManySelected();
-    const downloadUrl = generateDownloadUrl(
-      images,
-      envelope,
-      format,
-      size,
-      numSelected === 0
-    );
     const isAtEnvelope = !!(match && match.params && match.params.handle);
     const isRedirect = !!(
       location &&
@@ -328,7 +314,6 @@ class Home extends Component<P, State> {
             format={format}
             handleFormatChange={this.handleFormatChange}
             handleSizeChange={this.handleSizeChange}
-            downloadUrl={downloadUrl}
             isRedirect={isRedirect}
             token={token}
             login={login}
@@ -336,8 +321,10 @@ class Home extends Component<P, State> {
             numSelected={numSelected}
             pending={pending}
             deselectAll={this.deselectAll}
-            handleDownload={this.handleDownload}
+            download={this.handleDownload}
             toggleHistory={this.toggleHistory}
+            downloadProgress={downloadProgress}
+            isDownloading={isDownloading}
           />
           {yetToDrop && (
             <Zone>
