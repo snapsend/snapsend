@@ -73,6 +73,7 @@ const Dropzone = ({
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
+      maxHeight: '100vh',
     }}
     {...props}
   >
@@ -81,81 +82,3 @@ const Dropzone = ({
 );
 
 export default Dropzone;
-
-// export const transformMany = async (
-//   images: Array<ImageType>,
-//   maxWidth: ?number,
-//   maxHeight: ?number
-// ) => {
-//   // do a promise all for each image.
-//   const promiseArray = images.map(im => transform(im.url, maxWidth, maxHeight));
-//   const res = await Promise.all(promiseArray);
-//   return res;
-// };
-
-// export const transform = async (
-//   handle: string,
-//   maxWidth: ?number,
-//   maxHeight: ?number
-// ) => {
-//   return fs.transform('url', {
-//     resize: {
-//       width: maxWidth,
-//       height: maxHeight,
-//     },
-//   });
-// };
-
-// export const generateDownloadUrl = async (
-//   images: Array<ImageType>,
-//   envelope: ?UnfinishedEnvelope,
-//   format: Format,
-//   size: Size,
-//   noneSelected: boolean
-// ): Promise<string> => {
-//   // start with the base url
-//   const baseUrl = 'https://process.filestackapi.com/';
-
-//   const transformedImages = await transformMany(
-//     images,
-//     size.width,
-//     size.height
-//   );
-
-//   let imagesString = images.reduce((currString, im, ind) => {
-//     const split = im.url.split('/');
-//     const handle = split[split.length - 1];
-//     if (im.selected || noneSelected) {
-//       if (currString.length > 0) return `${currString},${handle}`;
-//       return handle;
-//     }
-//     return currString;
-//   }, '');
-
-//   if (images.length > 1) imagesString = `[${imagesString}]`;
-
-//   let formatString = '';
-//   if (format === 'JPG') {
-//     formatString = 'output=format:jpg/';
-//   } else if (format === 'PNG') {
-//     formatString = 'output=format:png/';
-//   }
-
-//   let resize = '';
-//   if (size.width || size.height) {
-//     let w = '';
-//     let h = '';
-//     if (size.width) w = `width:${size.width}`;
-//     if (size.height) h = `height:${size.height}`;
-//     if (size.width && size.height) {
-//       w = `${w},`;
-//       h = `${h}/`;
-//     } else {
-//       w = `${w}/`;
-//     }
-
-//     resize = `resize=${w}${h}`;
-//   }
-//   const result = `${baseUrl}${resize}${formatString}zip/${imagesString}`;
-//   return result;
-// };
