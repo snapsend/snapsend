@@ -483,6 +483,8 @@ const Flex = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  max-height: 100vh;
+  overflow: hidden;
 `;
 
 const Content = styled.div`
@@ -490,6 +492,7 @@ const Content = styled.div`
   flex-direction: row;
   flex: 1;
   align-items: flex-start;
+  overflow-y: scroll;
 `;
 
 const TooManyFiles = ({ closeModal }) => (
