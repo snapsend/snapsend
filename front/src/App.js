@@ -27,8 +27,8 @@ const ContextProvider = () => (
   <LoginStatus>
     <Fragment>
       <Switch>
-        <Route exact path="/" component={Home} />
         <Route path="/envelope/:handle" component={Home} />
+        <Route exact path="/" component={Home} />
         <Route component={NotFound} />
       </Switch>
     </Fragment>

@@ -26,6 +26,7 @@ import { withLoginStatus } from '../components/LoginStatus';
 import History from '../components/History';
 import Drawer from '../components/Drawer';
 import downloadImages from '../zipDownload';
+import NotFound from './404';
 
 type PendingImage = Promise<ImageType>;
 type P = {
@@ -47,7 +48,7 @@ type P = {
 };
 
 type State = {
-  envelope: ?(UnfinishedEnvelope | Envelope),
+  envelope: ?(UnfinishedEnvelope | Envelope | 'NOT FOUND'),
   pending: number,
   images: Array<ImageType>,
   redirect: ?string,
@@ -66,29 +67,80 @@ const initialEnvelope: UnfinishedEnvelope = {
 
 // const wait = ms => new Promise(r => setTimeout(r, ms));
 
+const initialState = {
+  pending: 0,
+  images: [],
+  envelope: null,
+  redirect: null,
+  format: 'ORIGINAL',
+  size: { width: null, height: null },
+  uploadError: null,
+  historyOpen: true,
+  downloadProgress: 0,
+  isDownloading: false,
+};
+
 class Home extends Component<P, State> {
-  state: State = {
-    pending: 0,
-    images: [],
-    envelope: null,
-    redirect: null,
-    format: 'ORIGINAL',
-    size: { width: null, height: null },
-    uploadError: null,
-    historyOpen: true,
-    downloadProgress: 0,
-    isDownloading: false,
-  };
+  state: State = initialState;
 
   async componentDidMount() {
     // if the component just mounted, check if there is an envelopeId and fetch it.
+    console.log('MOUNTIN');
     const { match } = this.props;
     if (match && match.params && typeof match.params.handle !== 'undefined') {
       const envelope: Envelope = await get(`/envelope/${match.params.handle}`);
       match.params &&
         match.params.handle &&
         track('V', match.params.handle, this.props.token);
-      if (envelope.success !== true) return;
+      if (envelope.success !== true) {
+        this.setState({ envelope: 'NOT FOUND' });
+        return;
+      }
+      const images = envelope.images;
+      this.setState(state => ({
+        ...state,
+        envelope,
+        images,
+      }));
+    }
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    // check if there is a network envelope in state, and not isViewing in props
+    const isViewing = !!(
+      nextProps.match &&
+      nextProps.match.params &&
+      nextProps.match.params.handle
+    );
+
+    const isPreviouslyViewing =
+      prevState.envelope && prevState.envelope.success === true;
+
+    if (isPreviouslyViewing && !isViewing) {
+      return initialState;
+    }
+    return null;
+  }
+
+  async componentDidUpdate() {
+    const isViewing = !!(
+      this.props.match &&
+      this.props.match.params &&
+      this.props.match.params.handle
+    );
+
+    const isPreviouslyViewing =
+      this.state.envelope && this.state.envelope.success;
+
+    if (!isPreviouslyViewing && isViewing) {
+      const envelope: Envelope = await get(
+        `/envelope/${this.props.match.params.handle || ''}`
+      );
+
+      if (envelope.success !== true) {
+        this.setState({ envelope: 'NOT FOUND' });
+        return;
+      }
       const images = envelope.images;
       this.setState(state => ({
         ...state,
@@ -258,12 +310,16 @@ class Home extends Component<P, State> {
     const handleProgress = (num: number) => {
       this.setState({ downloadProgress: num });
     };
+    const name =
+      typeof envelope.envelopeName === 'string'
+        ? envelope.envelopeName
+        : 'snapsend';
     await downloadImages(
       selected,
       size.width,
       size.height,
       format,
-      envelope.envelopeName || 'snapsend',
+      name,
       handleProgress
     );
     this.trackDownload();
@@ -282,6 +338,8 @@ class Home extends Component<P, State> {
       downloadProgress,
       isDownloading,
     } = this.state;
+    console.log('WHAT', this.props, this.state);
+    if (envelope === 'NOT FOUND') return <NotFound />;
     const yetToDrop = pending === 0 && images.length === 0;
     const isViewing: boolean = !!(match && match.params && match.params.handle);
 
