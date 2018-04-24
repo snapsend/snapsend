@@ -34,16 +34,17 @@ export default ({
   isViewing,
   format,
   size,
-  downloadUrl,
   handleFormatChange,
   handleSizeChange,
   isAtEnvelope,
   isRedirect,
   numSelected,
   deselectAll,
-  handleDownload,
   toggleHistory,
   pending,
+  download,
+  downloadProgress,
+  isDownloading,
 }: {
   envelope: ?UnfinishedEnvelope | Envelope,
   handleEnvelopeChange: EventHandler,
@@ -53,16 +54,18 @@ export default ({
   size: Size,
   handleFormatChange: (SyntheticInputEvent<HTMLLIElement>) => void,
   handleSizeChange: EventHandler,
-  downloadUrl: string,
   isAtEnvelope: boolean,
   isRedirect: boolean,
   numSelected: number,
   deselectAll: () => void,
-  handleDownload: () => void,
   toggleHistory: () => void,
   pending: ?number,
+  download: () => Promise<void>,
+  downloadProgress: number,
+  isDownloading: boolean,
 }) => {
   const isEnvelope = isAtEnvelope;
+  const progressText = getProgressText(downloadProgress, numSelected);
   return (
     <AppBar elevation={4} component="header" square>
       <Toolbar>
@@ -159,8 +162,8 @@ export default ({
                   style={{ margin: '15px 15px 0px' }}
                   variant="raised"
                   color="secondary"
-                  onClick={handleDownload}
-                  href={downloadUrl}
+                  onClick={download}
+                  disabled={isDownloading}
                   download={`${envelope.envelopeName || 'snapsend'}.zip`}
                 >
                   {`Download ${numSelected === 0 ? 'All' : numSelected}`}
@@ -174,6 +177,8 @@ export default ({
                     Deselect all
                   </Button>
                 )}
+                {downloadProgress > 0 &&
+                  downloadProgress < numSelected + 2 && <T>{progressText}</T>}
                 <div style={{ flex: 1 }} />
                 <IconButton
                   onClick={toggleHistory}
@@ -187,6 +192,13 @@ export default ({
       )}
     </AppBar>
   );
+};
+
+const getProgressText = (progress: number, num: number) => {
+  if (progress < num) {
+    return `Downloading ${progress} of ${num}`;
+  }
+  return 'Zipping files';
 };
 
 const DownloadWrap = styled.div`
