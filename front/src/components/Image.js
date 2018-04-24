@@ -6,7 +6,6 @@ import T from '../components/T';
 import CheckCircle from 'material-ui-icons/CheckCircle';
 import { withTheme } from 'material-ui/styles';
 import Delete from 'material-ui-icons/Delete';
-import IconButton from 'material-ui/IconButton';
 
 type Props = {
   img?: ImageType,

@@ -2,6 +2,9 @@
 
 import React from 'react';
 import type { Node } from 'react';
+import T from '../components/T';
+import AppBar from 'material-ui/AppBar';
+import { MainAppBar } from '../components/AppBar';
 
 type Props = { children: Node };
 export default class ErrorBoundary extends React.Component<
@@ -19,7 +22,11 @@ export default class ErrorBoundary extends React.Component<
 
   render() {
     if (this.state.hasError) {
-      return <h1>Something went wrong.</h1>;
+      return (
+        <AppBar elevation={4} component="header" square>
+          <MainAppBar />
+        </AppBar>
+      );
     }
     return this.props.children;
   }

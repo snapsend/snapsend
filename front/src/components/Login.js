@@ -6,12 +6,10 @@ import styled from 'styled-components';
 import T from './T';
 import Logo from '../icons/Logo';
 import Input from 'material-ui/TextField';
-import { post } from '../network';
 import Close from 'material-ui-icons/Close';
 import AccountCircle from 'material-ui-icons/AccountCircle';
 import IconButton from 'material-ui/IconButton';
 import ProfileImage from './ProfileImage';
-import { setToken } from '../cookies';
 import { withCookies } from 'react-cookie';
 import Avatar from 'material-ui/Avatar';
 import type { Login, Logout, CreateUser, User } from '../types';
@@ -112,15 +110,7 @@ class LoginComponent extends React.Component<Props, State> {
 
   render() {
     const { status, error, password, password2 } = this.state;
-    const {
-      createUser,
-      login,
-      logout,
-      token,
-      waiting,
-      user,
-      error: netError,
-    } = this.props;
+    const { token, waiting, user, error: netError } = this.props;
 
     const passwordsMatch = password === password2;
     const isLoggedIn = !!token;

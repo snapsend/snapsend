@@ -25,6 +25,8 @@ import Button from '../components/Button';
 import { withLoginStatus } from '../components/LoginStatus';
 import History from '../components/History';
 import Drawer from '../components/Drawer';
+import downloadImages from '../zipDownload';
+import NotFound from './404';
 
 type PendingImage = Promise<ImageType>;
 type P = {
@@ -46,7 +48,7 @@ type P = {
 };
 
 type State = {
-  envelope: ?(UnfinishedEnvelope | Envelope),
+  envelope: ?(UnfinishedEnvelope | Envelope | 'NOT FOUND'),
   pending: number,
   images: Array<ImageType>,
   redirect: ?string,
@@ -54,6 +56,8 @@ type State = {
   size: Size,
   uploadError: ?string,
   historyOpen: boolean,
+  downloadProgress: number,
+  isDownloading: boolean,
 };
 
 const initialEnvelope: UnfinishedEnvelope = {
@@ -61,77 +65,82 @@ const initialEnvelope: UnfinishedEnvelope = {
   envelopeName: '',
 };
 
-const wait = ms => new Promise(r => setTimeout(r, ms));
+// const wait = ms => new Promise(r => setTimeout(r, ms));
 
-const generateDownloadUrl = (
-  images: Array<ImageType>,
-  envelope: ?UnfinishedEnvelope,
-  format: Format,
-  size: Size,
-  noneSelected: boolean
-) => {
-  // start with the base url
-  const baseUrl = 'https://process.filestackapi.com/';
-
-  let imagesString = images.reduce((currString, im, ind) => {
-    const split = im.url.split('/');
-    const handle = split[split.length - 1];
-    if (im.selected || noneSelected) {
-      if (currString.length > 0) return `${currString},${handle}`;
-      return handle;
-    }
-    return currString;
-  }, '');
-
-  if (images.length > 1) imagesString = `[${imagesString}]`;
-
-  let formatString = '';
-  if (format === 'JPG') {
-    formatString = 'output=format:jpg/';
-  } else if (format === 'PNG') {
-    formatString = 'output=format:png/';
-  }
-
-  let resize = '';
-  if (size.width || size.height) {
-    let w = '';
-    let h = '';
-    if (size.width) w = `width:${size.width}`;
-    if (size.height) h = `height:${size.height}`;
-    if (size.width && size.height) {
-      w = `${w},`;
-      h = `${h}/`;
-    } else {
-      w = `${w}/`;
-    }
-
-    resize = `resize=${w}${h}`;
-  }
-  const result = `${baseUrl}${resize}${formatString}zip/${imagesString}`;
-  return result;
+const initialState = {
+  pending: 0,
+  images: [],
+  envelope: null,
+  redirect: null,
+  format: 'ORIGINAL',
+  size: { width: null, height: null },
+  uploadError: null,
+  historyOpen: true,
+  downloadProgress: 0,
+  isDownloading: false,
 };
 
 class Home extends Component<P, State> {
-  state: State = {
-    pending: 0,
-    images: [],
-    envelope: null,
-    redirect: null,
-    format: 'ORIGINAL',
-    size: { width: null, height: null },
-    uploadError: null,
-    historyOpen: true,
-  };
+  state: State = initialState;
 
   async componentDidMount() {
     // if the component just mounted, check if there is an envelopeId and fetch it.
+    console.log('MOUNTIN');
     const { match } = this.props;
     if (match && match.params && typeof match.params.handle !== 'undefined') {
       const envelope: Envelope = await get(`/envelope/${match.params.handle}`);
       match.params &&
         match.params.handle &&
         track('V', match.params.handle, this.props.token);
-      if (envelope.success !== true) return;
+      if (envelope.success !== true) {
+        this.setState({ envelope: 'NOT FOUND' });
+        return;
+      }
+      const images = envelope.images;
+      this.setState(state => ({
+        ...state,
+        envelope,
+        images,
+      }));
+    }
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    // check if there is a network envelope in state, and not isViewing in props
+    const isViewing = !!(
+      nextProps.match &&
+      nextProps.match.params &&
+      nextProps.match.params.handle
+    );
+
+    const isPreviouslyViewing =
+      prevState.envelope && prevState.envelope.success === true;
+
+    if (isPreviouslyViewing && !isViewing) {
+      return initialState;
+    }
+    return null;
+  }
+
+  async componentDidUpdate() {
+    const isViewing = !!(
+      this.props.match &&
+      this.props.match.params &&
+      this.props.match.params.handle
+    );
+
+    const isPreviouslyViewing =
+      this.state.envelope && this.state.envelope.success;
+
+    if (!isPreviouslyViewing && isViewing) {
+      const envelope: Envelope = await get(
+        `/envelope/${this.props.match.params.handle}`
+      );
+
+      if (envelope.success !== true) {
+        this.setState({ envelope: 'NOT FOUND' });
+        return;
+      }
       const images = envelope.images;
       this.setState(state => ({
         ...state,
@@ -199,8 +208,8 @@ class Home extends Component<P, State> {
     // post to the network
     const res: { handle: string } = await post('/envelope', {
       ...envelope,
-		senderName: '',
-		recipientName: '',
+      senderName: '',
+      recipientName: '',
       images: this.state.images,
       token: this.props.token || null,
     });
@@ -275,7 +284,7 @@ class Home extends Component<P, State> {
     });
   };
 
-  handleDownload = () => {
+  trackDownload = () => {
     const params = this.props.match.params;
     if (!params) return;
     const handle = params.handle;
@@ -286,20 +295,55 @@ class Home extends Component<P, State> {
     track('D', handle, this.props.token, number);
   };
 
+  handleDownload = async () => {
+    const { images, envelope, format, size } = this.state;
+    // pass in the right images
+    if (!envelope) return;
+    this.setState({ isDownloading: true });
+    let selected = images.filter(im => !!im.selected);
+    let numSelected = selected.length;
+    if (numSelected === 0) {
+      selected = images;
+      numSelected = images.length;
+    }
+
+    const handleProgress = (num: number) => {
+      this.setState({ downloadProgress: num });
+    };
+    const name =
+      typeof envelope.envelopeName === 'string'
+        ? envelope.envelopeName
+        : 'snapsend';
+    await downloadImages(
+      selected,
+      size.width,
+      size.height,
+      format,
+      name,
+      handleProgress
+    );
+    this.trackDownload();
+    this.setState({ isDownloading: false });
+  };
+
   render() {
     const { match, location, token, login, logout, user } = this.props;
-    const { images, pending, envelope, redirect, size, format } = this.state;
+    const {
+      images,
+      pending,
+      envelope,
+      redirect,
+      size,
+      format,
+      downloadProgress,
+      isDownloading,
+    } = this.state;
+    console.log('WHAT', this.props, this.state);
+    if (envelope === 'NOT FOUND') return <NotFound />;
     const yetToDrop = pending === 0 && images.length === 0;
     const isViewing: boolean = !!(match && match.params && match.params.handle);
 
     const numSelected = this.howManySelected();
-    const downloadUrl = generateDownloadUrl(
-      images,
-      envelope,
-      format,
-      size,
-      numSelected === 0
-    );
     const isAtEnvelope = !!(match && match.params && match.params.handle);
     const isRedirect = !!(
       location &&
@@ -308,7 +352,10 @@ class Home extends Component<P, State> {
     );
     const status = isRedirect
       ? 'REVIEWING'
-      : isViewing ? 'DOWNLOADING' : 'EDITING';
+      : isViewing
+        ? 'DOWNLOADING'
+        : 'EDITING';
+
     return (
       <Dropzone onDrop={this.handleDrop}>
         {this.state.uploadError && (
@@ -325,7 +372,6 @@ class Home extends Component<P, State> {
             format={format}
             handleFormatChange={this.handleFormatChange}
             handleSizeChange={this.handleSizeChange}
-            downloadUrl={downloadUrl}
             isRedirect={isRedirect}
             token={token}
             login={login}
@@ -333,8 +379,10 @@ class Home extends Component<P, State> {
             numSelected={numSelected}
             pending={pending}
             deselectAll={this.deselectAll}
-            handleDownload={this.handleDownload}
+            download={this.handleDownload}
             toggleHistory={this.toggleHistory}
+            downloadProgress={downloadProgress}
+            isDownloading={isDownloading}
           />
           {yetToDrop && (
             <Zone>
@@ -435,6 +483,8 @@ const Flex = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  max-height: 100vh;
+  overflow: hidden;
 `;
 
 const Content = styled.div`
@@ -442,6 +492,7 @@ const Content = styled.div`
   flex-direction: row;
   flex: 1;
   align-items: flex-start;
+  overflow-y: scroll;
 `;
 
 const TooManyFiles = ({ closeModal }) => (

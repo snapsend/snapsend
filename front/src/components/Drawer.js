@@ -1,13 +1,12 @@
 //@flow
 import * as React from 'react';
 import Slide from 'material-ui/transitions/Slide';
-import List, { ListItem, ListItemText, ListItemIcon } from 'material-ui/List';
-import Hidden from 'material-ui/Hidden';
+import List, { ListItem, ListItemText } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import styled from 'styled-components';
 import T from './T';
-import type { Envelope, RecordedAction } from '../types';
+import type { Envelope } from '../types';
 import SeenIcon from 'material-ui-icons/Visibility';
 import CreatedIcon from 'material-ui-icons/CallMade';
 import DownloadIcon from 'material-ui-icons/CloudDownload';
@@ -34,7 +33,7 @@ export default class HistoryDrawer extends React.Component<Props, State> {
           </ListItem>
           <Divider />
           <List>
-            {envelope.history.map((h, i) => {
+            {history.map((h, i) => {
               const icon =
                 h.action === 'C' ? (
                   <CreatedIcon />

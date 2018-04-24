@@ -1,6 +1,6 @@
 //@flow
 import * as React from 'react';
-import type { User, Image } from '../types';
+import type { User } from '../types';
 import EnvelopeRow from './EnvelopeRow';
 import styled from 'styled-components';
 import T from './T';
@@ -19,80 +19,80 @@ import T from './T';
  * When some images are dropped, the history will disappear and it will just show the images.
  */
 
-const USER = {
-  email: 'kristo@kristo.com',
-  uname: 'kristo',
-  envelope: [
-    {
-      envelopeName: 'First envelope',
-      history: [],
-      handle: 'asdfaskhf',
-      recipientName: 'Bea Helman',
-      senderName: 'Kristo Jorgenson',
-      images: [
-        {
-          id: 1,
-          filename: 'file1',
-          url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
-        },
-        {
-          id: 2,
-          filename: 'file1',
-          url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
-        },
-        {
-          id: 3,
-          filename: 'file1',
-          url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
-        },
-        {
-          id: 4,
-          filename: 'file1',
-          url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
-        },
-        {
-          id: 5,
-          filename: 'file1',
-          url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
-        },
-      ],
-    },
-    {
-      envelopeName: 'Second envelope',
-      history: [],
-      handle: 'kadsfjqwo8ry3',
-      recipientName: 'Nicolini',
-      senderName: 'Kristo Jorgenson',
-      images: [
-        {
-          id: 1,
-          filename: 'file',
-          url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
-        },
-        {
-          id: 2,
-          filename: 'file',
-          url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
-        },
-        {
-          id: 3,
-          filename: 'file',
-          url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
-        },
-        {
-          id: 4,
-          filename: 'file',
-          url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
-        },
-        {
-          id: 5,
-          filename: 'file',
-          url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
-        },
-      ],
-    },
-  ],
-};
+// const USER = {
+//   email: 'kristo@kristo.com',
+//   uname: 'kristo',
+//   envelope: [
+//     {
+//       envelopeName: 'First envelope',
+//       history: [],
+//       handle: 'asdfaskhf',
+//       recipientName: 'Bea Helman',
+//       senderName: 'Kristo Jorgenson',
+//       images: [
+//         {
+//           id: 1,
+//           filename: 'file1',
+//           url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
+//         },
+//         {
+//           id: 2,
+//           filename: 'file1',
+//           url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
+//         },
+//         {
+//           id: 3,
+//           filename: 'file1',
+//           url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
+//         },
+//         {
+//           id: 4,
+//           filename: 'file1',
+//           url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
+//         },
+//         {
+//           id: 5,
+//           filename: 'file1',
+//           url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
+//         },
+//       ],
+//     },
+//     {
+//       envelopeName: 'Second envelope',
+//       history: [],
+//       handle: 'kadsfjqwo8ry3',
+//       recipientName: 'Nicolini',
+//       senderName: 'Kristo Jorgenson',
+//       images: [
+//         {
+//           id: 1,
+//           filename: 'file',
+//           url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
+//         },
+//         {
+//           id: 2,
+//           filename: 'file',
+//           url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
+//         },
+//         {
+//           id: 3,
+//           filename: 'file',
+//           url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
+//         },
+//         {
+//           id: 4,
+//           filename: 'file',
+//           url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
+//         },
+//         {
+//           id: 5,
+//           filename: 'file',
+//           url: 'https://cdn.filestackcontent.com/pKXAEMrcR9KEmRdjjjx7',
+//         },
+//       ],
+//     },
+//   ],
+// };
 
 type Props = {
   user: ?User,

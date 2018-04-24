@@ -480,6 +480,11 @@ def history():
   handle = loaded_r['handle']
   action = loaded_r['action']
   dnum = loaded_r['dnum']
+  
+  if db.session.query(Envelope).filter(Envelope.handle==handle).scalar() == None:
+    payload = {"error":"Invalid Handle"}
+    return return_success(payload,False)
+  
   result = db.session.query(Envelope).filter(Envelope.handle==handle).first()
   envid = result.envelopeID
   if token != None:
