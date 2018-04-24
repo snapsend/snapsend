@@ -134,7 +134,7 @@ class Home extends Component<P, State> {
 
     if (!isPreviouslyViewing && isViewing) {
       const envelope: Envelope = await get(
-        `/envelope/${this.props.match.params.handle || ''}`
+        `/envelope/${this.props.match.params.handle}`
       );
 
       if (envelope.success !== true) {
