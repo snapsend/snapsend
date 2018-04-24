@@ -68,21 +68,7 @@ export default ({
   const progressText = getProgressText(downloadProgress, numSelected);
   return (
     <AppBar elevation={4} component="header" square>
-      <Toolbar>
-        <Link
-          to="/"
-          style={{
-            display: 'flex',
-            textDecoration: 'none',
-            alignItems: 'center',
-          }}
-        >
-          <Logo style={{ marginRight: 20 }} />
-          <Title variant="title">Snapsend.</Title>
-        </Link>
-        <div style={{ flex: 1 }} />
-        <Login />
-      </Toolbar>
+      <MainAppBar />
       {envelope && (
         <Fragment>
           <EditingWrapper>
@@ -193,6 +179,24 @@ export default ({
     </AppBar>
   );
 };
+
+export const MainAppBar = () => (
+  <Toolbar>
+    <Link
+      to="/"
+      style={{
+        display: 'flex',
+        textDecoration: 'none',
+        alignItems: 'center',
+      }}
+    >
+      <Logo style={{ marginRight: 20 }} />
+      <Title variant="title">Snapsend.</Title>
+    </Link>
+    <div style={{ flex: 1 }} />
+    <Login />
+  </Toolbar>
+);
 
 const getProgressText = (progress: number, num: number) => {
   if (progress < num) {
