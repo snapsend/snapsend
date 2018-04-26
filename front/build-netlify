@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+echo 'Mapping Netlify build env vars to create-react-app, and running build ...'
+set -x
+REACT_APP_REPOSITORY_URL="$REPOSITORY_URL" \
+REACT_APP_BRANCH="$BRANCH" \
+REACT_APP_PULL_REQUEST="$PULL_REQUEST" \
+REACT_APP_HEAD="$HEAD" \
+REACT_APP_COMMIT_REF="$COMMIT_REF" \
+REACT_APP_CONTEXT="$CONTEXT" \
+REACT_APP_URL="$URL" \
+REACT_APP_DEPLOY_URL="$DEPLOY_URL" \
+REACT_APP_DEPLOY_PRIME_URL="$DEPLOY_PRIME_URL" \
+npm run build
