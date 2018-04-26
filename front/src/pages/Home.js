@@ -85,7 +85,6 @@ class Home extends Component<P, State> {
 
   async componentDidMount() {
     // if the component just mounted, check if there is an envelopeId and fetch it.
-    console.log('MOUNTIN');
     const { match } = this.props;
     if (match && match.params && typeof match.params.handle !== 'undefined') {
       const envelope: Envelope = await get(`/envelope/${match.params.handle}`);
@@ -338,7 +337,6 @@ class Home extends Component<P, State> {
       downloadProgress,
       isDownloading,
     } = this.state;
-    console.log('WHAT', this.props, this.state);
     if (envelope === 'NOT FOUND') return <NotFound />;
     const yetToDrop = pending === 0 && images.length === 0;
     const isViewing: boolean = !!(match && match.params && match.params.handle);
