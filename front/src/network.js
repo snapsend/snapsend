@@ -1,7 +1,7 @@
 // @flow
 
 // switch based on BRANC
-const BRANCH = process.env.BRANCH;
+const BRANCH = process.env.REACT_APP_BRANCH;
 console.log('BRANCH: ', BRANCH);
 const API_BASE =
   (BRANCH === 'master'

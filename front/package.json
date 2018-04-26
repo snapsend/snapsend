@@ -5,6 +5,7 @@
   "dependencies": {
     "attr-accept": "^1.1.2",
     "babel-runtime": "^6.26.0",
+    "build-create-react-app-netlify": "^1.1.2",
     "coveralls": "^3.0.0",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
@@ -38,6 +39,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build-netlify": "./build-netlify"
   }
 }
