@@ -104,6 +104,5 @@ const generateUrl = (
     resize = `resize=${w}${h}`;
   }
   const result = `${baseUrl}${resize}${formatString}${im.url}`;
-  console.log('URL: ', result);
   return result;
 };

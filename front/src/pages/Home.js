@@ -85,7 +85,6 @@ class Home extends Component<P, State> {
 
   async componentDidMount() {
     // if the component just mounted, check if there is an envelopeId and fetch it.
-    console.log('MOUNTIN');
     const { match } = this.props;
     if (match && match.params && typeof match.params.handle !== 'undefined') {
       const envelope: Envelope = await get(`/envelope/${match.params.handle}`);
@@ -338,7 +337,6 @@ class Home extends Component<P, State> {
       downloadProgress,
       isDownloading,
     } = this.state;
-    console.log('WHAT', this.props, this.state);
     if (envelope === 'NOT FOUND') return <NotFound />;
     const yetToDrop = pending === 0 && images.length === 0;
     const isViewing: boolean = !!(match && match.params && match.params.handle);
@@ -361,29 +359,29 @@ class Home extends Component<P, State> {
         {this.state.uploadError && (
           <TooManyFiles closeModal={this.closeModal} />
         )}
+        <AppBar
+          isAtEnvelope={isAtEnvelope}
+          envelope={envelope}
+          handleEnvelopeChange={this.handleEnvelopeChange}
+          handleSave={this.handleEnvelopeSave}
+          isViewing={isViewing}
+          size={size}
+          format={format}
+          handleFormatChange={this.handleFormatChange}
+          handleSizeChange={this.handleSizeChange}
+          isRedirect={isRedirect}
+          token={token}
+          login={login}
+          logout={logout}
+          numSelected={numSelected}
+          pending={pending}
+          deselectAll={this.deselectAll}
+          download={this.handleDownload}
+          toggleHistory={this.toggleHistory}
+          downloadProgress={downloadProgress}
+          isDownloading={isDownloading}
+        />
         <Flex>
-          <AppBar
-            isAtEnvelope={isAtEnvelope}
-            envelope={envelope}
-            handleEnvelopeChange={this.handleEnvelopeChange}
-            handleSave={this.handleEnvelopeSave}
-            isViewing={isViewing}
-            size={size}
-            format={format}
-            handleFormatChange={this.handleFormatChange}
-            handleSizeChange={this.handleSizeChange}
-            isRedirect={isRedirect}
-            token={token}
-            login={login}
-            logout={logout}
-            numSelected={numSelected}
-            pending={pending}
-            deselectAll={this.deselectAll}
-            download={this.handleDownload}
-            toggleHistory={this.toggleHistory}
-            downloadProgress={downloadProgress}
-            isDownloading={isDownloading}
-          />
           {yetToDrop && (
             <Zone>
               <Circle>
@@ -447,6 +445,11 @@ class Home extends Component<P, State> {
 
 export default withLoginStatus(Home);
 
+const Body = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const Images = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -460,7 +463,7 @@ const Zone = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex: 1;
+  flex: 1 0 auto;
   background: #c2c2c2;
   z-index: 0;
   padding: 30px;
@@ -484,7 +487,7 @@ const Flex = styled.div`
   flex-direction: column;
   flex: 1;
   max-height: 100vh;
-  overflow: hidden;
+  overflow-y: scroll;
 `;
 
 const Content = styled.div`
@@ -492,7 +495,6 @@ const Content = styled.div`
   flex-direction: row;
   flex: 1;
   align-items: flex-start;
-  overflow-y: scroll;
 `;
 
 const TooManyFiles = ({ closeModal }) => (
