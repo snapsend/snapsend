@@ -2,7 +2,7 @@
 
 // switch based on BRANC
 const BRANCH = process.env.BRANCH;
-console.log('BRANCH: ', BRANCH);
+console.log('BRANCH: ', BRANCH, process.env);
 const API_BASE =
   (BRANCH === 'master'
     ? process.env.REACT_APP_MASTER_API_URL
