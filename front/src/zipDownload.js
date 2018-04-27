@@ -97,8 +97,10 @@ const generateUrl = (
     if (width && height) {
       w = `${w},`;
       h = `${h}/`;
-    } else {
+    } else if (width && !height) {
       w = `${w}/`;
+    } else if (!width && height) {
+      h = `${h}/`;
     }
 
     resize = `resize=${w}${h}`;
